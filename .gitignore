@@ -9,7 +9,6 @@
 *.pch
 
 # Libraries
-*.lib
 *.a
 *.la
 *.lo
@@ -74,3 +73,15 @@ $RECYCLE.BIN/
 
 # Windows shortcuts
 *.lnk
+
+*.htm
+*.crf
+*.d
+*.dep
+*.map
+*.lnp
+*.bak
+*.sct
+*.axf
+*.lst
+.mxproject
