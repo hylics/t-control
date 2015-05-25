@@ -85,3 +85,5 @@ $RECYCLE.BIN/
 *.axf
 *.lst
 .mxproject
+*.__i
+*._ia
