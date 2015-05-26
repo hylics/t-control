@@ -74,15 +74,10 @@
 /* Functions Prototypes                                                       */
 /******************************************************************************/
 /* Initializes the SPI communication peripheral. */
-uint8_t SPI_Init(uint8_t lsbFirst,
-                       uint32_t clockFreq,
-                       uint8_t clockPol,
-                       uint8_t clockPha);
+uint8_t SPI_Init(uint8_t lsbFirst, uint32_t clockFreq, uint8_t clockPol, uint8_t clockPha);
 /* Writes data to SPI. */
-uint8_t SPI_Write(uint8_t* data,
-                        uint8_t bytesNumber);
+uint8_t SPI_Write(uint8_t *data, uint8_t bytesNumber);
 /* Reads data from SPI. */
-uint8_t SPI_Read(uint8_t* data,
-                       uint8_t bytesNumber);
+uint8_t SPI_Read(uint8_t *data, uint8_t bytesNumber);
 
 #endif	// _COMMUNICATION_H_

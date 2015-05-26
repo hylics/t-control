@@ -103,9 +103,7 @@ uint8_t SPI_Init(uint8_t lsbFirst,
  *
  * @return Number of written bytes.
 *******************************************************************************/
-uint8_t SPI_Write(uint8_t* data,
-                        uint8_t bytesNumber)
-{
+uint8_t SPI_Write(uint8_t *data, uint8_t bytesNumber) {
 	uint8_t CS_flag = data[0];
 	
   //Modifying CS by this function or external
@@ -149,9 +147,7 @@ uint8_t SPI_Write(uint8_t* data,
  *
  * @return Number of written bytes.
 *******************************************************************************/
-uint8_t SPI_Read(uint8_t* data,
-                       uint8_t bytesNumber)
-{
+uint8_t SPI_Read(uint8_t *data, uint8_t bytesNumber) {
 	// Add your code here.
 	uint8_t CS_flag = data[0];
 
