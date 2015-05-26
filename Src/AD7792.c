@@ -361,6 +361,11 @@ uint32_t AD7792_SingleConversion(void)
     regData = AD7792_GetRegisterValue(AD7792_REG_DATA, 3, 0); // CS is not modified by SPI read/write functions.
     ADI_DELAY(TIMEOUT_LH);
 	  ADI_PART_CS_HIGH;
+	
+	  /*bad solution for problem reading 2 bytes as 3 bytes*/
+	  if((regData & 0xF000) != 0) {
+		  regData>>=8;
+	  }
 
     return(regData);
 }

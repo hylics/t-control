@@ -135,13 +135,12 @@ int main(void)
 		while (1)
     {
 			/*reading data unstable, some times its read only first byte of data*/
-		__IO uint32_t t_read;
+		//__IO uint32_t t_read;
 		for(uint32_t i=0; i<5; i++) {
-			t_read = AD7792_SingleConversion();
 			/*if(t_read < 0x60) {
 				while(1) {}
 				}*/
-			raw_conv[i] = t_read;
+			raw_conv[i] = AD7792_SingleConversion();
 			HAL_Delay(200);
 		}
 
