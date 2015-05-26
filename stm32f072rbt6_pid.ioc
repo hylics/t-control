@@ -1,5 +1,5 @@
 #MicroXplorer Configuration settings - do not modify
-#Mon May 25 10:51:11 EEST 2015
+#Tue May 26 13:50:17 EEST 2015
 Dma.Request0=SPI2_RX
 Dma.Request1=SPI2_TX
 Dma.RequestsNb=2
@@ -23,7 +23,7 @@ Dma.SPI2_TX.1.Priority=DMA_PRIORITY_LOW
 Dma.SPI2_TX.1.RequestParameters=Instance,Direction,PeriphInc,MemInc,PeriphDataAlignment,MemDataAlignment,Mode,Priority
 FREERTOS.INCLUDE_vTaskDelayUntil=1
 FREERTOS.IPParameters=INCLUDE_vTaskDelayUntil,Tasks01
-FREERTOS.Tasks01=adcTask,1,128,StartAdcTask
+FREERTOS.Tasks01=defaultTask,0,128,StartDefaultTask
 File.Version=5
 KeepUserPlacement=true
 Mcu.Family=STM32F0
@@ -194,7 +194,7 @@ ProjectManager.FreePins=false
 ProjectManager.HalAssertFull=false
 ProjectManager.KeepUserCode=true
 ProjectManager.LastFirmware=true
-ProjectManager.LibraryCopy=1
+ProjectManager.LibraryCopy=0
 ProjectManager.ProjectBuild=false
 ProjectManager.ProjectFileName=stm32f072rbt6_pid.ioc
 ProjectManager.ProjectName=stm32f072rbt6_pid
@@ -210,14 +210,13 @@ RCC.HCLKFreq_Value=48000000
 RCC.HSICECFreq_Value=32786.88524590164
 RCC.I2C1Freq_Value=8000000
 RCC.I2SFreq_Value=48000000
-RCC.IPParameters=PLLSource,PLLMUL,APB1TimFreq_Value,PLLSourceVirtualString,I2SFreq_Value,FCLKCortexFreq_Value,HSICECFreq_Value,AHBFreq_Value,PLLSourceVirtual,SYSCLKFreq_VALUE,USART1Freq_Value,SYSCLKSource,MCOFreq_Value,PLLCLKFreq_Value,VCOOutput2Freq_Value,RTCFreq_Value,PLLMCOFreq_Value,FamilyName,USART2Freq_Value,HCLKFreq_Value,CECFreq_Value,TimSysFreq_Value,I2C1Freq_Value,APB1Freq_Value
+RCC.IPParameters=PLLSource,PLLMUL,APB1TimFreq_Value,I2SFreq_Value,FCLKCortexFreq_Value,HSICECFreq_Value,AHBFreq_Value,PLLSourceVirtual,SYSCLKFreq_VALUE,USART1Freq_Value,SYSCLKSource,MCOFreq_Value,PLLCLKFreq_Value,VCOOutput2Freq_Value,RTCFreq_Value,PLLMCOFreq_Value,FamilyName,USART2Freq_Value,HCLKFreq_Value,CECFreq_Value,TimSysFreq_Value,I2C1Freq_Value,APB1Freq_Value
 RCC.MCOFreq_Value=48000000
 RCC.PLLCLKFreq_Value=288000000
 RCC.PLLMCOFreq_Value=288000000
 RCC.PLLMUL=RCC_PLL_MUL6
 RCC.PLLSource=RCC_PLLSOURCE_HSI48
 RCC.PLLSourceVirtual=RCC_PLLSOURCE_HSI48
-RCC.PLLSourceVirtualString=RCC_PLLSOURCE_HSI48
 RCC.RTCFreq_Value=40000
 RCC.SYSCLKFreq_VALUE=48000000
 RCC.SYSCLKSource=RCC_SYSCLKSOURCE_HSI48

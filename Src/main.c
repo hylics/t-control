@@ -1,7 +1,7 @@
 /**
   ******************************************************************************
   * File Name          : main.c
-  * Date               : 25/05/2015 10:51:17
+  * Date               : 26/05/2015 13:50:23
   * Description        : Main program body
   ******************************************************************************
   *
@@ -85,8 +85,8 @@ int main(void)
 	*  switch Iout1 and Iout2
 	*/
 	
-	__IO uint32_t raw_conv[5] = {0};
-	__IO uint32_t conf[5] = {0};
+	__IO unsigned long raw_conv[5] = {0};
+	__IO unsigned long conf[5] = {0};
   /* USER CODE END 1 */
 
   /* MCU Configuration----------------------------------------------------------*/
@@ -115,8 +115,7 @@ int main(void)
   if(AD7792_Init() == 1) {
 		//
 		AD7792_conf(AD7792_GAIN_1, AD7792_CH_AIN2P_AIN2M, AD7792_EN_IXCEN_210uA);
-		
-    /*		
+						
 		//AD7792_SetGain(AD7792_GAIN_1);
 		//AD7792_EnableBuf();
 		//AD7792_SetIntReference(AD7792_REFSEL_INT);
@@ -125,8 +124,7 @@ int main(void)
 		
 		//AD7792_IexDir(AD7792_DIR_IEXC1_IEXC2_IOUT1);
 		//AD7792_IexEn(AD7792_EN_IXCEN_210uA);
-		*/
-		// check config
+		
 		conf[0] = AD7792_GetRegisterValue(AD7792_REG_CONF, 2, 1);
 		conf[1] = AD7792_GetRegisterValue(AD7792_REG_MODE, 2, 1);
 		conf[2] = AD7792_GetRegisterValue(AD7792_REG_IO, 1, 1);
@@ -134,30 +132,9 @@ int main(void)
 		conf[4] = AD7792_GetRegisterValue(AD7792_REG_FULLSALE, 2, 1);
 		
 		//AD7792_SetMode(AD7792_MODE_SINGLE);
-		HAL_Delay(200);
-	  while(1) {
-			
-			//
-			/*reading data unstable, some times its read only first byte of data*/
-		  __IO uint32_t t_read;
-		  for(uint32_t i=0; i<5; i++) {
-			  t_read = AD7792_SingleConversion();
-		  	if(t_read < 0x60) {
-			  	while(1) {}
-		  		}
-			  raw_conv[i] = t_read;
-			  HAL_Delay(200);
-	  	} //end for(uint32_t i=0; i<5; i++)
-
-		//raw_conv = AD7792_SingleConversion();
-		HAL_Delay(200);
-		conf[0] = AD7792_GetRegisterValue(AD7792_REG_CONF, 2, 1);
-		conf[1] = AD7792_GetRegisterValue(AD7792_REG_MODE, 2, 1);
-		conf[2] = AD7792_GetRegisterValue(AD7792_REG_IO, 1, 1);
-		conf[3] = AD7792_GetRegisterValue(AD7792_REG_OFFSET, 2, 1);
-		conf[4] = AD7792_GetRegisterValue(AD7792_REG_FULLSALE, 2, 1);
-		} //end while(1)
-	} //end if(AD7792_Init() == 1)
+		
+		
+	}
   /* USER CODE END 2 */
 
   /* Call init function for freertos objects (in freertos.c) */
@@ -175,8 +152,26 @@ int main(void)
   /* USER CODE END WHILE */
 
   /* USER CODE BEGIN 3 */
-		/**/
-			
+			/*reading data unstable, some times its read only first byte of data*/
+		__IO unsigned long t_read;
+		for(uint32_t i=0; i<5; i++) {
+			t_read = AD7792_SingleConversion();
+			if(t_read < 0x60) {
+				while(1) {}
+				}
+			raw_conv[i] = t_read;
+			HAL_Delay(200);
+		}
+					
+				//HAL_Delay(200);
+		//raw_conv = AD7792_SingleConversion();
+		HAL_Delay(200);
+		conf[0] = AD7792_GetRegisterValue(AD7792_REG_CONF, 2, 1);
+		conf[1] = AD7792_GetRegisterValue(AD7792_REG_MODE, 2, 1);
+		conf[2] = AD7792_GetRegisterValue(AD7792_REG_IO, 1, 1);
+		conf[3] = AD7792_GetRegisterValue(AD7792_REG_OFFSET, 2, 1);
+		conf[4] = AD7792_GetRegisterValue(AD7792_REG_FULLSALE, 2, 1);
+	
   }
   /* USER CODE END 3 */
 

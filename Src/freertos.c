@@ -1,7 +1,7 @@
 /**
   ******************************************************************************
   * File Name          : freertos.c
-  * Date               : 25/05/2015 10:51:13
+  * Date               : 26/05/2015 13:50:19
   * Description        : Code for freertos applications
   ******************************************************************************
   *
@@ -42,14 +42,14 @@
 /* USER CODE END Includes */
 
 /* Variables -----------------------------------------------------------------*/
-osThreadId adcTaskHandle;
+osThreadId defaultTaskHandle;
 
 /* USER CODE BEGIN Variables */
 
 /* USER CODE END Variables */
 
 /* Function prototypes -------------------------------------------------------*/
-void StartAdcTask(void const * argument);
+void StartDefaultTask(void const * argument);
 
 void MX_FREERTOS_Init(void); /* (MISRA C 2004 rule 8.1) */
 
@@ -78,9 +78,9 @@ void MX_FREERTOS_Init(void) {
   /* USER CODE END RTOS_TIMERS */
 
   /* Create the thread(s) */
-  /* definition and creation of adcTask */
-  osThreadDef(adcTask, StartAdcTask, osPriorityAboveNormal, 0, 128);
-  adcTaskHandle = osThreadCreate(osThread(adcTask), NULL);
+  /* definition and creation of defaultTask */
+  osThreadDef(defaultTask, StartDefaultTask, osPriorityNormal, 0, 128);
+  defaultTaskHandle = osThreadCreate(osThread(defaultTask), NULL);
 
   /* USER CODE BEGIN RTOS_THREADS */
   /* add threads, ... */
@@ -91,17 +91,17 @@ void MX_FREERTOS_Init(void) {
   /* USER CODE END RTOS_QUEUES */
 }
 
-/* StartAdcTask function */
-void StartAdcTask(void const * argument)
+/* StartDefaultTask function */
+void StartDefaultTask(void const * argument)
 {
 
-  /* USER CODE BEGIN StartAdcTask */
+  /* USER CODE BEGIN StartDefaultTask */
   /* Infinite loop */
   for(;;)
   {
     osDelay(1);
   }
-  /* USER CODE END StartAdcTask */
+  /* USER CODE END StartDefaultTask */
 }
 
 /* USER CODE BEGIN Application */
