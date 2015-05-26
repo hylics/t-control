@@ -51,14 +51,14 @@ extern __IO uint8_t dma_t_cplt, dma_r_cplt;
 //#define DMA_T_CPLT while(dma_t_cplt) {}, dma_t_cplt=1
 __STATIC_INLINE void dma_tr_cplt() {
 	while(dma_t_cplt) {
-		//
+		;
 	}
 	dma_t_cplt = 1;
 }
 
 __STATIC_INLINE void dma_rc_cplt() {
 	while(dma_r_cplt) {
-		//
+		;
 	}
 	dma_r_cplt = 1;
 }
@@ -83,11 +83,7 @@ __STATIC_INLINE void dma_rc_cplt() {
  *
  * @return 0 - Initialization failed, 1 - Initialization succeeded.
 *******************************************************************************/
-uint8_t SPI_Init(uint8_t lsbFirst,
-                       uint32_t clockFreq,
-                       uint8_t clockPol,
-                       uint8_t clockPha)
-{
+uint8_t SPI_Init(uint8_t lsbFirst, uint32_t clockFreq, uint8_t clockPol, uint8_t clockPha) {
 	// Add your code here.
 	
     return(1);

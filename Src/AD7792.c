@@ -358,7 +358,7 @@ uint32_t AD7792_SingleConversion(void)
     AD7792_WaitRdyGoLow();
 	  ADI_DELAY(TIMEOUT_WRGL);
 	  ADI_DELAY(5);
-    regData = AD7792_GetRegisterValue(AD7792_REG_DATA, 2, 0); // CS is not modified by SPI read/write functions.
+    regData = AD7792_GetRegisterValue(AD7792_REG_DATA, 3, 0); // CS is not modified by SPI read/write functions.
     ADI_DELAY(TIMEOUT_LH);
 	  ADI_PART_CS_HIGH;
 
