@@ -60,9 +60,9 @@
  *                  Example: 1 - if initialization was successful (ID is 0x0B).
  *                           0 - if initialization was unsuccessful.
 *******************************************************************************/
-unsigned char AD7792_Init(void)
+uint8_t AD7792_Init(void)
 { 
-	unsigned char status = 0x1;
+	uint8_t status = 0x1;
     
   //SPI_Init(0, 1000000, 1, 1);
 	ADI_PART_CS_HIGH;
@@ -81,7 +81,7 @@ unsigned char AD7792_Init(void)
 *******************************************************************************/
 void AD7792_Reset(void)
 {
-	unsigned char dataToSend[6] = {0x03, 0xff, 0xff, 0xff, 0xff, 0xff};
+	uint8_t dataToSend[6] = {0x03, 0xff, 0xff, 0xff, 0xff, 0xff};
 	
   ADI_PART_CS_LOW;
   ADI_DELAY(TIMEOUT_LH);
@@ -98,13 +98,13 @@ void AD7792_Reset(void)
  *
  * @return data - The value of the selected register register.
 *******************************************************************************/
-unsigned long AD7792_GetRegisterValue(unsigned char regAddress, 
-                                      unsigned char size,
-                                      unsigned char modifyCS)
+uint32_t AD7792_GetRegisterValue(uint8_t regAddress, 
+                                      uint8_t size,
+                                      uint8_t modifyCS)
 {	
-	unsigned char data[5]      = {0x00, 0x00, 0x00, 0x00, 0x00};
-	unsigned long receivedData = 0x00;
-  unsigned char i            = 0x00; 
+	uint8_t data[5]      = {0x00, 0x00, 0x00, 0x00, 0x00};
+	uint32_t receivedData = 0x00;
+  uint8_t i            = 0x00; 
     
 	data[0] = 0x01 * modifyCS;
 	data[1] = AD7792_COMM_READ |  AD7792_COMM_ADDR(regAddress);
@@ -125,14 +125,14 @@ unsigned long AD7792_GetRegisterValue(unsigned char regAddress,
  *
  * @return  None.    
 *******************************************************************************/
-void AD7792_SetRegisterValue(unsigned char regAddress,
-                             unsigned long regValue, 
-                             unsigned char size,
-                             unsigned char modifyCS)
+void AD7792_SetRegisterValue(uint8_t regAddress,
+                             uint32_t regValue, 
+                             uint8_t size,
+                             uint8_t modifyCS)
 {
-	unsigned char data[5]      = {0x00, 0x00, 0x00, 0x00, 0x00};	
-	unsigned char* dataPointer = (unsigned char*)&regValue;
-  unsigned char bytesNr      = size + 1;
+	uint8_t data[5]      = {0x00, 0x00, 0x00, 0x00, 0x00};	
+	uint8_t* dataPointer = (uint8_t*)&regValue;
+  uint8_t bytesNr      = size + 1;
     
     data[0] = 0x01 * modifyCS;
     data[1] = AD7792_COMM_WRITE |  AD7792_COMM_ADDR(regAddress);
@@ -164,9 +164,9 @@ void AD7792_WaitRdyGoLow(void)
  *
  * @return  None.    
 *******************************************************************************/
-void AD7792_SetMode(unsigned long mode)
+void AD7792_SetMode(uint32_t mode)
 {
-    unsigned long command;
+    uint32_t command;
     
     command = AD7792_GetRegisterValue(AD7792_REG_MODE,
                                       2,
@@ -181,9 +181,9 @@ void AD7792_SetMode(unsigned long mode)
 }
 
 /*my func*/
-void AD7792_SetCLCS(unsigned long clc)
+void AD7792_SetCLCS(uint32_t clc)
 {
-	unsigned long command;
+	uint32_t command;
     
     command = AD7792_GetRegisterValue(AD7792_REG_MODE,
                                       2,
@@ -198,9 +198,9 @@ void AD7792_SetCLCS(unsigned long clc)
 }
 
 /*my func*/
-void AD7792_SetRate(unsigned long rate)
+void AD7792_SetRate(uint32_t rate)
 {
-	unsigned long command;
+	uint32_t command;
     
     command = AD7792_GetRegisterValue(AD7792_REG_MODE,
                                       2,
@@ -220,7 +220,7 @@ void AD7792_SetRate(unsigned long rate)
 /*my func*/
 void AD7792_EnableBuf(void)
 {
-	unsigned long command;
+	uint32_t command;
 	
 	command = AD7792_GetRegisterValue(AD7792_REG_CONF,
                                       2,
@@ -236,9 +236,9 @@ void AD7792_EnableBuf(void)
 }
 
 /*my func*/
-void AD7792_IexDir(unsigned long direction)
+void AD7792_IexDir(uint32_t direction)
 {
-	unsigned long command;
+	uint32_t command;
 	
 	command = AD7792_GetRegisterValue(AD7792_REG_IO,
                                       1,
@@ -254,9 +254,9 @@ void AD7792_IexDir(unsigned long direction)
 }
 
 /*my func*/
-void AD7792_IexEn(unsigned long current)
+void AD7792_IexEn(uint32_t current)
 {
-	unsigned long command;
+	uint32_t command;
 	
 	command = AD7792_GetRegisterValue(AD7792_REG_IO,
                                       1,
@@ -274,7 +274,7 @@ void AD7792_IexEn(unsigned long current)
 /*my func*/
 void AD7792_SetUnipolar(void)
 {
-	unsigned long command;
+	uint32_t command;
 	
 	command = AD7792_GetRegisterValue(AD7792_REG_CONF,
                                       2,
@@ -291,8 +291,8 @@ void AD7792_SetUnipolar(void)
 
 /*my func*/
 
-int AD7792_conf(unsigned long gain, unsigned long channel, unsigned long current) {
-	unsigned long command;
+int AD7792_conf(uint32_t gain, uint32_t channel, uint32_t current) {
+	uint32_t command;
 	int retval = 0;
 	
 	command = AD7792_GetRegisterValue(AD7792_REG_CONF, 2, 1); // CS is modified by SPI read/write functions.
@@ -341,9 +341,9 @@ int AD7792_conf(unsigned long gain, unsigned long channel, unsigned long current
  *
  * @return  None.    
 *******************************************************************************/
-void AD7792_SetChannel(unsigned long channel)
+void AD7792_SetChannel(uint32_t channel)
 {
-    unsigned long command;
+    uint32_t command;
     
     command = AD7792_GetRegisterValue(AD7792_REG_CONF,
                                       2,
@@ -364,9 +364,9 @@ void AD7792_SetChannel(unsigned long channel)
  *
  * @return  None.    
 *******************************************************************************/
-void AD7792_SetGain(unsigned long gain)
+void AD7792_SetGain(uint32_t gain)
 {
-    unsigned long command;
+    uint32_t command;
     
     command = AD7792_GetRegisterValue(AD7792_REG_CONF,
                                       2,
@@ -388,9 +388,9 @@ void AD7792_SetGain(unsigned long gain)
  *
  * @return None.    
 *******************************************************************************/
-void AD7792_SetIntReference(unsigned char type)
+void AD7792_SetIntReference(uint8_t type)
 {
-    unsigned long command = 0;
+    uint32_t command = 0;
     
     command = AD7792_GetRegisterValue(AD7792_REG_CONF,
                                       2,
@@ -411,7 +411,7 @@ void AD7792_SetIntReference(unsigned char type)
  *
  * @return none.
 *******************************************************************************/
-void AD7792_Calibrate(unsigned char mode, unsigned char channel)
+void AD7792_Calibrate(uint8_t mode, uint8_t channel)
 {
     unsigned short oldRegValue = 0x0;
     unsigned short newRegValue = 0x0;
@@ -432,10 +432,10 @@ void AD7792_Calibrate(unsigned char mode, unsigned char channel)
  *
  * @return regData - Result of a single analog-to-digital conversion.
 *******************************************************************************/
-unsigned long AD7792_SingleConversion(void)
+uint32_t AD7792_SingleConversion(void)
 {
-    unsigned long command = 0x0;
-    unsigned long regData = 0x0;
+    uint32_t command = 0x0;
+    uint32_t regData = 0x0;
     
     command  = AD7792_MODE_SEL(AD7792_MODE_SINGLE);
     ADI_PART_CS_LOW;
@@ -460,11 +460,11 @@ unsigned long AD7792_SingleConversion(void)
  *
  * @return samplesAverage - The average of the conversion results.
 *******************************************************************************/
-unsigned long AD7792_ContinuousReadAvg(unsigned char sampleNumber)
+uint32_t AD7792_ContinuousReadAvg(uint8_t sampleNumber)
 {
-    unsigned long samplesAverage = 0x0;
-    unsigned long command        = 0x0;
-    unsigned char count          = 0x0;
+    uint32_t samplesAverage = 0x0;
+    uint32_t command        = 0x0;
+    uint8_t count          = 0x0;
     
     command = AD7792_MODE_SEL(AD7792_MODE_CONT);
     ADI_PART_CS_LOW;

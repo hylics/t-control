@@ -85,8 +85,8 @@ int main(void)
 	*  switch Iout1 and Iout2
 	*/
 	
-	__IO unsigned long raw_conv[5] = {0};
-	__IO unsigned long conf[5] = {0};
+	__IO uint32_t raw_conv[5] = {0};
+	__IO uint32_t conf[5] = {0};
   /* USER CODE END 1 */
 
   /* MCU Configuration----------------------------------------------------------*/
@@ -153,7 +153,7 @@ int main(void)
 
   /* USER CODE BEGIN 3 */
 			/*reading data unstable, some times its read only first byte of data*/
-		__IO unsigned long t_read;
+		__IO uint32_t t_read;
 		for(uint32_t i=0; i<5; i++) {
 			t_read = AD7792_SingleConversion();
 			if(t_read < 0x60) {

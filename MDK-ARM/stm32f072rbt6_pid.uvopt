@@ -241,7 +241,7 @@
       <Focus>0</Focus>
       <ColumnNumber>0</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>134</TopLine>
+      <TopLine>135</TopLine>
       <CurrentLine>138</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>..\Drivers\CMSIS\Device\ST\STM32F0xx\Source\Templates\arm\startup_stm32f072xb.s</PathWithFileName>
@@ -625,7 +625,7 @@
       <Focus>0</Focus>
       <ColumnNumber>0</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>100</TopLine>
+      <TopLine>104</TopLine>
       <CurrentLine>117</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>..\Src\main.c</PathWithFileName>
@@ -673,7 +673,7 @@
       <Focus>0</Focus>
       <ColumnNumber>0</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>101</TopLine>
+      <TopLine>102</TopLine>
       <CurrentLine>112</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>..\Src\AD7792.c</PathWithFileName>

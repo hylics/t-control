@@ -171,53 +171,53 @@
 /******************************************************************************/
 
 /* Initialize AD7792 and check if the device is present*/
-unsigned char AD7792_Init(void);
+uint8_t AD7792_Init(void);
 
 /* Sends 32 consecutive 1's on SPI in order to reset the part. */
 void AD7792_Reset(void);
 
 /* Reads the value of the selected register. */
-unsigned long AD7792_GetRegisterValue(unsigned char regAddress, 
-									  unsigned char size,
-                                      unsigned char modifyCS);
+uint32_t AD7792_GetRegisterValue(uint8_t regAddress, 
+									  uint8_t size,
+                                      uint8_t modifyCS);
 
 /* Writes a value to the register. */
-void AD7792_SetRegisterValue(unsigned char regAddress,
-							 unsigned long regValue, 
-							 unsigned char size,
-                             unsigned char modifyCS);
+void AD7792_SetRegisterValue(uint8_t regAddress,
+							 uint32_t regValue, 
+							 uint8_t size,
+                             uint8_t modifyCS);
 
 /* Waits for RDY pin to go low. */
 void AD7792_WaitRdyGoLow(void);
 
 /* Sets the operating mode of AD7792. */
-void AD7792_SetMode(unsigned long mode);     
+void AD7792_SetMode(uint32_t mode);     
 
 /* Selects the channel of AD7792. */
-void AD7792_SetChannel(unsigned long channel);
+void AD7792_SetChannel(uint32_t channel);
 
 /* Sets the gain of the In-Amp. */
-void AD7792_SetGain(unsigned long gain);
+void AD7792_SetGain(uint32_t gain);
 
 /* Sets the reference source for the ADC. */
-void AD7792_SetIntReference(unsigned char type);
+void AD7792_SetIntReference(uint8_t type);
 
 /* Performs the given calibration to the specified channel. */
-void AD7792_Calibrate(unsigned char mode, unsigned char channel);
+void AD7792_Calibrate(uint8_t mode, uint8_t channel);
 
 /* Returns the result of a single conversion. */
-unsigned long AD7792_SingleConversion(void);
+uint32_t AD7792_SingleConversion(void);
 
 /* Returns the average of several conversion results. */
-unsigned long AD7792_ContinuousReadAvg(unsigned char sampleNumber);
+uint32_t AD7792_ContinuousReadAvg(uint8_t sampleNumber);
 
 /*my func*/
-void AD7792_SetCLCS(unsigned long clc);
-void AD7792_SetRate(unsigned long rate);
+void AD7792_SetCLCS(uint32_t clc);
+void AD7792_SetRate(uint32_t rate);
 void AD7792_EnableBuf(void);
-void AD7792_IexDir(unsigned long direction);
-void AD7792_IexEn(unsigned long current);
+void AD7792_IexDir(uint32_t direction);
+void AD7792_IexEn(uint32_t current);
 void AD7792_SetUnipolar(void);
-int AD7792_conf(unsigned long gain, unsigned long channel, unsigned long current);
+int AD7792_conf(uint32_t gain, uint32_t channel, uint32_t current);
 
 #endif	// _AD7792_H_

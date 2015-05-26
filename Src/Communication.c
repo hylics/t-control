@@ -83,10 +83,10 @@ __STATIC_INLINE void dma_rc_cplt() {
  *
  * @return 0 - Initialization failed, 1 - Initialization succeeded.
 *******************************************************************************/
-unsigned char SPI_Init(unsigned char lsbFirst,
-                       unsigned long clockFreq,
-                       unsigned char clockPol,
-                       unsigned char clockPha)
+uint8_t SPI_Init(uint8_t lsbFirst,
+                       uint32_t clockFreq,
+                       uint8_t clockPol,
+                       uint8_t clockPha)
 {
 	// Add your code here.
 	
@@ -103,8 +103,8 @@ unsigned char SPI_Init(unsigned char lsbFirst,
  *
  * @return Number of written bytes.
 *******************************************************************************/
-unsigned char SPI_Write(unsigned char* data,
-                        unsigned char bytesNumber)
+uint8_t SPI_Write(uint8_t* data,
+                        uint8_t bytesNumber)
 {
 	uint8_t CS_flag = data[0];
 	
@@ -149,8 +149,8 @@ unsigned char SPI_Write(unsigned char* data,
  *
  * @return Number of written bytes.
 *******************************************************************************/
-unsigned char SPI_Read(unsigned char* data,
-                       unsigned char bytesNumber)
+uint8_t SPI_Read(uint8_t* data,
+                       uint8_t bytesNumber)
 {
 	// Add your code here.
 	uint8_t CS_flag = data[0];
