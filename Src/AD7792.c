@@ -363,7 +363,7 @@ uint32_t AD7792_SingleConversion(void)
 	  ADI_PART_CS_HIGH;
 	
 	  /*bad solution for problem reading 2 bytes as 3 bytes*/
-	  if((regData & 0xF000) != 0) {
+	  if((regData & 0xF00000) != 0) {
 		  regData>>=8;
 	  }
 

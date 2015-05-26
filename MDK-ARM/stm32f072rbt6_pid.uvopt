@@ -623,10 +623,10 @@
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <Focus>0</Focus>
-      <ColumnNumber>0</ColumnNumber>
+      <ColumnNumber>39</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>142</TopLine>
-      <CurrentLine>147</CurrentLine>
+      <TopLine>118</TopLine>
+      <CurrentLine>143</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>..\Src\main.c</PathWithFileName>
       <FilenameWithoutPath>main.c</FilenameWithoutPath>
@@ -671,10 +671,10 @@
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <Focus>0</Focus>
-      <ColumnNumber>5</ColumnNumber>
+      <ColumnNumber>10</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>232</TopLine>
-      <CurrentLine>368</CurrentLine>
+      <TopLine>337</TopLine>
+      <CurrentLine>370</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>..\Src\AD7792.c</PathWithFileName>
       <FilenameWithoutPath>AD7792.c</FilenameWithoutPath>
@@ -687,10 +687,10 @@
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <Focus>0</Focus>
-      <ColumnNumber>21</ColumnNumber>
+      <ColumnNumber>3</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>40</TopLine>
-      <CurrentLine>53</CurrentLine>
+      <TopLine>87</TopLine>
+      <CurrentLine>89</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>..\Src\Communication.c</PathWithFileName>
       <FilenameWithoutPath>Communication.c</FilenameWithoutPath>
