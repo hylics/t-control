@@ -85,7 +85,8 @@ int main(void)
 	*  switch Iout1 and Iout2
 	*/
 	
-	__IO uint32_t raw_conv[5] = {0};
+	__IO uint32_t raw_conv[8] = {0};
+	__IO uint32_t sum_conv[4] = {0};
 	__IO uint32_t conf[5] = {0};
   /* USER CODE END 1 */
 
@@ -136,20 +137,38 @@ int main(void)
     {
 			/*reading data unstable, some times its read only first byte of data*/
 		//__IO uint32_t t_read;
-		for(uint32_t i=0; i<5; i++) {
+		for(uint32_t i=0; i<8; i++) {
+			uint32_t command = AD7792_IEXCEN(AD7792_EN_IXCEN_210uA);
+			
+			if( i % 2 ) {
+				command &= ~AD7792_IEXCDIR(AD7792_DIR_IEXC1_IOUT2_IEXC2_IOUT1);
+        command |= AD7792_IEXCDIR(AD7792_DIR_IEXC1_IOUT2_IEXC2_IOUT1);
+        AD7792_SetRegisterValue(AD7792_REG_IO, command, 1, 1); // CS is modified by SPI read/write functions.
+			}
+			else {
+				command &= ~AD7792_IEXCDIR(AD7792_DIR_IEXC1_IOUT1_IEXC2_IOUT2);
+        command |= AD7792_IEXCDIR(AD7792_DIR_IEXC1_IOUT1_IEXC2_IOUT2);
+        AD7792_SetRegisterValue(AD7792_REG_IO, command, 1, 1); // CS is modified by SPI read/write functions.
+			}
+			conf[2] = AD7792_GetRegisterValue(AD7792_REG_IO, 1, 1);
 			/*if(t_read < 0x60) {
 				while(1) {}
 				}*/
 			raw_conv[i] = AD7792_SingleConversion();
 			HAL_Delay(200);
 		}
+		
+		/*sum of A21+A22 measurement*/
+		for( uint32_t i=0; i<4; i++) {
+			sum_conv[i] = raw_conv[2*i] + raw_conv[(2*i + 1)];
+		}
 
 		HAL_Delay(200);
-		conf[0] = AD7792_GetRegisterValue(AD7792_REG_CONF, 2, 1);
-		conf[1] = AD7792_GetRegisterValue(AD7792_REG_MODE, 2, 1);
-		conf[2] = AD7792_GetRegisterValue(AD7792_REG_IO, 1, 1);
-		conf[3] = AD7792_GetRegisterValue(AD7792_REG_OFFSET, 2, 1);
-		conf[4] = AD7792_GetRegisterValue(AD7792_REG_FULLSALE, 2, 1);
+		//conf[0] = AD7792_GetRegisterValue(AD7792_REG_CONF, 2, 1);
+		//conf[1] = AD7792_GetRegisterValue(AD7792_REG_MODE, 2, 1);
+		//conf[2] = AD7792_GetRegisterValue(AD7792_REG_IO, 1, 1);
+		//conf[3] = AD7792_GetRegisterValue(AD7792_REG_OFFSET, 2, 1);
+		//conf[4] = AD7792_GetRegisterValue(AD7792_REG_FULLSALE, 2, 1);
 	
   }
 		
@@ -172,25 +191,6 @@ int main(void)
 
   /* USER CODE BEGIN 3 */
 			/*reading data unstable, some times its read only first byte of data*/
-		__IO uint32_t t_read;
-		for(uint32_t i=0; i<5; i++) {
-			t_read = AD7792_SingleConversion();
-			if(t_read < 0x60) {
-				while(1) {}
-				}
-			raw_conv[i] = t_read;
-			HAL_Delay(200);
-		}
-					
-				//HAL_Delay(200);
-		//raw_conv = AD7792_SingleConversion();
-		HAL_Delay(200);
-		conf[0] = AD7792_GetRegisterValue(AD7792_REG_CONF, 2, 1);
-		conf[1] = AD7792_GetRegisterValue(AD7792_REG_MODE, 2, 1);
-		conf[2] = AD7792_GetRegisterValue(AD7792_REG_IO, 1, 1);
-		conf[3] = AD7792_GetRegisterValue(AD7792_REG_OFFSET, 2, 1);
-		conf[4] = AD7792_GetRegisterValue(AD7792_REG_FULLSALE, 2, 1);
-	
   }
   /* USER CODE END 3 */
 
