@@ -35,29 +35,37 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #ifndef _RTD_LINEARIZATION_H
 #define _RTD_LINEARIZATION_H
 
+/* configuration */
+#define RTD_METHOD_PIECEWISE
+#define USE_ARM_MATH
+#define RTD_N_POLY_4
+
 /* defines */
-#define METHOD_MATH       1
-#define METHOD_PIECEWISE  2
-#define RTD_LIN_METHOD  METHOD_PIECEWISE
+
+
 
 /* end defines*/
 
 /* includes */
-#if RTD_LIN_METHOD == METHOD_MATH
-  #define ARM_MATH_CM0
-  #include "arm_math.h"
-#else //RTD_LIN_METHOD == METHOD_PIECEWISE
-  #include "stdint.h"
+#include <stdint.h>
+
+#if defined(RTD_METHOD_MATH)
+  #if defined(USE_ARM_MATH)
+    #define ARM_MATH_CM0
+    #include "arm_math.h"
+	#else
+	  #include <math.h>
+	#endif
+#elif defined(RTD_METHOD_PIECEWISE)
   typedef float float32_t;
-	typedef double float64_t;
+  typedef double float64_t;
+#else
+  #error "Define method used to calculate temperature RTD_METHOD_MATH or RTD_METHOD_PIECEWISE"
 #endif
 /* end includes*/
 
-//float32_t i;
-
-
 /* function prototypes*/
-
+float32_t rtd_get_temp(uint32_t Rx);
 
 /* end function prototypes*/
 
