@@ -598,6 +598,11 @@
               <FileType>1</FileType>
               <FilePath>..\Src\freertos.c</FilePath>
             </File>
+            <File>
+              <FileName>rtd_linearization.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Src\rtd_linearization.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>

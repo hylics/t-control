@@ -50,6 +50,7 @@
 
 #include "AD7792.h"
 #include "arm_math.h"
+#include "rtd_linearization.h"
 
 /* USER CODE END Includes */
 
