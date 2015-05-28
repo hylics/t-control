@@ -52,6 +52,23 @@
 #define AD7792_RDY_STATE       GPIO1_STATE
 
 /** 
+  * @brief  HAL Lock structures definition  
+  */
+typedef enum 
+{
+  ADI_UNLOCKED = 0x00,
+  ADI_LOCKED   = 0x01  
+} ADI_LockTypeDef;
+
+typedef enum 
+{
+  ADI_OK       = 0x00,
+  ADI_ERROR    = 0x01,
+  ADI_BUSY     = 0x02,
+  ADI_TIMEOUT  = 0x03
+} ADI_StatusTypeDef;
+
+/** 
   * @brief  AD7792 handle Structure definition  
   */ 
 typedef struct __AD7792_HandleTypeDef
@@ -61,15 +78,9 @@ typedef struct __AD7792_HandleTypeDef
 	uint32_t io;        /*8 bit*/
 	uint32_t offset;    /*16/24 bit*/
 	uint32_t fullscale; /*16/24 bit*/
+	ADI_LockTypeDef lock;
+	ADI_StatusTypeDef state;
 } AD7792_HandleTypeDef;
-
-typedef enum 
-{
-  ADI_OK       = 0x00,
-  ADI_ERROR    = 0x01,
-  ADI_BUSY     = 0x02,
-  ADI_TIMEOUT  = 0x03
-} ADI_StatusTypeDef;
 
 /** @brief  type arguments for manipulating ad7792 registers*/
 typedef enum {reg_all, reg_mode, reg_conf, reg_io, reg_offset, reg_full_scale} op_mode_TypeDef;
@@ -83,7 +94,7 @@ typedef enum {reg_all, reg_mode, reg_conf, reg_io, reg_offset, reg_full_scale} o
 #define AD7792_REG_ID	      4 /* ID Register	     	  (RO, 8-bit) */
 #define AD7792_REG_IO	      5 /* IO Register	     	  (RO, 8-bit) */
 #define AD7792_REG_OFFSET   6 /* Offset Register	    (RW, 24-bit */
-#define AD7792_REG_FULLSALE	7 /* Full-Scale Register	(RW, 24-bit */
+#define AD7792_REG_FULLSCALE	7 /* Full-Scale Register	(RW, 24-bit */
 
 /* Communications Register Bit Designations (AD7792_REG_COMM) */
 #define AD7792_COMM_WEN		  (1 << 7) 			/* Write Enable */

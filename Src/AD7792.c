@@ -152,8 +152,46 @@ void AD7792_WaitRdyGoLow(void) {
 }
 
 ADI_StatusTypeDef AD7792_conf2(AD7792_HandleTypeDef *adc_instance, op_mode_TypeDef type) {
+	/* Check the AD7792 handle allocation */
+	if(adc_instance == NULL) {
+		return ADI_ERROR;
+	}
+	
 	/* Check the parameters */
 	//assert_param();
+	
+	adc_instance->state = ADI_BUSY;
+	
+	if(adc_instance->lock == ADI_LOCKED) {
+		return ADI_BUSY;
+	}
+	else {
+		adc_instance->lock = ADI_LOCKED;
+	}
+	
+	if(type==reg_all || type==reg_conf) { // REG CONF
+		AD7792_SetRegisterValue(AD7792_REG_CONF, adc_instance->conf, 2, 1);
+	}
+	
+	if(type==reg_all || type==reg_mode) { // REG MODE
+		AD7792_SetRegisterValue(AD7792_REG_MODE, adc_instance->mode, 2, 1);
+	}
+	
+	if(type==reg_all || type==reg_io) { // REG IO
+		AD7792_SetRegisterValue(AD7792_REG_IO, adc_instance->io, 1, 1);
+	}
+	
+	if(type==reg_all || type==reg_offset) { // REG OFFSET
+		AD7792_SetRegisterValue(AD7792_REG_OFFSET, adc_instance->offset, 2, 1);
+	}
+	
+	if(type==reg_all || type==reg_full_scale) { // REG FULLSCALE
+		AD7792_SetRegisterValue(AD7792_REG_FULLSCALE, adc_instance->fullscale, 2, 1);
+	}
+	
+	adc_instance->lock = ADI_UNLOCKED;
+	adc_instance->state = ADI_OK;
+	
 	return ADI_OK;
 }
 
@@ -257,8 +295,8 @@ int AD7792_conf(uint32_t gain, uint32_t channel, uint32_t current) {
 		  //retval = 1;
 	}*/
 	
-	command &= ~AD7702_FS_1_120ms;
-	command |= AD7702_FS_1_120ms;
+	command &= ~AD7702_RATE_1_120ms;
+	command |= AD7702_RATE_1_120ms;
   AD7792_SetRegisterValue(AD7792_REG_MODE, command, 2, 1); // CS is modified by SPI read/write functions.
 	/*if( (AD7792_GetRegisterValue(AD7792_REG_MODE, 2, 1) & command) != command) {
       //retval = 2;

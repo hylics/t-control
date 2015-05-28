@@ -131,7 +131,7 @@ int main(void)
 		conf[1] = AD7792_GetRegisterValue(AD7792_REG_MODE, 2, 1);
 		conf[2] = AD7792_GetRegisterValue(AD7792_REG_IO, 1, 1);
 		conf[3] = AD7792_GetRegisterValue(AD7792_REG_OFFSET, 2, 1);
-		conf[4] = AD7792_GetRegisterValue(AD7792_REG_FULLSALE, 2, 1);
+		conf[4] = AD7792_GetRegisterValue(AD7792_REG_FULLSCALE, 2, 1);
 		
 		//AD7792_SetMode(AD7792_MODE_SINGLE);
 		while (1)
