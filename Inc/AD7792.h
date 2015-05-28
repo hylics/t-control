@@ -80,8 +80,8 @@ typedef enum {reg_all, reg_mode, reg_conf, reg_io, reg_offset, reg_full_scale} o
 #define AD7792_REG_MODE	    1 /* Mode Register	     	(RW, 16-bit */
 #define AD7792_REG_CONF	    2 /* Configuration Register (RW, 16-bit)*/
 #define AD7792_REG_DATA	    3 /* Data Register	     	(RO, 16-/24-bit) */
-#define AD7792_REG_ID	      4 /* ID Register	     	(RO, 8-bit) */
-#define AD7792_REG_IO	      5 /* IO Register	     	(RO, 8-bit) */
+#define AD7792_REG_ID	      4 /* ID Register	     	  (RO, 8-bit) */
+#define AD7792_REG_IO	      5 /* IO Register	     	  (RO, 8-bit) */
 #define AD7792_REG_OFFSET   6 /* Offset Register	    (RW, 24-bit */
 #define AD7792_REG_FULLSALE	7 /* Full-Scale Register	(RW, 24-bit */
 
@@ -102,7 +102,7 @@ typedef enum {reg_all, reg_mode, reg_conf, reg_io, reg_offset, reg_full_scale} o
 /* Mode Register Bit Designations (AD7792_REG_MODE) */
 #define AD7792_MODE_SEL(x)		(((x) & 0x7) << 13)	/* Operation Mode Select */
 #define AD7792_MODE_CLKSRC(x)	(((x) & 0x3) << 6) 	/* ADC Clock Source Select */
-#define AD7792_MODE_RATE(x)		((x) & 0xF) 		/* Filter Update Rate Select */
+#define AD7792_MODE_RATE(x)		((x) & 0xF) 		    /* Filter Update Rate Select */
 
 /* AD7792_MODE_SEL(x) options */
 #define AD7792_MODE_CONT		     0 /* Continuous Conversion Mode */
@@ -120,38 +120,44 @@ typedef enum {reg_all, reg_mode, reg_conf, reg_io, reg_offset, reg_full_scale} o
 #define AD7792_CLK_EXT		  2 /* External 64 kHz Clock */
 #define AD7792_CLK_EXT_DIV2	3 /* External Clock divided by 2 */
 
-/* AD7792_MODE_FS*/
-#define AD7792_FS_4ms             0x1 /*470 Hz*/
-#define AD7792_FS_8ms             0x2 /*242 Hz*/
-#define AD7792_FS_16ms            0x3 /*123 Hz*/
-#define AD7792_FS_32ms            0x4 /*62 Hz*/
-#define AD7792_FS_40ms            0x5 /*50 Hz*/
-#define AD7792_FS_48ms            0x6 /*39 Hz*/
-#define AD7792_FS_60ms            0x7 /*33.2 Hz*/
-#define AD7792_FS_101ms           0x8 /*19.6 Hz*/
-#define AD7702_FS_1_120ms         0x9 /*16.7 Hz reject 50Hz only*/
-#define AD7792_FS_2_120ms         0xA /*16.7 Hz reject 50 and 60Hz*/
-#define AD7792_FS_160ms           0xB /*12.5 Hz*/
-#define AD7792_FS_200ms           0xC /*10 Hz*/
-#define AD7792_FS_240ms           0xD /*8.33 Hz*/
-#define AD7792_FS_320ms           0xE /*6.25 Hz*/
-#define AD7792_FS_480ms           0xF /*4.17 Hz*/
-#define IS_ADI_MODE_FS(reg)    (((reg) == AD7792_FS_4ms) || ((reg) == AD7792_FS_8ms) || ((reg) == AD7792_FS_16ms) || \
+/* AD7792_MODE_RATE(x) */
+#define AD7792_RATE_4ms             1  /*470 Hz*/
+#define AD7792_RATE_8ms             2  /*242 Hz*/
+#define AD7792_RATE_16ms            3  /*123 Hz*/
+#define AD7792_RATE_32ms            4  /*62 Hz*/
+#define AD7792_RATE_40ms            5  /*50 Hz*/
+#define AD7792_RATE_48ms            6  /*39 Hz*/
+#define AD7792_RATE_60ms            7  /*33.2 Hz*/
+#define AD7792_RATE_101ms           8  /*19.6 Hz*/
+#define AD7702_RATE_1_120ms         9  /*16.7 Hz reject 50Hz only*/
+#define AD7792_RATE_2_120ms         10 /*16.7 Hz reject 50 and 60Hz*/
+#define AD7792_RATE_160ms           11 /*12.5 Hz*/
+#define AD7792_RATE_200ms           12 /*10 Hz*/
+#define AD7792_RATE_240ms           13 /*8.33 Hz*/
+#define AD7792_RATE_320ms           14 /*6.25 Hz*/
+#define AD7792_RATE_480ms           15 /*4.17 Hz*/
+/*#define IS_ADI_MODE_RATE(reg)    (((reg) == AD7792_FS_4ms) || ((reg) == AD7792_FS_8ms) || ((reg) == AD7792_FS_16ms) || \
                                ((reg) == AD7792_FS_32ms) || ((reg) == AD7792_FS_40ms) || ((reg) == AD7792_FS_48ms) || \
 															 ((reg) == AD7792_FS_60ms) || ((reg) == AD7792_FS_101ms) || ((reg) == AD7792_FS_1_120ms) || \
                                ((reg) == AD7792_FS_2_120ms) || ((reg) == AD7792_FS_160ms) || ((reg) == AD7792_FS_200ms) || \
-                               ((reg) == AD7792_FS_240ms) || ((reg) == AD7792_FS_320ms) || ((reg) == AD7792_FS_480ms))
+                               ((reg) == AD7792_FS_240ms) || ((reg) == AD7792_FS_320ms) || ((reg) == AD7792_FS_480ms))*/
+
 
 
 /* Configuration Register Bit Designations (AD7792_REG_CONF) */
-#define AD7792_CONF_VBIAS(x)  (((x) & 0x3) << 14) 	/* Bias Voltage Generator Enable */
-#define AD7792_CONF_BO_EN	    (1 << 13) 			/* Burnout Current Enable */
-#define AD7792_CONF_UNIPOLAR  (1 << 12) 			/* Unipolar/Bipolar Enable */
-#define AD7792_CONF_BOOST	    (1 << 11) 			/* Boost Enable */
+#define AD7792_CONF_VBIAS(x)  (((x) & 0x3) << 14) /* Bias Voltage Generator Enable */
+#define AD7792_CONF_BO_EN	    (1 << 13) 		    	/* Burnout Current Enable */
+#define AD7792_CONF_UNIPOLAR  (1 << 12) 			    /* Unipolar/Bipolar Enable */
+#define AD7792_CONF_BOOST	    (1 << 11) 		     	/* Boost Enable */
 #define AD7792_CONF_GAIN(x)	  (((x) & 0x7) << 8) 	/* Gain Select */
 #define AD7792_CONF_REFSEL(x) (((x) & 0x1) << 7) 	/* INT/EXT Reference Select */
-#define AD7792_CONF_BUF		    (1 << 4) 				/* Buffered Mode Enable */
-#define AD7792_CONF_CHAN(x)	  ((x) & 0x7) 			/* Channel select */
+#define AD7792_CONF_BUF		    (1 << 4) 			    	/* Buffered Mode Enable */
+#define AD7792_CONF_CHAN(x)	  ((x) & 0x7) 		    /* Channel select */
+
+/* AD7792_CONF_VBIAS(x) options*/
+#define AD7792_VBIAS_DISABLE   0
+#define AD7792_VBIAS_AIN1M     1
+#define AD7792_VBIAS_AIN2M     2
 
 /* AD7792_CONF_GAIN(x) options */
 #define AD7792_GAIN_1       0
@@ -178,6 +184,8 @@ typedef enum {reg_all, reg_mode, reg_conf, reg_io, reg_offset, reg_full_scale} o
 /* ID Register Bit Designations (AD7792_REG_ID) */
 #define AD7792_ID			    0xA
 #define AD7792_ID_MASK		0xF
+
+
 
 /* IO (Excitation Current Sources) Register Bit Designations (AD7792_REG_IO) */
 #define AD7792_IEXCDIR(x)	(((x) & 0x3) << 2)
