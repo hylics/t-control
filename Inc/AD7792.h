@@ -51,6 +51,29 @@
 /* AD7792 GPIO */
 #define AD7792_RDY_STATE       GPIO1_STATE
 
+/** 
+  * @brief  AD7792 handle Structure definition  
+  */ 
+typedef struct __AD7792_HandleTypeDef
+{
+	uint32_t mode;      /*16 bit*/
+	uint32_t conf;      /*16 bit*/
+	uint32_t io;        /*8 bit*/
+	uint32_t offset;    /*16/24 bit*/
+	uint32_t fullscale; /*16/24 bit*/
+} AD7792_HandleTypeDef;
+
+typedef enum 
+{
+  ADI_OK       = 0x00,
+  ADI_ERROR    = 0x01,
+  ADI_BUSY     = 0x02,
+  ADI_TIMEOUT  = 0x03
+} ADI_StatusTypeDef;
+
+/** @brief  type arguments for manipulating ad7792 registers*/
+typedef enum {reg_all, reg_mode, reg_conf, reg_io, reg_offset, reg_full_scale} op_mode_TypeDef;
+
 /*AD7792 Registers*/
 #define AD7792_REG_COMM		  0 /* Communications Register(WO, 8-bit) */
 #define AD7792_REG_STAT	    0 /* Status Register	    (RO, 8-bit) */
@@ -113,6 +136,11 @@
 #define AD7792_FS_240ms           0xD /*8.33 Hz*/
 #define AD7792_FS_320ms           0xE /*6.25 Hz*/
 #define AD7792_FS_480ms           0xF /*4.17 Hz*/
+#define IS_ADI_MODE_FS(reg)    (((reg) == AD7792_FS_4ms) || ((reg) == AD7792_FS_8ms) || ((reg) == AD7792_FS_16ms) || \
+                               ((reg) == AD7792_FS_32ms) || ((reg) == AD7792_FS_40ms) || ((reg) == AD7792_FS_48ms) || \
+															 ((reg) == AD7792_FS_60ms) || ((reg) == AD7792_FS_101ms) || ((reg) == AD7792_FS_1_120ms) || \
+                               ((reg) == AD7792_FS_2_120ms) || ((reg) == AD7792_FS_160ms) || ((reg) == AD7792_FS_200ms) || \
+                               ((reg) == AD7792_FS_240ms) || ((reg) == AD7792_FS_320ms) || ((reg) == AD7792_FS_480ms))
 
 
 /* Configuration Register Bit Designations (AD7792_REG_CONF) */
@@ -207,6 +235,8 @@ uint32_t AD7792_SingleConversion(void);
 uint32_t AD7792_ContinuousReadAvg(uint8_t sampleNumber);
 
 /*my func*/
+ADI_StatusTypeDef AD7792_conf2(AD7792_HandleTypeDef *adc_instance, op_mode_TypeDef type);
+
 void AD7792_SetCLCS(uint32_t clc);
 void AD7792_SetRate(uint32_t rate);
 void AD7792_EnableBuf(void);

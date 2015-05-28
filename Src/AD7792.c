@@ -45,6 +45,10 @@
 /******************************************************************************/
 #include "AD7792.h"				// AD7792 definitions.
 #include "Communication.h"		// Communication definitions.
+//#include "stm32f0xx_hal_conf.h" //for assert
+//#include <assert.h>
+
+//#define AD7793
 
 #define TIMEOUT_COMMAND 2     //address <-> command
 #define TIMEOUT_PACKET  50    //address,command <-> address,command
@@ -145,6 +149,12 @@ void AD7792_WaitRdyGoLow(void) {
     while( AD7792_RDY_STATE ) {
       ;
     }
+}
+
+ADI_StatusTypeDef AD7792_conf2(AD7792_HandleTypeDef *adc_instance, op_mode_TypeDef type) {
+	/* Check the parameters */
+	//assert_param();
+	return ADI_OK;
 }
 
 /***************************************************************************//**
