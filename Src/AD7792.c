@@ -151,6 +151,12 @@ void AD7792_WaitRdyGoLow(void) {
     }
 }
 
+/**
+* @brief write config to ad7792
+* @param *adc_instance
+* @param type - choice all register been written or specific
+* @return ADI_StatusTypeDef
+*/
 ADI_StatusTypeDef AD7792_conf2(AD7792_HandleTypeDef *adc_instance, op_mode_TypeDef type) {
 	/* Check the AD7792 handle allocation */
 	if(adc_instance == NULL) {
@@ -169,23 +175,28 @@ ADI_StatusTypeDef AD7792_conf2(AD7792_HandleTypeDef *adc_instance, op_mode_TypeD
 		adc_instance->lock = ADI_LOCKED;
 	}
 	
-	if(type==reg_all || type==reg_conf) { // REG CONF
+	// REG CONF
+	if(type==reg_all || type==reg_conf) {
 		AD7792_SetRegisterValue(AD7792_REG_CONF, adc_instance->conf, 2, 1);
 	}
 	
-	if(type==reg_all || type==reg_mode) { // REG MODE
+	// REG MODE
+	if(type==reg_all || type==reg_mode) {
 		AD7792_SetRegisterValue(AD7792_REG_MODE, adc_instance->mode, 2, 1);
 	}
 	
-	if(type==reg_all || type==reg_io) { // REG IO
+	// REG IO
+	if(type==reg_all || type==reg_io) {
 		AD7792_SetRegisterValue(AD7792_REG_IO, adc_instance->io, 1, 1);
 	}
 	
-	if(type==reg_all || type==reg_offset) { // REG OFFSET
+	// REG OFFSET
+	if(type==reg_all || type==reg_offset) {
 		AD7792_SetRegisterValue(AD7792_REG_OFFSET, adc_instance->offset, 2, 1);
 	}
 	
-	if(type==reg_all || type==reg_full_scale) { // REG FULLSCALE
+	// REG FULLSCALE
+	if(type==reg_all || type==reg_full_scale) {
 		AD7792_SetRegisterValue(AD7792_REG_FULLSCALE, adc_instance->fullscale, 2, 1);
 	}
 	
