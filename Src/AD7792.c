@@ -49,12 +49,17 @@
 //#include <assert.h>
 
 //#define AD7793
+//#define TIMEOUT_COMMAND 2     //address <-> command
+//#define TIMEOUT_PACKET  50    //address,command <-> address,command
+//#define TIMEOUT_LH      1     //CS LOW or HIGH <-> transmit or receive
+//#define TIMEOUT_RESET   2000  //after reset
 
-#define TIMEOUT_COMMAND 2     //address <-> command
-#define TIMEOUT_PACKET  50    //address,command <-> address,command
-#define TIMEOUT_LH      1     //CS LOW or HIGH <-> transmit or receive
-#define TIMEOUT_RESET   2000  //after reset
-
+/******************************************************************************/
+/* Private functions prototypes                                               */
+/******************************************************************************/
+static uint32_t AD7792_GetRegisterValue(uint8_t regAddress, uint8_t size, uint8_t modifyCS);
+static void AD7792_SetRegisterValue(uint8_t regAddress, uint32_t regValue, uint8_t size, uint8_t modifyCS);
+static void AD7792_WaitRdyGoLow(void);
 
 
 /***************************************************************************//**
@@ -102,21 +107,34 @@ void AD7792_Reset(void)
  *
  * @return data - The value of the selected register register.
 *******************************************************************************/
-uint32_t AD7792_GetRegisterValue(uint8_t regAddress, uint8_t size, uint8_t modifyCS) {	
-	uint8_t data[5]      = {0x00, 0x00, 0x00, 0x00, 0x00};
+static uint32_t AD7792_GetRegisterValue(uint8_t regAddress, uint8_t size, uint8_t modifyCS) {	
+	uint8_t data[4]      = {0x00};
 	uint32_t receivedData = 0x00;
   uint8_t i            = 0x00; 
     
-	data[0] = 0x01 * modifyCS;
-	data[1] = AD7792_COMM_READ |  AD7792_COMM_ADDR(regAddress);
-	SPI_Read(data, (size));
+	data[0] = AD7792_COMM_READ |  AD7792_COMM_ADDR(regAddress);
+	//Modifying CS by this function or external
+	if(modifyCS) {
+		ADI_PART_CS_LOW;
+		ADI_DELAY(TIMEOUT_LH);
+	}	
+	SPI_Read(data, size);
+	//Modifying CS by this function or external
+	if(modifyCS) {
+		ADI_DELAY(TIMEOUT_LH);
+		ADI_PART_CS_HIGH;
+	}
+	ADI_DELAY(TIMEOUT_PACKET);
+	
 	for(i = 0; i < size; i++)
     {
         receivedData = (receivedData << 8) + data[i];
     }
     
     return (receivedData);
-}
+} //END AD7792_GetRegisterValue()
+
+
 /***************************************************************************//**
  * @brief Writes the value to the register
  *
@@ -126,26 +144,38 @@ uint32_t AD7792_GetRegisterValue(uint8_t regAddress, uint8_t size, uint8_t modif
  *
  * @return  None.    
 *******************************************************************************/
-void AD7792_SetRegisterValue(uint8_t regAddress, uint32_t regValue, uint8_t size, uint8_t modifyCS) {
-	uint8_t data[5]      = {0x00, 0x00, 0x00, 0x00, 0x00};	
-	uint8_t* dataPointer = (uint8_t*)&regValue;
-  uint8_t bytesNr      = size + 1;
+static void AD7792_SetRegisterValue(uint8_t regAddress, uint32_t regValue, uint8_t size, uint8_t modifyCS) {
+	uint8_t data[4]      = {0x00};	
+	uint8_t* data_ptr = (uint8_t*)&regValue;
+  uint8_t bytesNr      = size;
     
-  data[0] = 0x01 * modifyCS;
-  data[1] = AD7792_COMM_WRITE |  AD7792_COMM_ADDR(regAddress);
-  while(bytesNr > 1) {
-      data[bytesNr] = *dataPointer;
-      dataPointer++;
+  data[0] = AD7792_COMM_WRITE |  AD7792_COMM_ADDR(regAddress);
+  while(bytesNr != 0) {
+      data[bytesNr] = *data_ptr;
+      data_ptr++;
       bytesNr--;
-  }	    
-	SPI_Write(data, (size));
-}
+  }
+  //Modifying CS by this function or external
+	if(modifyCS) {
+		ADI_PART_CS_LOW;
+		ADI_DELAY(TIMEOUT_LH);
+	}	
+	SPI_Write(data, size);
+	//Modifying CS by this function or external
+	if(modifyCS) {
+		ADI_DELAY(TIMEOUT_LH);
+		ADI_PART_CS_HIGH;
+	}
+	ADI_DELAY(TIMEOUT_PACKET);
+	
+} //END AD7792_SetRegisterValue()
+
 /***************************************************************************//**
  * @brief  Waits for RDY pin to go low.
  *
  * @return None.
 *******************************************************************************/
-void AD7792_WaitRdyGoLow(void) {
+static void AD7792_WaitRdyGoLow(void) {
     while( AD7792_RDY_STATE ) {
       ;
     }
@@ -157,7 +187,7 @@ void AD7792_WaitRdyGoLow(void) {
 * @param type - choice all register been written or specific
 * @return ADI_StatusTypeDef
 */
-ADI_StatusTypeDef AD7792_conf2(AD7792_HandleTypeDef *adc_instance, op_mode_TypeDef type) {
+ADI_StatusTypeDef AD7792_conf(AD7792_HandleTypeDef *adc_instance, op_mode_TypeDef type) {
 	/* Check the AD7792 handle allocation */
 	if(adc_instance == NULL) {
 		return ADI_ERROR;
@@ -206,88 +236,8 @@ ADI_StatusTypeDef AD7792_conf2(AD7792_HandleTypeDef *adc_instance, op_mode_TypeD
 	return ADI_OK;
 }
 
-/***************************************************************************//**
- * @brief Sets the operating mode of AD7792.
- *
- * @param mode - Mode of operation.
- *
- * @return  None.    
-*******************************************************************************/
-void AD7792_SetMode(uint32_t mode) {
-    uint32_t command;
-    
-    command = AD7792_GetRegisterValue(AD7792_REG_MODE, 2, 1); // CS is modified by SPI read/write functions.
-    command &= ~AD7792_MODE_SEL(0xFF);
-    command |= AD7792_MODE_SEL(mode);
-    AD7792_SetRegisterValue(AD7792_REG_MODE, command, 2, 1); // CS is modified by SPI read/write functions.
-}
-
 /*my func*/
-void AD7792_SetCLCS(uint32_t clc) {
-	uint32_t command;
-    
-  command = AD7792_GetRegisterValue(AD7792_REG_MODE, 2, 1); // CS is modified by SPI read/write functions.
-  command &= ~AD7792_MODE_CLKSRC(0xFF);
-  command |= AD7792_MODE_CLKSRC(clc);
-  AD7792_SetRegisterValue(AD7792_REG_MODE, command, 2, 1); // CS is modified by SPI read/write functions.
-}
-
-/*my func*/
-void AD7792_SetRate(uint32_t rate) {
-	uint32_t command;
-    
-  command = AD7792_GetRegisterValue(AD7792_REG_MODE, 2, 1); // CS is modified by SPI read/write functions.
-  command &= ~AD7792_MODE_RATE(0xFF);
-  command |= AD7792_MODE_RATE(rate);
-  AD7792_SetRegisterValue(AD7792_REG_MODE, command, 2, 1); // CS is modified by SPI read/write functions.
-}
-
-
-
-
-/*my func*/
-void AD7792_EnableBuf(void) {
-	uint32_t command;
-	
-	command = AD7792_GetRegisterValue(AD7792_REG_CONF, 2, 1); // CS is modified by SPI read/write functions.
-	command &= ~AD7792_CONF_BUF;
-  command |= AD7792_CONF_BUF;
-  AD7792_SetRegisterValue(AD7792_REG_CONF, command, 2, 1); // CS is modified by SPI read/write functions.
-}
-
-/*my func*/
-void AD7792_IexDir(uint32_t direction) {
-	uint32_t command;
-	
-	command = AD7792_GetRegisterValue(AD7792_REG_IO, 1, 1); // CS is modified by SPI read/write functions.
-	command &= ~AD7792_IEXCDIR(direction);
-  command |= AD7792_IEXCDIR(direction);
-  AD7792_SetRegisterValue(AD7792_REG_IO, command, 1, 1); // CS is modified by SPI read/write functions.
-}
-
-/*my func*/
-void AD7792_IexEn(uint32_t current) {
-	uint32_t command;
-	
-	command = AD7792_GetRegisterValue(AD7792_REG_IO, 1, 1); // CS is modified by SPI read/write functions.
-	command &= ~AD7792_IEXCEN(current);
-  command |= AD7792_IEXCEN(current);
-  AD7792_SetRegisterValue(AD7792_REG_IO, command, 1, 1); // CS is modified by SPI read/write functions.
-}
-
-/*my func*/
-void AD7792_SetUnipolar(void) {
-	uint32_t command;
-	
-	command = AD7792_GetRegisterValue(AD7792_REG_CONF, 2, 1); // CS is modified by SPI read/write functions.
-	command &= ~AD7792_CONF_UNIPOLAR;
-  command |= AD7792_CONF_UNIPOLAR;
-  AD7792_SetRegisterValue(AD7792_REG_CONF, command, 2, 1); // CS is modified by SPI read/write functions.
-}
-
-/*my func*/
-
-int AD7792_conf(uint32_t gain, uint32_t channel, uint32_t current) {
+/*int AD7792_conf(uint32_t gain, uint32_t channel, uint32_t current) {
 	uint32_t command;
 	int retval = 0;
 	
@@ -302,27 +252,27 @@ int AD7792_conf(uint32_t gain, uint32_t channel, uint32_t current) {
 	
 	
 	AD7792_SetRegisterValue(AD7792_REG_CONF, command, 2, 1);
-	/*if( (AD7792_GetRegisterValue(AD7792_REG_CONF, 2, 1) & command) != command ) {
+	//if( (AD7792_GetRegisterValue(AD7792_REG_CONF, 2, 1) & command) != command ) {
 		  //retval = 1;
-	}*/
+	}
 	
 	command &= ~AD7702_RATE_1_120ms;
 	command |= AD7702_RATE_1_120ms;
   AD7792_SetRegisterValue(AD7792_REG_MODE, command, 2, 1); // CS is modified by SPI read/write functions.
-	/*if( (AD7792_GetRegisterValue(AD7792_REG_MODE, 2, 1) & command) != command) {
+	//if( (AD7792_GetRegisterValue(AD7792_REG_MODE, 2, 1) & command) != command) {
       //retval = 2;
-	}*/
+	}
 	
 
 	command = 0x0;
 	command |= AD7792_IEXCEN(current);
 	AD7792_SetRegisterValue(AD7792_REG_IO, command, 1, 1);
-	/*if( (AD7792_GetRegisterValue(AD7792_REG_IO, 1, 1) & command) != command) {
+	//if( (AD7792_GetRegisterValue(AD7792_REG_IO, 1, 1) & command) != command) {
 		  //retval = 3;
-	}*/
+	}
 	
 	return retval;
-}
+}*/
 
 
 
@@ -339,40 +289,6 @@ void AD7792_SetChannel(uint32_t channel) {
     command = AD7792_GetRegisterValue(AD7792_REG_CONF, 2, 1); // CS is modified by SPI read/write functions.
     command &= ~AD7792_CONF_CHAN(0xFF);
     command |= AD7792_CONF_CHAN(channel);
-    AD7792_SetRegisterValue(AD7792_REG_CONF, command, 2, 1); // CS is modified by SPI read/write functions.
-}
-
-/***************************************************************************//**
- * @brief  Sets the gain of the In-Amp.
- *
- * @param  gain - Gain.
- *
- * @return  None.    
-*******************************************************************************/
-void AD7792_SetGain(uint32_t gain)
-{
-    uint32_t command;
-    
-    command = AD7792_GetRegisterValue(AD7792_REG_CONF, 2, 1); // CS is modified by SPI read/write functions.
-    command &= ~AD7792_CONF_GAIN(0xFF);
-    command |= AD7792_CONF_GAIN(gain);
-    AD7792_SetRegisterValue(AD7792_REG_CONF, command, 2, 1); // CS is modified by SPI read/write functions.
-}
-/***************************************************************************//**
- * @brief Sets the reference source for the ADC.
- *
- * @param type - Type of the reference.
- *               Example: AD7792_REFSEL_EXT	- External Reference Selected
- *                        AD7792_REFSEL_INT	- Internal Reference Selected.
- *
- * @return None.    
-*******************************************************************************/
-void AD7792_SetIntReference(uint8_t type) {
-    uint32_t command = 0;
-    
-    command = AD7792_GetRegisterValue(AD7792_REG_CONF, 2, 1); // CS is modified by SPI read/write functions.
-    command &= ~AD7792_CONF_REFSEL(AD7792_REFSEL_INT);
-    command |= AD7792_CONF_REFSEL(type);
     AD7792_SetRegisterValue(AD7792_REG_CONF, command, 2, 1); // CS is modified by SPI read/write functions.
 }
 

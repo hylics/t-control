@@ -48,7 +48,7 @@
 /* USER CODE BEGIN Includes */
 #define ARM_MATH_CM0
 
-#include "AD7792.h"
+#include "adi.h"
 #include "arm_math.h"
 #include "rtd_linearization.h"
 
@@ -58,6 +58,7 @@
 
 /* USER CODE BEGIN PV */
 __IO uint8_t dma_t_cplt=1, dma_r_cplt=1;
+extern AD7792_HandleTypeDef adi1;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -89,6 +90,7 @@ int main(void)
 	__IO uint32_t raw_conv[8] = {0};
 	__IO uint32_t sum_conv[4] = {0};
 	__IO uint32_t conf[5] = {0};
+	
   /* USER CODE END 1 */
 
   /* MCU Configuration----------------------------------------------------------*/
@@ -112,46 +114,34 @@ int main(void)
   MX_USART2_UART_Init();
 
   /* USER CODE BEGIN 2 */
-
+	
 	AD7792_Reset();
-  if(AD7792_Init() == 1) {
-		//
-		AD7792_conf(AD7792_GAIN_1, AD7792_CH_AIN2P_AIN2M, AD7792_EN_IXCEN_210uA);
-						
-		//AD7792_SetGain(AD7792_GAIN_1);
-		//AD7792_EnableBuf();
-		//AD7792_SetIntReference(AD7792_REFSEL_INT);
-		//AD7792_SetChannel(AD7792_CH_AIN2P_AIN2M);
-		//AD7792_SetUnipolar();
-		
-		//AD7792_IexDir(AD7792_DIR_IEXC1_IEXC2_IOUT1);
-		//AD7792_IexEn(AD7792_EN_IXCEN_210uA);
-		
-		conf[0] = AD7792_GetRegisterValue(AD7792_REG_CONF, 2, 1);
+	ADI_Init();
+  
+		/*conf[0] = AD7792_GetRegisterValue(AD7792_REG_CONF, 2, 1);
 		conf[1] = AD7792_GetRegisterValue(AD7792_REG_MODE, 2, 1);
 		conf[2] = AD7792_GetRegisterValue(AD7792_REG_IO, 1, 1);
 		conf[3] = AD7792_GetRegisterValue(AD7792_REG_OFFSET, 2, 1);
-		conf[4] = AD7792_GetRegisterValue(AD7792_REG_FULLSCALE, 2, 1);
-		
-		//AD7792_SetMode(AD7792_MODE_SINGLE);
-		while (1)
+		conf[4] = AD7792_GetRegisterValue(AD7792_REG_FULLSCALE, 2, 1);*/
+		__IO uint8_t temp_state=1;
+		while (temp_state)
     {
 			/*reading data unstable, some times its read only first byte of data*/
 		//__IO uint32_t t_read;
 		for(uint32_t i=0; i<8; i++) {
-			uint32_t command = AD7792_IEXCEN(AD7792_EN_IXCEN_210uA);
+			//uint32_t command = AD7792_IEXCEN(AD7792_EN_IXCEN_210uA);
 			
 			if( i % 2 ) {
-				command &= ~AD7792_IEXCDIR(AD7792_DIR_IEXC1_IOUT2_IEXC2_IOUT1);
-        command |= AD7792_IEXCDIR(AD7792_DIR_IEXC1_IOUT2_IEXC2_IOUT1);
-        AD7792_SetRegisterValue(AD7792_REG_IO, command, 1, 1); // CS is modified by SPI read/write functions.
+				adi1.io &= ~AD7792_IEXCDIR(AD7792_DIR_IEXC1_IOUT2_IEXC2_IOUT1);
+        adi1.io |= AD7792_IEXCDIR(AD7792_DIR_IEXC1_IOUT2_IEXC2_IOUT1);
+        AD7792_conf(&adi1, reg_io); // CS is modified by SPI read/write functions.
 			}
 			else {
-				command &= ~AD7792_IEXCDIR(AD7792_DIR_IEXC1_IOUT1_IEXC2_IOUT2);
-        command |= AD7792_IEXCDIR(AD7792_DIR_IEXC1_IOUT1_IEXC2_IOUT2);
-        AD7792_SetRegisterValue(AD7792_REG_IO, command, 1, 1); // CS is modified by SPI read/write functions.
+				adi1.io &= ~AD7792_IEXCDIR(AD7792_DIR_IEXC1_IOUT1_IEXC2_IOUT2);
+        adi1.io |= AD7792_IEXCDIR(AD7792_DIR_IEXC1_IOUT1_IEXC2_IOUT2);
+        AD7792_conf(&adi1, reg_io); // CS is modified by SPI read/write functions.
 			}
-			conf[2] = AD7792_GetRegisterValue(AD7792_REG_IO, 1, 1);
+			//conf[2] = AD7792_GetRegisterValue(AD7792_REG_IO, 1, 1);
 			/*if(t_read < 0x60) {
 				while(1) {}
 				}*/
@@ -173,7 +163,7 @@ int main(void)
 	
   }
 		
-	}
+	
   /* USER CODE END 2 */
 
   /* Call init function for freertos objects (in freertos.c) */

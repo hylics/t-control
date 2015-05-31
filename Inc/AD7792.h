@@ -47,6 +47,7 @@
 /******************************************************************************/
 
 #include <stdint.h>
+#include "gpio.h"
 
 /* AD7792 GPIO */
 #define AD7792_RDY_STATE       GPIO1_STATE
@@ -60,6 +61,9 @@ typedef enum
   ADI_LOCKED   = 0x01  
 } ADI_LockTypeDef;
 
+/** 
+  * @brief  HAL ADI Status structures definition  
+  */
 typedef enum 
 {
   ADI_OK       = 0x00,
@@ -69,15 +73,26 @@ typedef enum
 } ADI_StatusTypeDef;
 
 /** 
+  * @brief  HAL pin CS structures definition  
+  */
+typedef struct __ADI_PIN_HandleTypeDef
+{
+	GPIO_TypeDef* gpio;
+	uint16_t pin;
+}ADI_PIN_HandleTypeDef;
+
+/** 
   * @brief  AD7792 handle Structure definition  
   */ 
 typedef struct __AD7792_HandleTypeDef
 {
-	uint32_t mode;      /*16 bit*/
-	uint32_t conf;      /*16 bit*/
-	uint32_t io;        /*8 bit*/
-	uint32_t offset;    /*16/24 bit*/
-	uint32_t fullscale; /*16/24 bit*/
+	uint32_t mode;              /*16 bit*/
+	uint32_t conf;              /*16 bit*/
+	uint32_t io;                /*8 bit*/
+	uint32_t offset;            /*16/24 bit*/
+	uint32_t fullscale;         /*16/24 bit*/
+	ADI_PIN_HandleTypeDef cs;
+	ADI_PIN_HandleTypeDef rdy;
 	ADI_LockTypeDef lock;
 	ADI_StatusTypeDef state;
 } AD7792_HandleTypeDef;
@@ -110,7 +125,9 @@ typedef enum {reg_all, reg_mode, reg_conf, reg_io, reg_offset, reg_full_scale} o
 #define AD7792_STAT_CH2		(1 << 1) /* Channel 2 */
 #define AD7792_STAT_CH1		(1 << 0) /* Channel 1 */
 
-/* Mode Register Bit Designations (AD7792_REG_MODE) */
+/****************************************************************************************/
+/* Mode Register Bit Designations (AD7792_REG_MODE)                                     */
+/****************************************************************************************/
 #define AD7792_MODE_SEL(x)		(((x) & 0x7) << 13)	/* Operation Mode Select */
 #define AD7792_MODE_CLKSRC(x)	(((x) & 0x3) << 6) 	/* ADC Clock Source Select */
 #define AD7792_MODE_RATE(x)		((x) & 0xF) 		    /* Filter Update Rate Select */
@@ -147,15 +164,10 @@ typedef enum {reg_all, reg_mode, reg_conf, reg_io, reg_offset, reg_full_scale} o
 #define AD7792_RATE_240ms           13 /*8.33 Hz*/
 #define AD7792_RATE_320ms           14 /*6.25 Hz*/
 #define AD7792_RATE_480ms           15 /*4.17 Hz*/
-/*#define IS_ADI_MODE_RATE(reg)    (((reg) == AD7792_FS_4ms) || ((reg) == AD7792_FS_8ms) || ((reg) == AD7792_FS_16ms) || \
-                               ((reg) == AD7792_FS_32ms) || ((reg) == AD7792_FS_40ms) || ((reg) == AD7792_FS_48ms) || \
-															 ((reg) == AD7792_FS_60ms) || ((reg) == AD7792_FS_101ms) || ((reg) == AD7792_FS_1_120ms) || \
-                               ((reg) == AD7792_FS_2_120ms) || ((reg) == AD7792_FS_160ms) || ((reg) == AD7792_FS_200ms) || \
-                               ((reg) == AD7792_FS_240ms) || ((reg) == AD7792_FS_320ms) || ((reg) == AD7792_FS_480ms))*/
 
-
-
-/* Configuration Register Bit Designations (AD7792_REG_CONF) */
+/****************************************************************************************/
+/* Configuration Register Bit Designations (AD7792_REG_CONF)                            */
+/****************************************************************************************/
 #define AD7792_CONF_VBIAS(x)  (((x) & 0x3) << 14) /* Bias Voltage Generator Enable */
 #define AD7792_CONF_BO_EN	    (1 << 13) 		    	/* Burnout Current Enable */
 #define AD7792_CONF_UNIPOLAR  (1 << 12) 			    /* Unipolar/Bipolar Enable */
@@ -196,9 +208,9 @@ typedef enum {reg_all, reg_mode, reg_conf, reg_io, reg_offset, reg_full_scale} o
 #define AD7792_ID			    0xA
 #define AD7792_ID_MASK		0xF
 
-
-
-/* IO (Excitation Current Sources) Register Bit Designations (AD7792_REG_IO) */
+/****************************************************************************************/
+/* IO (Excitation Current Sources) Register Bit Designations (AD7792_REG_IO)            */
+/****************************************************************************************/
 #define AD7792_IEXCDIR(x)	(((x) & 0x3) << 2)
 #define AD7792_IEXCEN(x)	(((x) & 0x3) << 0)
 
@@ -206,7 +218,7 @@ typedef enum {reg_all, reg_mode, reg_conf, reg_io, reg_offset, reg_full_scale} o
 #define AD7792_DIR_IEXC1_IOUT1_IEXC2_IOUT2	0  /* IEXC1 connect to IOUT1, IEXC2 connect to IOUT2 */
 #define AD7792_DIR_IEXC1_IOUT2_IEXC2_IOUT1	1  /* IEXC1 connect to IOUT2, IEXC2 connect to IOUT1 */
 #define AD7792_DIR_IEXC1_IEXC2_IOUT1		    2  /* Both current sources IEXC1,2 connect to IOUT1  */
-#define AD7792_DIR_IEXC1_IEXC2_IOUT2		    3  /* Both current sources IEXC1,2 connect to IOUT2 */
+#define AD7792_DIR_IEXC1_IEXC2_IOUT2		    3  /* Both current sources IEXC1,2 connect to IOUT2  */
 
 /* AD7792_IEXCEN(x) options*/
 #define AD7792_EN_IXCEN_10uA				1  /* Excitation Current 10uA */
@@ -214,7 +226,7 @@ typedef enum {reg_all, reg_mode, reg_conf, reg_io, reg_offset, reg_full_scale} o
 #define AD7792_EN_IXCEN_1mA					3  /* Excitation Current 1mA */
 
 /******************************************************************************/
-/* Functions Prototypes                                                       */
+/* Public Functions Prototypes                                                */
 /******************************************************************************/
 
 /* Initialize AD7792 and check if the device is present*/
@@ -223,26 +235,8 @@ uint8_t AD7792_Init(void);
 /* Sends 32 consecutive 1's on SPI in order to reset the part. */
 void AD7792_Reset(void);
 
-/* Reads the value of the selected register. */
-uint32_t AD7792_GetRegisterValue(uint8_t regAddress, uint8_t size, uint8_t modifyCS);
-
-/* Writes a value to the register. */
-void AD7792_SetRegisterValue(uint8_t regAddress, uint32_t regValue, uint8_t size, uint8_t modifyCS);
-
-/* Waits for RDY pin to go low. */
-void AD7792_WaitRdyGoLow(void);
-
-/* Sets the operating mode of AD7792. */
-void AD7792_SetMode(uint32_t mode);     
-
 /* Selects the channel of AD7792. */
 void AD7792_SetChannel(uint32_t channel);
-
-/* Sets the gain of the In-Amp. */
-void AD7792_SetGain(uint32_t gain);
-
-/* Sets the reference source for the ADC. */
-void AD7792_SetIntReference(uint8_t type);
 
 /* Performs the given calibration to the specified channel. */
 void AD7792_Calibrate(uint8_t mode, uint8_t channel);
@@ -254,14 +248,8 @@ uint32_t AD7792_SingleConversion(void);
 uint32_t AD7792_ContinuousReadAvg(uint8_t sampleNumber);
 
 /*my func*/
-ADI_StatusTypeDef AD7792_conf2(AD7792_HandleTypeDef *adc_instance, op_mode_TypeDef type);
+ADI_StatusTypeDef AD7792_conf(AD7792_HandleTypeDef *adc_instance, op_mode_TypeDef type);
 
-void AD7792_SetCLCS(uint32_t clc);
-void AD7792_SetRate(uint32_t rate);
-void AD7792_EnableBuf(void);
-void AD7792_IexDir(uint32_t direction);
-void AD7792_IexEn(uint32_t current);
-void AD7792_SetUnipolar(void);
-int AD7792_conf(uint32_t gain, uint32_t channel, uint32_t current);
+//int AD7792_conf(uint32_t gain, uint32_t channel, uint32_t current);
 
 #endif	// _AD7792_H_

@@ -85,7 +85,7 @@ __STATIC_INLINE void dma_rc_cplt() {
 *******************************************************************************/
 uint8_t SPI_Init(uint8_t lsbFirst, uint32_t clockFreq, uint8_t clockPol, uint8_t clockPha) {
 	// Add your code here.
-	
+	// init in file spi.c
     return(1);
 }
 
@@ -100,33 +100,19 @@ uint8_t SPI_Init(uint8_t lsbFirst, uint32_t clockFreq, uint8_t clockPol, uint8_t
  * @return Number of written bytes.
 *******************************************************************************/
 uint8_t SPI_Write(uint8_t *data, uint8_t bytesNumber) {
-	uint8_t CS_flag = data[0];
-	
-  //Modifying CS by this function or external
-	if(CS_flag) {
-		ADI_PART_CS_LOW;
-		ADI_DELAY(TIMEOUT_LH);
-	}
+	// Add your code here.
 	
 	//write to address register
-	HAL_SPI_Transmit_DMA(SPI_HW, &data[1], (uint16_t)1);
+	HAL_SPI_Transmit_DMA(SPI_HW, &data[0], (uint16_t)1);
 	
 	dma_tr_cplt();
 	
 	ADI_DELAY(TIMEOUT_COMMAND);
 	
 	//write to ADC
-	HAL_SPI_Transmit_DMA(SPI_HW, &data[2], (uint16_t)bytesNumber);
+	HAL_SPI_Transmit_DMA(SPI_HW, &data[1], (uint16_t)bytesNumber);
 	
 	dma_tr_cplt();
-	
-	//Modifying CS by this function or external
-	if(CS_flag) {
-		ADI_DELAY(TIMEOUT_LH);
-		ADI_PART_CS_HIGH;
-	}
-	
-	ADI_DELAY(TIMEOUT_PACKET);
 
 	return(bytesNumber);
 }
@@ -145,15 +131,10 @@ uint8_t SPI_Write(uint8_t *data, uint8_t bytesNumber) {
 *******************************************************************************/
 uint8_t SPI_Read(uint8_t *data, uint8_t bytesNumber) {
 	// Add your code here.
-	uint8_t CS_flag = data[0];
-
-	if(CS_flag) {
-		ADI_PART_CS_LOW;
-		ADI_DELAY(TIMEOUT_LH);
-	}
+	
 	//write to address register
-	HAL_SPI_Transmit_DMA(SPI_HW, &data[1], (uint16_t)1);
-	//HAL_SPI_Transmit(SPI_HW, &data[1], (uint16_t)1, SPI_TIMEOUT);
+	HAL_SPI_Transmit_DMA(SPI_HW, &data[0], (uint16_t)1);
+	//HAL_SPI_Transmit(SPI_HW, &data[0], (uint16_t)1, SPI_TIMEOUT);
 	
 	dma_tr_cplt();
 	
@@ -164,13 +145,6 @@ uint8_t SPI_Read(uint8_t *data, uint8_t bytesNumber) {
 	//HAL_SPI_Receive(SPI_HW, &data[0], (uint16_t)bytesNumber, SPI_TIMEOUT);
 	
 	dma_rc_cplt();
-	
-	if(CS_flag) {
-		ADI_DELAY(TIMEOUT_LH);
-		ADI_PART_CS_HIGH;
-	}
-	
-	ADI_DELAY(TIMEOUT_PACKET);
 
 	return(bytesNumber);
 }

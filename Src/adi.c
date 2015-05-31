@@ -1,0 +1,33 @@
+/***********************
+*
+*/
+
+#include "adi.h"
+
+AD7792_HandleTypeDef adi1;
+
+void ADI_Init(void) {
+	//
+	adi1.conf &= (~AD7792_CONF_GAIN(0xFF) | ~AD7792_CONF_CHAN(0xFF) | ~AD7792_CONF_UNIPOLAR);
+	adi1.conf |= (AD7792_CONF_GAIN(AD7792_GAIN_1) | AD7792_CONF_CHAN(AD7792_CH_AIN2P_AIN2M) | AD7792_CONF_UNIPOLAR);
+	
+	adi1.mode &= ~AD7792_MODE_RATE(AD7702_RATE_1_120ms);
+	adi1.mode |= AD7792_MODE_RATE(AD7702_RATE_1_120ms);
+	
+	adi1.io |= ( AD7792_IEXCDIR(AD7792_DIR_IEXC1_IOUT1_IEXC2_IOUT2) | AD7792_IEXCEN(AD7792_EN_IXCEN_210uA) );
+	adi1.fullscale = 0x5800;
+	adi1.offset = 0x8000;
+	
+	adi1.cs.gpio = GPIOB;
+	adi1.cs.pin = GPIO_PIN_12;
+	adi1.rdy.gpio = GPIOC;
+	adi1.rdy.pin = GPIO_PIN_6;
+	
+	if(AD7792_Init() == 1) {
+		//
+		AD7792_conf(&adi1, reg_all);
+	}
+}
+
+
+
