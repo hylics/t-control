@@ -45,7 +45,7 @@
 #include "gpio.h"
 #include "spi.h"
 #include "stm32f0xx_hal.h"
-#include "AD7792.h"
+//#include "AD7792.h"
 
 /******************************************************************************/
 /* SPI-AD7792 timeout definitions                                             */

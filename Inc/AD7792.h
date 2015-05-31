@@ -89,8 +89,8 @@ typedef struct __AD7792_HandleTypeDef
 	uint32_t mode;              /*16 bit*/
 	uint32_t conf;              /*16 bit*/
 	uint32_t io;                /*8 bit*/
-	uint32_t offset;            /*16/24 bit*/
-	uint32_t fullscale;         /*16/24 bit*/
+	uint32_t offset[3];            /*16/24 bit*/
+	uint32_t fullscale[3];         /*16/24 bit*/
 	ADI_PIN_HandleTypeDef cs;
 	ADI_PIN_HandleTypeDef rdy;
 	ADI_LockTypeDef lock;
@@ -231,6 +231,9 @@ typedef enum {reg_all, reg_mode, reg_conf, reg_io, reg_offset, reg_full_scale} o
 
 /* Initialize AD7792 and check if the device is present*/
 uint8_t AD7792_Init(void);
+
+uint32_t AD7792_GetRegisterValue(uint8_t regAddress, uint8_t size, uint8_t modifyCS);
+void AD7792_SetRegisterValue(uint8_t regAddress, uint32_t regValue, uint8_t size, uint8_t modifyCS);
 
 /* Sends 32 consecutive 1's on SPI in order to reset the part. */
 void AD7792_Reset(void);

@@ -57,8 +57,8 @@
 /******************************************************************************/
 /* Private functions prototypes                                               */
 /******************************************************************************/
-static uint32_t AD7792_GetRegisterValue(uint8_t regAddress, uint8_t size, uint8_t modifyCS);
-static void AD7792_SetRegisterValue(uint8_t regAddress, uint32_t regValue, uint8_t size, uint8_t modifyCS);
+//static uint32_t AD7792_GetRegisterValue(uint8_t regAddress, uint8_t size, uint8_t modifyCS);
+//static void AD7792_SetRegisterValue(uint8_t regAddress, uint32_t regValue, uint8_t size, uint8_t modifyCS);
 static void AD7792_WaitRdyGoLow(void);
 
 
@@ -107,20 +107,21 @@ void AD7792_Reset(void)
  *
  * @return data - The value of the selected register register.
 *******************************************************************************/
-static uint32_t AD7792_GetRegisterValue(uint8_t regAddress, uint8_t size, uint8_t modifyCS) {	
+uint32_t AD7792_GetRegisterValue(uint8_t regAddress, uint8_t size, uint8_t modifyCS) {	
 	uint8_t data[4]      = {0x00};
 	uint32_t receivedData = 0x00;
   uint8_t i            = 0x00; 
     
 	data[0] = AD7792_COMM_READ |  AD7792_COMM_ADDR(regAddress);
 	//Modifying CS by this function or external
-	if(modifyCS) {
+	if(modifyCS != 0) {
 		ADI_PART_CS_LOW;
 		ADI_DELAY(TIMEOUT_LH);
-	}	
+	}
+	
 	SPI_Read(data, size);
 	//Modifying CS by this function or external
-	if(modifyCS) {
+	if(modifyCS != 0) {
 		ADI_DELAY(TIMEOUT_LH);
 		ADI_PART_CS_HIGH;
 	}
@@ -144,7 +145,7 @@ static uint32_t AD7792_GetRegisterValue(uint8_t regAddress, uint8_t size, uint8_
  *
  * @return  None.    
 *******************************************************************************/
-static void AD7792_SetRegisterValue(uint8_t regAddress, uint32_t regValue, uint8_t size, uint8_t modifyCS) {
+void AD7792_SetRegisterValue(uint8_t regAddress, uint32_t regValue, uint8_t size, uint8_t modifyCS) {
 	uint8_t data[4]      = {0x00};	
 	uint8_t* data_ptr = (uint8_t*)&regValue;
   uint8_t bytesNr      = size;
@@ -156,13 +157,13 @@ static void AD7792_SetRegisterValue(uint8_t regAddress, uint32_t regValue, uint8
       bytesNr--;
   }
   //Modifying CS by this function or external
-	if(modifyCS) {
+	if(modifyCS !=0) {
 		ADI_PART_CS_LOW;
 		ADI_DELAY(TIMEOUT_LH);
 	}	
 	SPI_Write(data, size);
 	//Modifying CS by this function or external
-	if(modifyCS) {
+	if(modifyCS != 0) {
 		ADI_DELAY(TIMEOUT_LH);
 		ADI_PART_CS_HIGH;
 	}
@@ -205,6 +206,8 @@ ADI_StatusTypeDef AD7792_conf(AD7792_HandleTypeDef *adc_instance, op_mode_TypeDe
 		adc_instance->lock = ADI_LOCKED;
 	}
 	
+	uint8_t channel = adc_instance->conf & 0x07;
+	
 	// REG CONF
 	if(type==reg_all || type==reg_conf) {
 		AD7792_SetRegisterValue(AD7792_REG_CONF, adc_instance->conf, 2, 1);
@@ -222,12 +225,18 @@ ADI_StatusTypeDef AD7792_conf(AD7792_HandleTypeDef *adc_instance, op_mode_TypeDe
 	
 	// REG OFFSET
 	if(type==reg_all || type==reg_offset) {
-		AD7792_SetRegisterValue(AD7792_REG_OFFSET, adc_instance->offset, 2, 1);
+		if(channel<=3) {
+			AD7792_SetRegisterValue(AD7792_REG_OFFSET, adc_instance->offset[channel], 2, 1);
+		}
+		else return ADI_ERROR;
 	}
 	
 	// REG FULLSCALE
 	if(type==reg_all || type==reg_full_scale) {
-		AD7792_SetRegisterValue(AD7792_REG_FULLSCALE, adc_instance->fullscale, 2, 1);
+		if(channel<=3) {
+		  AD7792_SetRegisterValue(AD7792_REG_FULLSCALE, adc_instance->fullscale[channel], 2, 1);
+		}
+		else return ADI_ERROR;
 	}
 	
 	adc_instance->lock = ADI_UNLOCKED;
@@ -294,7 +303,8 @@ void AD7792_SetChannel(uint32_t channel) {
 
 /***************************************************************************//**
  * @brief Performs the given calibration to the specified channel.
- *
+ * the offset calibration should be 
+ * performed before the system full-scale calibration is initiated
  * @param mode - Calibration type.
  * @param channel - Channel to be calibrated.
  *
