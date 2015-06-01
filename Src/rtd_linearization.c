@@ -36,3 +36,51 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include "rtd_linearization.h"
 
+static inline float32_t convert_positive(uint32_t Rx) {
+	float32_t res;
+#if defined(RTD_METHOD_MATH)
+	//
+	
+#elif defined(RTD_METHOD_PIECEWISE)
+	//
+#else
+  #error "Define method used to calculate temperature RTD_METHOD_MATH or RTD_METHOD_PIECEWISE"
+#endif
+	return res;
+}
+
+static inline float32_t convert_negative(uint32_t Rx) {
+	float32_t res;
+#if defined(RTD_METHOD_MATH)
+	//
+	#if defined(RTD_N_POLY_2)
+	//
+	#elif defined(RTD_N_POLY_3)
+	//
+	#elif defined(RTD_N_POLY_4)
+	res=1;
+	#else
+	//
+	#endif
+#elif defined(RTD_METHOD_PIECEWISE)
+	//
+#else
+  #error "Define method used to calculate temperature RTD_METHOD_MATH or RTD_METHOD_PIECEWISE"
+#endif
+	return res;
+}
+
+float32_t rtd_get_temp(uint32_t Rx) {
+	//
+	if(Rx > R_ZERO) {
+		//
+		return convert_positive(Rx);
+	}
+	else {
+		//
+		return convert_negative(Rx);
+	}
+	
+}
+
+

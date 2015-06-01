@@ -603,6 +603,21 @@
               <FileType>1</FileType>
               <FilePath>..\Src\rtd_linearization.c</FilePath>
             </File>
+            <File>
+              <FileName>adi.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Src\adi.c</FilePath>
+            </File>
+            <File>
+              <FileName>RTDmath.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Src\RTDmath.c</FilePath>
+            </File>
+            <File>
+              <FileName>RTDpwl.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Src\RTDpwl.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>

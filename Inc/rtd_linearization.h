@@ -32,12 +32,15 @@ OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
+/* AN709*/
 /*Constants RTD transpher function*/
 /*alpha 375*/
 /* A=3.81e-3  B=-6.02e-7  C=-6.0e-12 */
 /*alpha 385*/
 /* A=3.908e-3  B=-5.755e-7  C=-4.183e-12*/
 /* Rt = R0 * (1+AT+BT^2 -100CT^3 + CT^4 ) C=0 if t>0*/
+/* Z1=-A     Z2=A^2 - 4*B   Z3=(4*B)/R0     Z4=2*B*/
+/* Trtd(Rx)=(Z1+sqrt(Z2+Z3*r0))/Z4   */
 
 #ifndef _RTD_LINEARIZATION_H
 #define _RTD_LINEARIZATION_H
@@ -48,7 +51,9 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #define RTD_N_POLY_4
 
 /* defines */
-
+#define R_REF 2000
+#define ADC_MAX 65536
+#define R_ZERO 32768
 
 
 /* end defines*/
