@@ -123,5 +123,7 @@ float Rmax_rtd () {
   return (RMAX);
 }
 
+#elif !defined(RTD_METHOD_MATH)
+ #error "Define method used to calculate temperature RTD_METHOD_MATH or RTD_METHOD_PIECEWISE"
 #endif
 
