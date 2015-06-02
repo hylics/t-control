@@ -223,7 +223,7 @@ ADI_StatusTypeDef AD7792_conf(AD7792_HandleTypeDef *adc_instance, op_mode_TypeDe
 		AD7792_SetRegisterValue(AD7792_REG_IO, adc_instance->io, 1, 1);
 	}
 	
-	// REG OFFSET
+	/*// REG OFFSET
 	if(type==reg_all || type==reg_offset) {
 		if(channel<=3) {
 			AD7792_SetRegisterValue(AD7792_REG_OFFSET, adc_instance->offset[channel], 2, 1);
@@ -237,7 +237,7 @@ ADI_StatusTypeDef AD7792_conf(AD7792_HandleTypeDef *adc_instance, op_mode_TypeDe
 		  AD7792_SetRegisterValue(AD7792_REG_FULLSCALE, adc_instance->fullscale[channel], 2, 1);
 		}
 		else return ADI_ERROR;
-	}
+	}*/
 	
 	adc_instance->lock = ADI_UNLOCKED;
 	adc_instance->state = ADI_OK;
@@ -330,16 +330,19 @@ void AD7792_Calibrate(uint8_t mode, uint8_t channel) {
  *
  * @return regData - Result of a single analog-to-digital conversion.
 *******************************************************************************/
-uint32_t AD7792_SingleConversion(void)
+uint32_t AD7792_SingleConversion(AD7792_HandleTypeDef *adc_instance)
 {
-    uint32_t command = 0x0;
+    //uint32_t command = 0x2009; //default 0x200A
     uint32_t regData = 0x0;
     
-    command  = AD7792_MODE_SEL(AD7792_MODE_SINGLE);
+	  adc_instance->mode &= ~AD7792_MODE_SEL(0xF);
+    adc_instance->mode |= AD7792_MODE_SEL(AD7792_MODE_SINGLE);
+	
     ADI_PART_CS_LOW;
 	  ADI_DELAY(TIMEOUT_LH);
-    AD7792_SetRegisterValue(AD7792_REG_MODE, command, 2, 0);// CS is not modified by SPI read/write functions.
-	  //ADI_DELAY(30);
+	  //AD7792_conf(adc_instance, reg_mode); // remeber about CS!
+    //AD7792_SetRegisterValue(AD7792_REG_MODE, command, 2, 0);// CS is not modified by SPI read/write functions.
+	  AD7792_SetRegisterValue(AD7792_REG_MODE, adc_instance->mode, 2, 0);// CS is not modified by SPI read/write functions.
     AD7792_WaitRdyGoLow();
 	  ADI_DELAY(TIMEOUT_WRGL);
 	  ADI_DELAY(5);

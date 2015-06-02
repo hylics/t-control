@@ -118,11 +118,12 @@ int main(void)
 	AD7792_Reset();
 	ADI_Init();
   
-		/*conf[0] = AD7792_GetRegisterValue(AD7792_REG_CONF, 2, 1);
+		conf[0] = AD7792_GetRegisterValue(AD7792_REG_CONF, 2, 1);
 		conf[1] = AD7792_GetRegisterValue(AD7792_REG_MODE, 2, 1);
 		conf[2] = AD7792_GetRegisterValue(AD7792_REG_IO, 1, 1);
 		conf[3] = AD7792_GetRegisterValue(AD7792_REG_OFFSET, 2, 1);
-		conf[4] = AD7792_GetRegisterValue(AD7792_REG_FULLSCALE, 2, 1);*/
+		conf[4] = AD7792_GetRegisterValue(AD7792_REG_FULLSCALE, 2, 1);
+		
 		__IO uint8_t temp_state=1;
 		while (temp_state)
     {
@@ -132,20 +133,20 @@ int main(void)
 			//uint32_t command = AD7792_IEXCEN(AD7792_EN_IXCEN_210uA);
 			
 			if( i % 2 ) {
-				adi1.io &= ~AD7792_IEXCDIR(AD7792_DIR_IEXC1_IOUT2_IEXC2_IOUT1);
+				adi1.io &= ~AD7792_IEXCDIR(0x3);
         adi1.io |= AD7792_IEXCDIR(AD7792_DIR_IEXC1_IOUT2_IEXC2_IOUT1);
         AD7792_conf(&adi1, reg_io); // CS is modified by SPI read/write functions.
 			}
 			else {
-				adi1.io &= ~AD7792_IEXCDIR(AD7792_DIR_IEXC1_IOUT1_IEXC2_IOUT2);
+				adi1.io &= ~AD7792_IEXCDIR(0x3);
         adi1.io |= AD7792_IEXCDIR(AD7792_DIR_IEXC1_IOUT1_IEXC2_IOUT2);
         AD7792_conf(&adi1, reg_io); // CS is modified by SPI read/write functions.
 			}
-			//conf[2] = AD7792_GetRegisterValue(AD7792_REG_IO, 1, 1);
+			conf[2] = AD7792_GetRegisterValue(AD7792_REG_IO, 1, 1);
 			/*if(t_read < 0x60) {
 				while(1) {}
 				}*/
-			raw_conv[i] = AD7792_SingleConversion();
+			raw_conv[i] = AD7792_SingleConversion(&adi1);
 			HAL_Delay(200);
 		}
 		
@@ -155,11 +156,11 @@ int main(void)
 		}
 
 		HAL_Delay(200);
-		//conf[0] = AD7792_GetRegisterValue(AD7792_REG_CONF, 2, 1);
-		//conf[1] = AD7792_GetRegisterValue(AD7792_REG_MODE, 2, 1);
-		//conf[2] = AD7792_GetRegisterValue(AD7792_REG_IO, 1, 1);
-		//conf[3] = AD7792_GetRegisterValue(AD7792_REG_OFFSET, 2, 1);
-		//conf[4] = AD7792_GetRegisterValue(AD7792_REG_FULLSALE, 2, 1);
+		conf[0] = AD7792_GetRegisterValue(AD7792_REG_CONF, 2, 1);
+		conf[1] = AD7792_GetRegisterValue(AD7792_REG_MODE, 2, 1);
+		conf[2] = AD7792_GetRegisterValue(AD7792_REG_IO, 1, 1);
+		conf[3] = AD7792_GetRegisterValue(AD7792_REG_OFFSET, 2, 1);
+		conf[4] = AD7792_GetRegisterValue(AD7792_REG_FULLSCALE, 2, 1);
 	
   }
 		

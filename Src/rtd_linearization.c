@@ -37,7 +37,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "rtd_linearization.h"
 
 static inline float32_t convert_positive(uint32_t Rx) {
-	float32_t res;
+	float32_t res = 0.0;
 #if defined(RTD_METHOD_MATH)
 	//
 	
@@ -50,7 +50,7 @@ static inline float32_t convert_positive(uint32_t Rx) {
 }
 
 static inline float32_t convert_negative(uint32_t Rx) {
-	float32_t res;
+	float32_t res = 0.0;
 #if defined(RTD_METHOD_MATH)
 	//
 	#if defined(RTD_N_POLY_2)

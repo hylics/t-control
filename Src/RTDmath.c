@@ -8,6 +8,7 @@
 // More Info    : Details in application note AN-709, available
 //                at....  http://www.analog.com/MicroConverter
 //**************************************************************
+#if defined(RTD_METHOD_MATH)
 
 // include files....
 #include<math.h>        // math functions
@@ -102,3 +103,6 @@ float Rmin_rtd () {
 float Rmax_rtd () {
   return (RMAX);
 }
+
+#endif
+
