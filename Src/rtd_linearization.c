@@ -36,51 +36,58 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include "rtd_linearization.h"
 
-static inline float32_t convert_positive(uint32_t Rx) {
-	float32_t res = 0.0;
+/***************************************************************************//**
+ * @brief Temperature of RTD Function                             rtd_get_temp
+ * @param Rx = resistance of RTD
+ * @return corresponding temperature of RTD
+*******************************************************************************/
+float32_t rtd_get_temp(uint32_t Rx, alpha_t a, r_zero_t rz) {
+	float32_t t = 0.0f;
+	
 #if defined(RTD_METHOD_MATH)
-	//
+	// first determine if input resistance is within spec'd range
+  if (Rx<RMIN) {          // if input is under-range..
+    t = TMIN;           // ..then set to minimum of range
+	}
+  else if (Rx>RMAX) {      // if input is over-range..
+    t = TMAX;            // ..then set to maximum of range
+	}
+  // if input (r) is within range, then solve for output.
+  else {
+    // if r < threshold, use negative transfer function
+  //if (r<1000)  t=-242.0199+2.222812*r+2.585885E-3*pow(r,2)-4.826040E-6*pow(r,3)-2.818340E-8*pow(r,4)+1.524259E-10*pow(r,5);
+  //if (r<966)  t=-241.9610+2.216253*r+2.854064E-3*pow(r,2)-9.912120E-6*pow(r,3)+1.705183E-8*pow(r,4);
+    if (r<951)  t=-242.0906+2.227625*r+2.517790E-3*pow(r,2)-5.861951E-6*pow(r,3);
+  //if (r<721)  t=-242.9703+2.283841*r+1.472734E-3*pow(r,2);
+    // NOTE: un-comment only one of the above four lines...
+    // (5th-order, 4th-order, 3rd-order, 2nd-order respectively)
+
+    // if r >= threshold, use positive transfer function
+		#if defined(USE_ARM_MATH)
+		else {
+		  float32_t zrx = 0;
+		  arm_sqrt_f32((Z2[a]+Z3[2*a+rz]*Rx), &zrx);
+			t = (Z1[a]+zrx)/Z4[a];
+		}
+		#else
+    else t=(Z1[a]+sqrt(Z2[a]+Z3[2*a+rz]*Rx))/Z4[a];
+    #endif
+  }
 	
 #elif defined(RTD_METHOD_PIECEWISE)
-	//
+	int32_t i;
+  i=(Rx-RMIN)/RSEG;       // determine which coefficients to use
+  if (i<0)                // if input is under-range..
+    i=0;                  // ..then use lowest coefficients
+  else if (i>NSEG-1)      // if input is over-range..
+    i=NSEG-1;             // ..then use highest coefficients
+  t = C_rtd[i]+(Rx-(RMIN+RSEG*i))*(C_rtd[i+1]-C_rtd[i])/RSEG;
+  return (t);
 #else
   #error "Define method used to calculate temperature RTD_METHOD_MATH or RTD_METHOD_PIECEWISE"
 #endif
-	return res;
-}
-
-static inline float32_t convert_negative(uint32_t Rx) {
-	float32_t res = 0.0;
-#if defined(RTD_METHOD_MATH)
-	//
-	#if defined(RTD_N_POLY_2)
-	//
-	#elif defined(RTD_N_POLY_3)
-	//
-	#elif defined(RTD_N_POLY_4)
-	res=1;
-	#else
-	//
-	#endif
-#elif defined(RTD_METHOD_PIECEWISE)
-	//
-#else
-  #error "Define method used to calculate temperature RTD_METHOD_MATH or RTD_METHOD_PIECEWISE"
-#endif
-	return res;
-}
-
-float32_t rtd_get_temp(uint32_t Rx) {
-	//
-	if(Rx > R_ZERO) {
-		//
-		return convert_positive(Rx);
-	}
-	else {
-		//
-		return convert_negative(Rx);
-	}
 	
+	return t;
 }
 
 
