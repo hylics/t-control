@@ -89,6 +89,7 @@ int main(void)
 	
 	__IO uint32_t raw_conv[8] = {0};
 	__IO uint32_t sum_conv[4] = {0};
+	__IO float32_t t_rtd[4] = {0.0f};
 	__IO uint32_t conf[5] = {0};
 	
   /* USER CODE END 1 */
@@ -153,6 +154,7 @@ int main(void)
 		/*sum of A21+A22 measurement*/
 		for( uint32_t i=0; i<4; i++) {
 			sum_conv[i] = raw_conv[2*i] + raw_conv[(2*i + 1)];
+			t_rtd[i] = rtd_get_temp(sum_conv[i], a375, r1000);
 		}
 
 		HAL_Delay(200);

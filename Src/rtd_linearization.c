@@ -43,13 +43,14 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
 float32_t rtd_get_temp(uint32_t Rx, alpha_t a, r_zero_t rz) {
 	float32_t t = 0.0f;
+	float32_t r = R_REF*(float32_t)Rx/ADC_MAX;
 	
 #if defined(RTD_METHOD_MATH)
 	// first determine if input resistance is within spec'd range
-  if (Rx<RMIN) {          // if input is under-range..
+  if (r<RMIN) {          // if input is under-range..
     t = TMIN;           // ..then set to minimum of range
 	}
-  else if (Rx>RMAX) {      // if input is over-range..
+  else if (r>RMAX) {      // if input is over-range..
     t = TMAX;            // ..then set to maximum of range
 	}
   // if input (r) is within range, then solve for output.
@@ -66,23 +67,22 @@ float32_t rtd_get_temp(uint32_t Rx, alpha_t a, r_zero_t rz) {
 		#if defined(USE_ARM_MATH)
 		else {
 		  float32_t zrx = 0;
-		  arm_sqrt_f32((Z2[a]+Z3[2*a+rz]*Rx), &zrx);
+		  arm_sqrt_f32((Z2[a]+Z3[2*a+rz]*r), &zrx);
 			t = (Z1[a]+zrx)/Z4[a];
 		}
 		#else
-    else t=(Z1[a]+sqrt(Z2[a]+Z3[2*a+rz]*Rx))/Z4[a];
+    else t=(Z1[a]+sqrt(Z2[a]+Z3[2*a+rz]*r))/Z4[a];
     #endif
   }
 	
 #elif defined(RTD_METHOD_PIECEWISE)
 	int32_t i;
-  i=(Rx-RMIN)/RSEG;       // determine which coefficients to use
+  i=(r-RMIN)/RSEG;       // determine which coefficients to use
   if (i<0)                // if input is under-range..
     i=0;                  // ..then use lowest coefficients
   else if (i>NSEG-1)      // if input is over-range..
     i=NSEG-1;             // ..then use highest coefficients
-  t = C_rtd[i]+(Rx-(RMIN+RSEG*i))*(C_rtd[i+1]-C_rtd[i])/RSEG;
-  return (t);
+  t = C_rtd[i]+(r-(RMIN+RSEG*i))*(C_rtd[i+1]-C_rtd[i])/RSEG;
 #else
   #error "Define method used to calculate temperature RTD_METHOD_MATH or RTD_METHOD_PIECEWISE"
 #endif
