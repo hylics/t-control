@@ -329,12 +329,12 @@
               <OCR_RVCT9>
                 <Type>0</Type>
                 <StartAddress>0x20000000</StartAddress>
-                <Size>0x3000</Size>
+                <Size>0x4000</Size>
               </OCR_RVCT9>
               <OCR_RVCT10>
                 <Type>0</Type>
-                <StartAddress>0x20003000</StartAddress>
-                <Size>0x1000</Size>
+                <StartAddress>0x0</StartAddress>
+                <Size>0x0</Size>
               </OCR_RVCT10>
             </OnChipMemories>
             <RvctStartVector></RvctStartVector>
@@ -607,6 +607,11 @@
               <FileName>adi.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\Src\adi.c</FilePath>
+            </File>
+            <File>
+              <FileName>eeprom.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Src\eeprom.c</FilePath>
             </File>
           </Files>
         </Group>

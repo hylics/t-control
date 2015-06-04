@@ -48,6 +48,7 @@
 /* USER CODE BEGIN Includes */
 #define ARM_MATH_CM0
 
+#include "eeprom.h"
 #include "adi.h"
 #include "arm_math.h"
 #include "rtd_linearization.h"
