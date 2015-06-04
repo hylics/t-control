@@ -23,6 +23,21 @@
   * limitations under the License.
   *
   ******************************************************************************
+	The provided implementation of the EEPROM emulation firmware runs from the internal 
+Flash, thus the access to the Flash will be stalled during operations requiring Flash erase or 
+programming (EEPROM initialization, variable update or page erase). As a consequence, 
+the application code is not executed and the interrupt cannot be serviced.
+This behavior may be acceptable for many applications; however, for applications with real-
+time constraints, you need to run the critical processes from the internal RAM.
+In this case:
+1.     Relocate the vector table in the internal RAM.
+2.     Execute all critical code and interrupt service routines from the internal RAM. the 
+compiler provides a keyword to declare func
+tions as a RAM function; the function is 
+copied from the Flash to the RAM at system st
+artup just like any initialized variable. It is 
+important to note that, for a RAM function, all used variable(s) and called function(s) 
+should be within the RAM
   */ 
 
 /** @addtogroup STM32F0xx_EEPROM_Emulation
@@ -34,8 +49,10 @@
 
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
+#define FLASH_TIMEOUT  200
 /* Private macro -------------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
+extern FLASH_ProcessTypeDef pFlash;
 
 /* Global variable used to store variable value in read sequence */
 uint16_t DataVar = 0;
@@ -45,7 +62,7 @@ extern uint16_t VirtAddVarTab[NB_OF_VAR];
 
 /* Private function prototypes -----------------------------------------------*/
 /* Private functions ---------------------------------------------------------*/
-static FLASH_Status EE_Format(void);
+static uint32_t EE_Format(void);
 static uint16_t EE_VerifyPageFullWriteVariable(uint16_t VirtAddress, uint16_t Data);
 static uint16_t EE_PageTransfer(uint16_t VirtAddress, uint16_t Data);
 static uint16_t EE_FindValidPage(uint8_t Operation);
@@ -57,13 +74,14 @@ static uint16_t EE_FindValidPage(uint8_t Operation);
   * @retval - Flash error code: on write Flash error
   *         - FLASH_COMPLETE: on success
   */
-uint16_t EE_Init(void)
+uint32_t EE_Init(void)
 {
   uint16_t PageStatus0 = 6, PageStatus1 = 6;
   uint16_t VarIdx = 0;
   uint16_t EepromStatus = 0, ReadStatus = 0;
   int16_t x = -1;
-  uint16_t  FlashStatus;
+  uint32_t  FlashStatus;
+	HAL_StatusTypeDef hal_status;
 
   /* Get Page0 status */
   PageStatus0 = (*(__IO uint16_t*)PAGE0_BASE_ADDRESS);
@@ -77,28 +95,36 @@ uint16_t EE_Init(void)
       if (PageStatus1 == VALID_PAGE) /* Page0 erased, Page1 valid */
       {
         /* Erase Page0 */
-        FlashStatus = FLASH_ErasePage(PAGE0_BASE_ADDRESS);
+        FLASH_PageErase(PAGE0_BASE_ADDRESS);
+				hal_status = FLASH_WaitForLastOperation(FLASH_TIMEOUT);
+
         /* If erase operation was failed, a Flash error code is returned */
-        if (FlashStatus != FLASH_COMPLETE)
+        if (HAL_FLASH_GetError() != FLASH_ERROR_NONE)
         {
-          return FlashStatus;
+          return HAL_FLASH_GetError();
         }
       }
       else if (PageStatus1 == RECEIVE_DATA) /* Page0 erased, Page1 receive */
       {
         /* Erase Page0 */
-        FlashStatus = FLASH_ErasePage(PAGE0_BASE_ADDRESS);
+        FLASH_PageErase(PAGE0_BASE_ADDRESS);
+				hal_status = FLASH_WaitForLastOperation(FLASH_TIMEOUT);
+				
         /* If erase operation was failed, a Flash error code is returned */
-        if (FlashStatus != FLASH_COMPLETE)
+        if (HAL_FLASH_GetError() != FLASH_ERROR_NONE)
         {
-          return FlashStatus;
+          return HAL_FLASH_GetError();
         }
         /* Mark Page1 as valid */
-        FlashStatus = FLASH_ProgramHalfWord(PAGE1_BASE_ADDRESS, VALID_PAGE);
+        FLASH_Program_HalfWord(PAGE1_BASE_ADDRESS, VALID_PAGE);
+				
         /* If program operation was failed, a Flash error code is returned */
-        if (FlashStatus != FLASH_COMPLETE)
+        hal_status = FLASH_WaitForLastOperation(FLASH_TIMEOUT);
+				
+        /* If erase operation was failed, a Flash error code is returned */
+        if (HAL_FLASH_GetError() != FLASH_ERROR_NONE)
         {
-          return FlashStatus;
+          return HAL_FLASH_GetError();
         }
       }
       else /* First EEPROM access (Page0&1 are erased) or invalid state -> format EEPROM */
@@ -355,21 +381,24 @@ uint16_t EE_WriteVariable(uint16_t VirtAddress, uint16_t Data)
   * @retval Status of the last operation (Flash write or erase) done during
   *         EEPROM formating
   */
-static FLASH_Status EE_Format(void)
+static uint32_t EE_Format(void)
 {
-  FLASH_Status FlashStatus = FLASH_COMPLETE;
+  uint32_t FlashStatus = FLASH_ERROR_NONE;
+	HAL_StatusTypeDef hal_status;
 
   /* Erase Page0 */
-  FlashStatus = FLASH_ErasePage(PAGE0_BASE_ADDRESS);
+  FLASH_PageErase(PAGE0_BASE_ADDRESS);
+	hal_status = FLASH_WaitForLastOperation(FLASH_TIMEOUT);
 
   /* If erase operation was failed, a Flash error code is returned */
-  if (FlashStatus != FLASH_COMPLETE)
+  if (HAL_FLASH_GetError() != FLASH_ERROR_NONE)
   {
-    return FlashStatus;
+    return HAL_FLASH_GetError();
   }
 
   /* Set Page0 as valid page: Write VALID_PAGE at Page0 base address */
-  FlashStatus = FLASH_ProgramHalfWord(PAGE0_BASE_ADDRESS, VALID_PAGE);
+  FLASH_Program_HalfWord(PAGE0_BASE_ADDRESS, VALID_PAGE);
+	hal_status = FLASH_WaitForLastOperation(FLASH_TIMEOUT);
 
   /* If program operation was failed, a Flash error code is returned */
   if (FlashStatus != FLASH_COMPLETE)
