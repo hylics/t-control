@@ -31,10 +31,12 @@
 #define __EEPROM_H
 
 /* Includes ------------------------------------------------------------------*/
-#include "stm32f0xx.h"
-#include "stm32f0xx_hal_flash.h"
+#include "stm32f0xx_hal.h"
+//#include "stm32f0xx_hal_flash.h"
 
 /* Exported constants --------------------------------------------------------*/
+
+
 /* Define the size of the sectors to be used */
 #define PAGE_SIZE             ((uint32_t)0x0400)  /* Page size = 1KByte */
 
@@ -73,9 +75,20 @@
 #define NB_OF_VAR             ((uint8_t)0x03)
 
 /* Exported types ------------------------------------------------------------*/
+typedef float float32_t;
+typedef double float64_t;
+
+typedef struct __SavedDomain_t{
+	uint16_t offset[3];
+	uint16_t fullscale[3];
+	float32_t Kp;
+	float32_t Ki;
+	float32_t Kd;
+}SavedDomain_t;
+
 /* Exported macro ------------------------------------------------------------*/
 /* Exported functions ------------------------------------------------------- */
-uint32_t EE_Init(void);
+HAL_StatusTypeDef ee_format();
 uint16_t EE_ReadVariable(uint16_t VirtAddress, uint16_t* Data);
 uint16_t EE_WriteVariable(uint16_t VirtAddress, uint16_t Data);
 
