@@ -60,6 +60,8 @@
 /* USER CODE BEGIN PV */
 __IO uint8_t dma_t_cplt=1, dma_r_cplt=1;
 extern AD7792_HandleTypeDef adi1;
+extern SavedDomain_t SavedDomain;
+HAL_StatusTypeDef sts;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -116,7 +118,15 @@ int main(void)
   MX_USART2_UART_Init();
 
   /* USER CODE BEGIN 2 */
+	SavedDomain_t Copy_Options = SavedDomain;
+	//ee_format(&SavedDomain); //hardfault
+	/*if(SavedDomain.header != 0xABAB) {
+		ee_format(&SavedDomain);
+	}*/
 	
+	Copy_Options.offset[0] = 0x7000;
+	//sts = SaveOptToFlash(&Copy_Options, &SavedDomain);
+
 	AD7792_Reset();
 	ADI_Init();
   

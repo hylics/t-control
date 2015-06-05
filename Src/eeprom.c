@@ -51,21 +51,27 @@ should be within the RAM
 /* Private define ------------------------------------------------------------*/
 #define FLASH_TIMEOUT  200
 /* Private macro -------------------------------------------------------------*/
-/* Private variables ---------------------------------------------------------*/
-extern FLASH_ProcessTypeDef pFlash;
+/* Extern variables ---------------------------------------------------------*/
+//extern FLASH_ProcessTypeDef pFlash;
 
 /* Global variable used to store variable value in read sequence */
-const SavedDomain_t SavedDomain __attribute__ ((at(PAGE0_BASE_ADDRESS + 1024*14)));
+//const SavedDomain_t SavedDomain __attribute__ ((at(PAGE0_BASE_ADDRESS))) = {};
+const SavedDomain_t SavedDomain __attribute__ ((aligned(1024))) = {
+	0xABAB,                 //header
+  0x8000, 0x8000, 0x8000, //ADC offset
+  0x54A3, 0x54A3, 0x54A3, //ADC fullscale
+  0.0f, 0.0f, 0.0f};      //PID coeff KP Ki Kd
+
 
 /* Virtual address defined by the user: 0xFFFF value is prohibited */
 //extern uint16_t VirtAddVarTab[NB_OF_VAR];
 
-/* Private function prototypes -----------------------------------------------*/
+/* Extern function prototypes -----------------------------------------------*/
 extern void FLASH_PageErase(uint32_t PageAddress);
 extern HAL_StatusTypeDef FLASH_WaitForLastOperation(uint32_t Timeout);
 /* Private functions ---------------------------------------------------------*/
 
-HAL_StatusTypeDef ee_format() {
+HAL_StatusTypeDef ee_format(SavedDomain_t* page) {
 	HAL_StatusTypeDef status;
 	
 	status = HAL_FLASH_Unlock();
@@ -73,7 +79,8 @@ HAL_StatusTypeDef ee_format() {
 		return status;
 	}
 	
-	FLASH_PageErase(PAGE0_BASE_ADDRESS);
+	//FLASH_PageErase(PAGE0_BASE_ADDRESS);
+	FLASH_PageErase((uint32_t)page);
 	
 	status = FLASH_WaitForLastOperation(FLASH_TIMEOUT);
 	if(status != HAL_OK) {
@@ -86,7 +93,97 @@ HAL_StatusTypeDef ee_format() {
 	return status;
 }
 
+//void WriteFlash(void* Src, void* Dst, int Len)
+//{
+//  uint16_t* SrcW = (uint16_t*)Src;
+//  volatile uint16_t* DstW = (uint16_t*)Dst;
 
+//  FLASH->CR |= FLASH_CR_PG; /* Programm the flash */
+//  while (Len)
+//  {
+//    *DstW = *SrcW;
+//    while ((FLASH->SR & FLASH_SR_BSY) != 0 )
+//      ;
+//    if (*DstW != *SrcW )
+//    {
+//      goto EndPrg;
+//    }
+//    DstW++;
+//    SrcW++;
+//    Len = Len - sizeof(uint16_t);
+//  }
+//EndPrg:
+//  FLASH->CR &= ~FLASH_CR_PG; /* Reset the flag back !!!! */
+//}
+
+/*HAL_StatusTypeDef SaveOptToFlash(SavedDomain_t* Src, SavedDomain_t* Dst) {
+	uint64_t* SrcW = (uint64_t*)Src;
+	volatile uint32_t* DstW = (uint32_t*)Dst;
+	uint32_t len = sizeof(SavedDomain_t)/4;
+	HAL_StatusTypeDef status = HAL_ERROR;
+	
+	status = HAL_FLASH_Unlock();
+	if(status != HAL_OK) {
+		return status;
+	}
+	
+	while(len) {
+		//params: uint32_t TypeProgram, uint32_t Address, uint64_t Data
+	  status = HAL_FLASH_Program(TYPEPROGRAM_WORD, (uint32_t)DstW, (uint64_t)*SrcW);
+	  if(status != HAL_OK) {
+		  return status;
+	  }
+	  DstW++;
+    SrcW++;
+		len -= sizeof(uint32_t);
+	}
+
+	status = HAL_FLASH_Lock();
+	if(status != HAL_OK) {
+		return status;
+	}
+	
+	return status;
+}*/
+
+HAL_StatusTypeDef SaveOptToFlash(SavedDomain_t* Src, SavedDomain_t* Dst) {
+	uint16_t* SrcW = (uint16_t*)Src;
+	__IO uint16_t* DstW = (uint16_t*)Dst;
+	uint32_t len = sizeof(SavedDomain_t)/sizeof(uint16_t);
+	
+	HAL_StatusTypeDef status = HAL_ERROR;
+	
+	status = HAL_FLASH_Unlock();
+	if(status != HAL_OK) {
+		return status;
+	}
+	
+	SET_BIT(FLASH->CR, FLASH_CR_PG); /* Programm the flash */
+	
+	while(len) {
+		*DstW = *SrcW;
+	  status = FLASH_WaitForLastOperation((uint32_t)HAL_FLASH_TIMEOUT_VALUE);
+		if(status != HAL_OK) {
+		  return status;
+	  }
+    if (*DstW != *SrcW )
+    {
+      return HAL_ERROR;
+    }
+		
+	  DstW++;
+    SrcW++;
+		len -= sizeof(uint32_t);
+	}
+	CLEAR_BIT(FLASH->CR, FLASH_CR_PG);
+
+	status = HAL_FLASH_Lock();
+	if(status != HAL_OK) {
+		return status;
+	}
+	
+	return status;
+}
 
 
 

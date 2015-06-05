@@ -79,18 +79,18 @@ typedef float float32_t;
 typedef double float64_t;
 
 typedef struct __SavedDomain_t{
+	uint16_t header;
 	uint16_t offset[3];
 	uint16_t fullscale[3];
 	float32_t Kp;
 	float32_t Ki;
 	float32_t Kd;
-}SavedDomain_t;
+} SavedDomain_t;
 
 /* Exported macro ------------------------------------------------------------*/
 /* Exported functions ------------------------------------------------------- */
-HAL_StatusTypeDef ee_format();
-uint16_t EE_ReadVariable(uint16_t VirtAddress, uint16_t* Data);
-uint16_t EE_WriteVariable(uint16_t VirtAddress, uint16_t Data);
+HAL_StatusTypeDef ee_format(SavedDomain_t* page);
+HAL_StatusTypeDef SaveOptToFlash(SavedDomain_t* Src, SavedDomain_t* Dst);
 
 #endif /* __EEPROM_H */
 
