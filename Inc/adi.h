@@ -13,6 +13,7 @@
 
 /* Prototypes ----------------------------------------------------------------*/
 void ADI_Init(void);
+uint32_t rec_filter(uint32_t data, uint8_t Nb, uint8_t k);
 	 
 #ifdef __cplusplus
 }

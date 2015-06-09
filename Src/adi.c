@@ -34,5 +34,17 @@ void ADI_Init(void) {
 	}*/
 }
 
+uint32_t rec_filter(uint32_t data, uint8_t Nb, uint8_t k) {
+  static uint32_t y = 0;
+  static uint64_t z = 0;
+  z += (data - y);
+  return y = (Nb * z) >> k;
+
+//	static uint32_t res;
+//	res += data;
+//	res /= 2;
+//	return res;
+}
+
 
 

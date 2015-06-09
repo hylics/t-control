@@ -127,7 +127,7 @@ uint8_t SPI_Write(uint8_t *data, uint8_t bytesNumber) {
 	//write to address register
 	spi_send_byte(data[0]);
 	
-	ADI_DELAY(TIMEOUT_COMMAND);
+	//ADI_DELAY(TIMEOUT_COMMAND);
 	
 	//write to ADC
 	for(uint32_t i = 1; i < (bytesNumber+1); i++) {
@@ -174,7 +174,7 @@ uint8_t SPI_Read(uint8_t *data, uint8_t bytesNumber) {
 	//write to address register
 	spi_send_byte(data[0]);
 	
-	ADI_DELAY(TIMEOUT_COMMAND);
+	//ADI_DELAY(TIMEOUT_COMMAND);
 	
 	//read from ADC
 	for(uint32_t i = 0; i < bytesNumber; i++) {

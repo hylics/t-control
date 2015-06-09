@@ -97,9 +97,9 @@ void AD7792_Reset(void)
 	uint8_t dataToSend[6] = {0x03, 0xff, 0xff, 0xff, 0xff, 0xff};
 	
   ADI_PART_CS_LOW;
-  ADI_DELAY(TIMEOUT_LH);
+  //ADI_DELAY(TIMEOUT_LH);
 	SPI_Write(dataToSend, 5);
-	ADI_DELAY(TIMEOUT_LH);
+	//ADI_DELAY(TIMEOUT_LH);
 	ADI_PART_CS_HIGH;
 	ADI_DELAY(TIMEOUT_RESET);
 }
@@ -120,16 +120,16 @@ uint32_t AD7792_GetRegisterValue(uint8_t regAddress, uint8_t size, uint8_t modif
 	//Modifying CS by this function or external
 	if(modifyCS != 0) {
 		ADI_PART_CS_LOW;
-		ADI_DELAY(TIMEOUT_LH);
+		//ADI_DELAY(TIMEOUT_LH);
 	}
 	
 	SPI_Read(data, size);
 	//Modifying CS by this function or external
 	if(modifyCS != 0) {
-		ADI_DELAY(TIMEOUT_LH);
+		//ADI_DELAY(TIMEOUT_LH);
 		ADI_PART_CS_HIGH;
 	}
-	ADI_DELAY(TIMEOUT_PACKET);
+	//ADI_DELAY(TIMEOUT_PACKET);
 	
 	for(i = 0; i < size; i++)
     {
@@ -163,15 +163,15 @@ void AD7792_SetRegisterValue(uint8_t regAddress, uint32_t regValue, uint8_t size
   //Modifying CS by this function or external
 	if(modifyCS !=0) {
 		ADI_PART_CS_LOW;
-		ADI_DELAY(TIMEOUT_LH);
+		//ADI_DELAY(TIMEOUT_LH);
 	}	
 	SPI_Write(data, size);
 	//Modifying CS by this function or external
 	if(modifyCS != 0) {
-		ADI_DELAY(TIMEOUT_LH);
+		//ADI_DELAY(TIMEOUT_LH);
 		ADI_PART_CS_HIGH;
 	}
-	ADI_DELAY(TIMEOUT_PACKET);
+	//ADI_DELAY(TIMEOUT_PACKET);
 	
 } //END AD7792_SetRegisterValue()
 
@@ -343,15 +343,15 @@ uint32_t AD7792_SingleConversion(AD7792_HandleTypeDef *adc_instance)
     adc_instance->mode |= AD7792_MODE_SEL(AD7792_MODE_SINGLE);
 	
     ADI_PART_CS_LOW;
-	  ADI_DELAY(TIMEOUT_LH);
+	  //ADI_DELAY(TIMEOUT_LH);
 	  //AD7792_conf(adc_instance, reg_mode); // remeber about CS!
     //AD7792_SetRegisterValue(AD7792_REG_MODE, command, 2, 0);// CS is not modified by SPI read/write functions.
 	  AD7792_SetRegisterValue(AD7792_REG_MODE, adc_instance->mode, 2, 0);// CS is not modified by SPI read/write functions.
     AD7792_WaitRdyGoLow();
-	  ADI_DELAY(TIMEOUT_WRGL);
-	  ADI_DELAY(5);
+	  //ADI_DELAY(TIMEOUT_WRGL);
+	  //ADI_DELAY(5);
     regData = AD7792_GetRegisterValue(AD7792_REG_DATA, 3, 0); // CS is not modified by SPI read/write functions.
-    ADI_DELAY(TIMEOUT_LH);
+    //ADI_DELAY(TIMEOUT_LH);
 	  ADI_PART_CS_HIGH;
 	
 	  /*bad solution for problem reading 2 bytes as 3 bytes*/
@@ -374,14 +374,14 @@ uint32_t AD7792_ContinuousReadAvg(uint8_t sampleNumber) {
     
     command = AD7792_MODE_SEL(AD7792_MODE_CONT);
     ADI_PART_CS_LOW;
-	  ADI_DELAY(TIMEOUT_LH);
+	  //ADI_DELAY(TIMEOUT_LH);
     AD7792_SetRegisterValue(AD7792_REG_MODE, command, 2, 0);// CS is not modified by SPI read/write functions.
     for(count = 0;count < sampleNumber;count ++)
     {
         AD7792_WaitRdyGoLow();
         samplesAverage += AD7792_GetRegisterValue(AD7792_REG_DATA, 2, 0);  // CS is not modified by SPI read/write functions.
     }
-		ADI_DELAY(TIMEOUT_LH);
+		//ADI_DELAY(TIMEOUT_LH);
     ADI_PART_CS_HIGH;
     samplesAverage = samplesAverage / sampleNumber;
     

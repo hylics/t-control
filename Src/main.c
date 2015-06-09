@@ -89,9 +89,9 @@ int main(void)
 	*  switch Iout1 and Iout2
 	*/
 	
-	__IO uint32_t raw_conv[8] = {0};
+	//__IO uint32_t raw_conv = 0;
 	__IO uint32_t sum_conv[4] = {0};
-	__IO float32_t t_rtd[4] = {0.0f};
+	__IO float32_t t_rtd = 0.0f;
 	__IO uint32_t conf[5] = {0};
 	
   /* USER CODE END 1 */
@@ -136,42 +136,58 @@ int main(void)
 		__IO uint8_t temp_state=1;
 		while (temp_state)
     {
+			__IO uint32_t raw_conv;
+			static uint32_t filtered_conv;
 			/*reading data unstable, some times its read only first byte of data*/
-		//__IO uint32_t t_read;
-		for(uint32_t i=0; i<8; i++) {
-			//uint32_t command = AD7792_IEXCEN(AD7792_EN_IXCEN_210uA);
+		  //__IO uint32_t t_read;
+			adi1.io &= ~AD7792_IEXCDIR(0x3);
+			adi1.io |= AD7792_IEXCDIR(AD7792_DIR_IEXC1_IOUT2_IEXC2_IOUT1);
+			AD7792_conf(&adi1, reg_io); // CS is modified by SPI read/write functions.
+			raw_conv = AD7792_SingleConversion(&adi1);
 			
-			if( i % 2 ) {
-				adi1.io &= ~AD7792_IEXCDIR(0x3);
-        adi1.io |= AD7792_IEXCDIR(AD7792_DIR_IEXC1_IOUT2_IEXC2_IOUT1);
-        AD7792_conf(&adi1, reg_io); // CS is modified by SPI read/write functions.
-			}
-			else {
-				adi1.io &= ~AD7792_IEXCDIR(0x3);
-        adi1.io |= AD7792_IEXCDIR(AD7792_DIR_IEXC1_IOUT1_IEXC2_IOUT2);
-        AD7792_conf(&adi1, reg_io); // CS is modified by SPI read/write functions.
-			}
-			conf[2] = AD7792_GetRegisterValue(AD7792_REG_IO, 1, 1);
-			/*if(t_read < 0x60) {
-				while(1) {}
-				}*/
-			raw_conv[i] = AD7792_SingleConversion(&adi1);
-			HAL_Delay(200);
-		}
-		
-		/*sum of A21+A22 measurement*/
-		for( uint32_t i=0; i<4; i++) {
-			sum_conv[i] = raw_conv[2*i] + raw_conv[(2*i + 1)];
-			t_rtd[i] = rtd_get_temp(sum_conv[i], a375, r1000);
-		}
+			adi1.io &= ~AD7792_IEXCDIR(0x3);
+			adi1.io |= AD7792_IEXCDIR(AD7792_DIR_IEXC1_IOUT1_IEXC2_IOUT2);
+			AD7792_conf(&adi1, reg_io); // CS is modified by SPI read/write functions.
+			raw_conv += AD7792_SingleConversion(&adi1);
+			
+			filtered_conv = rec_filter(raw_conv, 15, 4);
+			
+			t_rtd = rtd_get_temp(filtered_conv, a375, r1000);
+			
+//		for(uint32_t i=0; i<8; i++) {
+//			//uint32_t command = AD7792_IEXCEN(AD7792_EN_IXCEN_210uA);
+//			
+//			if( i % 2 ) {
+//				adi1.io &= ~AD7792_IEXCDIR(0x3);
+//        adi1.io |= AD7792_IEXCDIR(AD7792_DIR_IEXC1_IOUT2_IEXC2_IOUT1);
+//        AD7792_conf(&adi1, reg_io); // CS is modified by SPI read/write functions.
+//			}
+//			else {
+//				adi1.io &= ~AD7792_IEXCDIR(0x3);
+//        adi1.io |= AD7792_IEXCDIR(AD7792_DIR_IEXC1_IOUT1_IEXC2_IOUT2);
+//        AD7792_conf(&adi1, reg_io); // CS is modified by SPI read/write functions.
+//			}
+//			conf[2] = AD7792_GetRegisterValue(AD7792_REG_IO, 1, 1);
+//			/*if(t_read < 0x60) {
+//				while(1) {}
+//				}*/
+//			raw_conv[i] = AD7792_SingleConversion(&adi1);
+//			HAL_Delay(200);
+//		}
+//		
+//		/*sum of A21+A22 measurement*/
+//		for( uint32_t i=0; i<4; i++) {
+//			sum_conv[i] = raw_conv[2*i] + raw_conv[(2*i + 1)];
+//			t_rtd[i] = rtd_get_temp(sum_conv[i], a375, r1000);
+//		}
 
 		HAL_Delay(200);
-		conf[0] = AD7792_GetRegisterValue(AD7792_REG_CONF, 2, 1);
+		/*conf[0] = AD7792_GetRegisterValue(AD7792_REG_CONF, 2, 1);
 		conf[1] = AD7792_GetRegisterValue(AD7792_REG_MODE, 2, 1);
 		conf[2] = AD7792_GetRegisterValue(AD7792_REG_IO, 1, 1);
 		conf[3] = AD7792_GetRegisterValue(AD7792_REG_OFFSET, 2, 1);
 		conf[4] = AD7792_GetRegisterValue(AD7792_REG_FULLSCALE, 2, 1);
-	
+	  */
   }
 		
 	
