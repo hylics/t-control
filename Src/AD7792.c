@@ -91,6 +91,9 @@ uint8_t AD7792_Init(void)
 *******************************************************************************/
 void AD7792_Reset(void)
 {
+	ADI_PART_CS_HIGH;
+	SCK_HIGH;
+	MOSI_LOW;
 	uint8_t dataToSend[6] = {0x03, 0xff, 0xff, 0xff, 0xff, 0xff};
 	
   ADI_PART_CS_LOW;
