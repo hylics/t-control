@@ -357,7 +357,7 @@
               <MiscControls>--C99</MiscControls>
               <Define>USE_HAL_DRIVER,STM32F072xB</Define>
               <Undefine></Undefine>
-              <IncludePath>..\Inc; ..\Drivers\STM32F0xx_HAL_Driver\Inc; ..\Drivers\CMSIS\Include; ..\Drivers\CMSIS\Device\ST\STM32F0xx\Include;..\Middlewares\Third_Party\FreeRTOS\Source\portable\RVDS\ARM_CM0;..\Middlewares\Third_Party\FreeRTOS\Source\include;..\Middlewares\Third_Party\FreeRTOS\Source\CMSIS_RTOS</IncludePath>
+              <IncludePath>..\Inc; ..\Drivers\STM32F0xx_HAL_Driver\Inc; ..\Drivers\CMSIS\Include; ..\Drivers\CMSIS\Device\ST\STM32F0xx\Include; ..\Middlewares\Third_Party\FreeRTOS\Source\portable\RVDS\ARM_CM0; ..\Middlewares\Third_Party\FreeRTOS\Source\include; ..\Middlewares\Third_Party\FreeRTOS\Source\CMSIS_RTOS</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -437,11 +437,6 @@
               <FileName>stm32f0xx_hal_pwr.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\Drivers\STM32F0xx_HAL_Driver\Src\stm32f0xx_hal_pwr.c</FilePath>
-            </File>
-            <File>
-              <FileName>stm32f0xx_hal_spi.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Drivers\STM32F0xx_HAL_Driver\Src\stm32f0xx_hal_spi.c</FilePath>
             </File>
             <File>
               <FileName>stm32f0xx_hal_tim_ex.c</FileName>
@@ -549,11 +544,6 @@
               <FilePath>..\Src\Communication.c</FilePath>
             </File>
             <File>
-              <FileName>spi.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Src\spi.c</FilePath>
-            </File>
-            <File>
               <FileName>rtc.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\Src\rtc.c</FilePath>
@@ -589,11 +579,6 @@
               <FilePath>..\Src\iwdg.c</FilePath>
             </File>
             <File>
-              <FileName>dma.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Src\dma.c</FilePath>
-            </File>
-            <File>
               <FileName>freertos.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\Src\freertos.c</FilePath>
@@ -612,6 +597,11 @@
               <FileName>eeprom.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\Src\eeprom.c</FilePath>
+            </File>
+            <File>
+              <FileName>soft_spi.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Src\soft_spi.c</FilePath>
             </File>
           </Files>
         </Group>

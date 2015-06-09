@@ -1,7 +1,7 @@
 /**
   ******************************************************************************
   * File Name          : main.c
-  * Date               : 26/05/2015 13:50:23
+  * Date               : 09/06/2015 10:01:22
   * Description        : Main program body
   ******************************************************************************
   *
@@ -36,11 +36,9 @@
 #include "stm32f0xx_hal.h"
 #include "cmsis_os.h"
 #include "crc.h"
-#include "dma.h"
 #include "i2c.h"
 #include "iwdg.h"
 #include "rtc.h"
-#include "spi.h"
 #include "tim.h"
 #include "usart.h"
 #include "gpio.h"
@@ -48,6 +46,7 @@
 /* USER CODE BEGIN Includes */
 #define ARM_MATH_CM0
 
+#include "soft_spi.h"
 #include "eeprom.h"
 #include "adi.h"
 #include "arm_math.h"
@@ -58,7 +57,7 @@
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
-__IO uint8_t dma_t_cplt=1, dma_r_cplt=1;
+//__IO uint8_t dma_t_cplt=1, dma_r_cplt=1;
 extern AD7792_HandleTypeDef adi1;
 extern SavedDomain_t SavedDomain;
 HAL_StatusTypeDef sts;
@@ -107,12 +106,10 @@ int main(void)
 
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
-  MX_DMA_Init();
   MX_CRC_Init();
   MX_I2C1_Init();
   MX_IWDG_Init();
   MX_RTC_Init();
-  MX_SPI2_Init();
   MX_TIM3_Init();
   MX_USART1_UART_Init();
   MX_USART2_UART_Init();
@@ -238,7 +235,7 @@ void SystemClock_Config(void)
 }
 
 /* USER CODE BEGIN 4 */
- void HAL_SPI_TxCpltCallback(SPI_HandleTypeDef *hspi) {
+ /*void HAL_SPI_TxCpltCallback(SPI_HandleTypeDef *hspi) {
 	 //change state
 	 dma_t_cplt = 0;
  }
@@ -246,7 +243,7 @@ void SystemClock_Config(void)
  void HAL_SPI_RxCpltCallback(SPI_HandleTypeDef *hspi) {
 	 //
 	 dma_r_cplt = 0;
- }
+ }*/
 /* USER CODE END 4 */
 
 #ifdef USE_FULL_ASSERT

@@ -43,7 +43,8 @@
 #define _COMMUNICATION_H_
 
 #include "gpio.h"
-#include "spi.h"
+//#include "spi.h"
+#include "soft_spi.h"
 #include "stm32f0xx_hal.h"
 //#include "AD7792.h"
 

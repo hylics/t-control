@@ -45,11 +45,11 @@
 /******************************************************************************/
 #include "Communication.h"
 
-extern __IO uint8_t dma_t_cplt, dma_r_cplt;
+//extern __IO uint8_t dma_t_cplt, dma_r_cplt;
 
 
 //#define DMA_T_CPLT while(dma_t_cplt) {}, dma_t_cplt=1
-__STATIC_INLINE void dma_tr_cplt() {
+/*__STATIC_INLINE void dma_tr_cplt() {
 	while(dma_t_cplt) {
 		;
 	}
@@ -62,7 +62,7 @@ __STATIC_INLINE void dma_rc_cplt() {
 	}
 	dma_r_cplt = 1;
 }
-
+*/
 
 /***************************************************************************//**
  * @brief Initializes the SPI communication peripheral. By default calls SPI_Init(0, 1000000, 1, 1);
@@ -86,6 +86,10 @@ __STATIC_INLINE void dma_rc_cplt() {
 uint8_t SPI_Init(uint8_t lsbFirst, uint32_t clockFreq, uint8_t clockPol, uint8_t clockPha) {
 	// Add your code here.
 	// init in file spi.c
+	//spi mode 3
+	ADI_PART_CS_HIGH;
+	SCK_HIGH;
+	MOSI_LOW;
     return(1);
 }
 
@@ -99,7 +103,7 @@ uint8_t SPI_Init(uint8_t lsbFirst, uint32_t clockFreq, uint8_t clockPol, uint8_t
  *
  * @return Number of written bytes.
 *******************************************************************************/
-uint8_t SPI_Write(uint8_t *data, uint8_t bytesNumber) {
+/*uint8_t SPI_Write(uint8_t *data, uint8_t bytesNumber) {
 	// Add your code here.
 	
 	//write to address register
@@ -115,6 +119,22 @@ uint8_t SPI_Write(uint8_t *data, uint8_t bytesNumber) {
 	dma_tr_cplt();
 
 	return(bytesNumber);
+}*/
+
+uint8_t SPI_Write(uint8_t *data, uint8_t bytesNumber) {
+	// Add your code here.
+	
+	//write to address register
+	spi_send_byte(data[0]);
+	
+	ADI_DELAY(TIMEOUT_COMMAND);
+	
+	//write to ADC
+	for(uint32_t i = 1; i < (bytesNumber+1); i++) {
+		spi_send_byte(data[i]);
+	}
+	
+	return(bytesNumber);
 }
 
 /***************************************************************************//**
@@ -129,7 +149,7 @@ uint8_t SPI_Write(uint8_t *data, uint8_t bytesNumber) {
  *
  * @return Number of written bytes.
 *******************************************************************************/
-uint8_t SPI_Read(uint8_t *data, uint8_t bytesNumber) {
+/*uint8_t SPI_Read(uint8_t *data, uint8_t bytesNumber) {
 	// Add your code here.
 	
 	//write to address register
@@ -147,4 +167,21 @@ uint8_t SPI_Read(uint8_t *data, uint8_t bytesNumber) {
 	dma_rc_cplt();
 
 	return(bytesNumber);
+}*/
+
+uint8_t SPI_Read(uint8_t *data, uint8_t bytesNumber) {
+	// Add your code here.
+	//write to address register
+	spi_send_byte(data[0]);
+	
+	ADI_DELAY(TIMEOUT_COMMAND);
+	
+	//read from ADC
+	for(uint32_t i = 0; i < bytesNumber; i++) {
+		*data = spi_read_byte();
+		data++;
+	}
+
+	return(bytesNumber);
 }
+
