@@ -75,6 +75,7 @@ uint8_t AD7792_Init(void)
     
   //SPI_Init(0, 1000000, 1, 1);
 	ADI_PART_CS_HIGH;
+	AD7792_GetRegisterValue(AD7792_REG_ID, 1, 1);
   if((AD7792_GetRegisterValue(AD7792_REG_ID, 1, 1) & 0x0F) != AD7792_ID)
 		{
 			status = 0x0;
@@ -223,7 +224,7 @@ ADI_StatusTypeDef AD7792_conf(AD7792_HandleTypeDef *adc_instance, op_mode_TypeDe
 		AD7792_SetRegisterValue(AD7792_REG_IO, adc_instance->io, 1, 1);
 	}
 	
-	/*// REG OFFSET
+	// REG OFFSET
 	if(type==reg_all || type==reg_offset) {
 		if(channel<=3) {
 			AD7792_SetRegisterValue(AD7792_REG_OFFSET, adc_instance->offset[channel], 2, 1);
@@ -237,7 +238,7 @@ ADI_StatusTypeDef AD7792_conf(AD7792_HandleTypeDef *adc_instance, op_mode_TypeDe
 		  AD7792_SetRegisterValue(AD7792_REG_FULLSCALE, adc_instance->fullscale[channel], 2, 1);
 		}
 		else return ADI_ERROR;
-	}*/
+	}
 	
 	adc_instance->lock = ADI_UNLOCKED;
 	adc_instance->state = ADI_OK;
