@@ -242,7 +242,7 @@ void AD7792_Reset(void);
 void AD7792_SetChannel(uint32_t channel);
 
 /* Performs the given calibration to the specified channel. */
-void AD7792_Calibrate(uint8_t mode, uint8_t channel);
+void AD7792_Calibrate(AD7792_HandleTypeDef *adc_instance, uint8_t mode, uint8_t channel);
 
 /* Returns the result of a single conversion. */
 uint32_t AD7792_SingleConversion(AD7792_HandleTypeDef *adc_instance);

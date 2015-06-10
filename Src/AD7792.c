@@ -314,19 +314,16 @@ void AD7792_SetChannel(uint32_t channel) {
  *
  * @return none.
 *******************************************************************************/
-void AD7792_Calibrate(uint8_t mode, uint8_t channel) {
-    unsigned short oldRegValue = 0x0;
-    unsigned short newRegValue = 0x0;
-    
-    AD7792_SetChannel(channel);
-    oldRegValue &= AD7792_GetRegisterValue(AD7792_REG_MODE, 2, 1); // CS is modified by SPI read/write functions.
-    oldRegValue &= ~AD7792_MODE_SEL(0x7);
-    newRegValue = oldRegValue | AD7792_MODE_SEL(mode);
-    ADI_PART_CS_LOW; 
-    AD7792_SetRegisterValue(AD7792_REG_MODE, newRegValue, 2, 0); // CS is not modified by SPI read/write functions.
-    AD7792_WaitRdyGoLow();
-    ADI_PART_CS_HIGH;
-    
+void AD7792_Calibrate(AD7792_HandleTypeDef *adc_instance, uint8_t mode, uint8_t channel) {
+	adc_instance->mode &= !AD7792_MODE_SEL(mode);
+	adc_instance->mode |= AD7792_MODE_SEL(mode);
+	adc_instance->conf &= ~AD7792_CONF_CHAN(0xFF);
+	adc_instance->conf |= AD7792_CONF_CHAN(channel);
+	AD7792_conf(adc_instance, reg_conf);
+  ADI_PART_CS_LOW; 
+  AD7792_SetRegisterValue(AD7792_REG_MODE, adc_instance->mode, 2, 0); // CS is not modified by SPI read/write functions.
+  AD7792_WaitRdyGoLow();
+  ADI_PART_CS_HIGH;
 }
 
 /***************************************************************************//**

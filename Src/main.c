@@ -91,7 +91,8 @@ int main(void)
 	
 	//__IO uint32_t raw_conv = 0;
 	__IO uint32_t sum_conv[4] = {0};
-	__IO float32_t t_rtd = 0.0f;
+	__IO uint32_t raw_conv = 0;
+	__IO static float32_t t_rtd = 0.0f;
 	__IO uint32_t conf[5] = {0};
 	
   /* USER CODE END 1 */
@@ -136,7 +137,6 @@ int main(void)
 		__IO uint8_t temp_state=1;
 		while (temp_state)
     {
-			__IO uint32_t raw_conv;
 			static uint32_t filtered_conv;
 			/*reading data unstable, some times its read only first byte of data*/
 		  //__IO uint32_t t_read;
@@ -150,9 +150,13 @@ int main(void)
 			AD7792_conf(&adi1, reg_io); // CS is modified by SPI read/write functions.
 			raw_conv += AD7792_SingleConversion(&adi1);
 			
-			filtered_conv = rec_filter(raw_conv, 15, 4);
+			filtered_conv = rec_filter(raw_conv, 55, 8); // 45=30s, 55=20s
 			
 			t_rtd = rtd_get_temp(filtered_conv, a375, r1000);
+			
+			//AD7792_Calibrate(&adi1, AD7792_MODE_CAL_SYS_ZERO, AD7792_CH_AIN2P_AIN2M);
+			conf[4] = AD7792_GetRegisterValue(AD7792_REG_FULLSCALE, 2, 1);
+			
 			
 //		for(uint32_t i=0; i<8; i++) {
 //			//uint32_t command = AD7792_IEXCEN(AD7792_EN_IXCEN_210uA);
