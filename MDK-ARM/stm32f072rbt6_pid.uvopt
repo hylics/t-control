@@ -143,7 +143,7 @@
         <SetRegEntry>
           <Number>0</Number>
           <Key>ST-LINKIII-KEIL_SWO</Key>
-          <Name>-U-O142 -O2254 -S3 -C0 -N00("ARM CoreSight SW-DP") -D00(0BB11477) -L00(0) -TO18 -TC10000000 -TP21 -TDS8007 -TDT0 -TDC1F -TIEFFFFFFFF -TIP8 -FO7 -FD20000000 -FC800 -FN1 -FF0STM32F0xx_128 -FS08000000 -FL020000</Name>
+          <Name>-U-O142 -O2254 -S3 -C-1 -TO18 -TC10000000 -TP21 -TDS8007 -TDT0 -TDC1F -TIEFFFFFFFF -TIP8 -FO7 -FD20000000 -FC800 -FN1 -FF0STM32F0xx_128 -FS08000000 -FL020000 </Name>
         </SetRegEntry>
       </TargetDriverDllRegistry>
       <Breakpoint>
@@ -364,8 +364,8 @@
       <Focus>0</Focus>
       <ColumnNumber>0</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>0</TopLine>
-      <CurrentLine>0</CurrentLine>
+      <TopLine>883</TopLine>
+      <CurrentLine>896</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>..\Drivers\STM32F0xx_HAL_Driver\Src\stm32f0xx_hal_tim_ex.c</PathWithFileName>
       <FilenameWithoutPath>stm32f0xx_hal_tim_ex.c</FilenameWithoutPath>
@@ -490,10 +490,10 @@
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <Focus>0</Focus>
-      <ColumnNumber>0</ColumnNumber>
+      <ColumnNumber>1</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>0</TopLine>
-      <CurrentLine>0</CurrentLine>
+      <TopLine>1053</TopLine>
+      <CurrentLine>1066</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>..\Drivers\STM32F0xx_HAL_Driver\Src\stm32f0xx_hal_tim.c</PathWithFileName>
       <FilenameWithoutPath>stm32f0xx_hal_tim.c</FilenameWithoutPath>
@@ -608,12 +608,12 @@
       <GroupNumber>3</GroupNumber>
       <FileNumber>23</FileNumber>
       <FileType>1</FileType>
-      <tvExp>1</tvExp>
+      <tvExp>0</tvExp>
       <Focus>0</Focus>
-      <ColumnNumber>0</ColumnNumber>
+      <ColumnNumber>7</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>182</TopLine>
-      <CurrentLine>188</CurrentLine>
+      <TopLine>90</TopLine>
+      <CurrentLine>114</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>..\Src\main.c</PathWithFileName>
       <FilenameWithoutPath>main.c</FilenameWithoutPath>
@@ -658,10 +658,10 @@
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <Focus>0</Focus>
-      <ColumnNumber>44</ColumnNumber>
+      <ColumnNumber>0</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>302</TopLine>
-      <CurrentLine>319</CurrentLine>
+      <TopLine>186</TopLine>
+      <CurrentLine>209</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>..\Src\AD7792.c</PathWithFileName>
       <FilenameWithoutPath>AD7792.c</FilenameWithoutPath>
@@ -756,8 +756,8 @@
       <Focus>0</Focus>
       <ColumnNumber>0</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>0</TopLine>
-      <CurrentLine>0</CurrentLine>
+      <TopLine>45</TopLine>
+      <CurrentLine>48</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>..\Src\tim.c</PathWithFileName>
       <FilenameWithoutPath>tim.c</FilenameWithoutPath>
@@ -802,10 +802,10 @@
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <Focus>0</Focus>
-      <ColumnNumber>0</ColumnNumber>
+      <ColumnNumber>13</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>0</TopLine>
-      <CurrentLine>0</CurrentLine>
+      <TopLine>99</TopLine>
+      <CurrentLine>36</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>..\Src\freertos.c</PathWithFileName>
       <FilenameWithoutPath>freertos.c</FilenameWithoutPath>
@@ -852,8 +852,8 @@
       <Focus>0</Focus>
       <ColumnNumber>0</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>0</TopLine>
-      <CurrentLine>0</CurrentLine>
+      <TopLine>47</TopLine>
+      <CurrentLine>66</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>..\Src\eeprom.c</PathWithFileName>
       <FilenameWithoutPath>eeprom.c</FilenameWithoutPath>
@@ -868,8 +868,8 @@
       <Focus>0</Focus>
       <ColumnNumber>0</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>14</TopLine>
-      <CurrentLine>18</CurrentLine>
+      <TopLine>1</TopLine>
+      <CurrentLine>1</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>..\Src\soft_spi.c</PathWithFileName>
       <FilenameWithoutPath>soft_spi.c</FilenameWithoutPath>
@@ -980,8 +980,8 @@
       <Focus>0</Focus>
       <ColumnNumber>0</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>0</TopLine>
-      <CurrentLine>0</CurrentLine>
+      <TopLine>167</TopLine>
+      <CurrentLine>180</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>..\Middlewares\Third_Party\FreeRTOS\Source\CMSIS_RTOS\cmsis_os.c</PathWithFileName>
       <FilenameWithoutPath>cmsis_os.c</FilenameWithoutPath>

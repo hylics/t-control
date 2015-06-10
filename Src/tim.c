@@ -1,7 +1,7 @@
 /**
   ******************************************************************************
   * File Name          : TIM.c
-  * Date               : 09/06/2015 10:01:21
+  * Date               : 10/06/2015 20:51:29
   * Description        : This file provides code for the configuration
   *                      of the TIM instances.
   ******************************************************************************
@@ -51,9 +51,9 @@ void MX_TIM3_Init(void)
   TIM_OC_InitTypeDef sConfigOC;
 
   htim3.Instance = TIM3;
-  htim3.Init.Prescaler = 0;
+  htim3.Init.Prescaler = 48000;
   htim3.Init.CounterMode = TIM_COUNTERMODE_UP;
-  htim3.Init.Period = 0;
+  htim3.Init.Period = 20000;
   htim3.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
   HAL_TIM_PWM_Init(&htim3);
 

@@ -1,8 +1,8 @@
 #MicroXplorer Configuration settings - do not modify
-#Tue Jun 09 10:01:19 EEST 2015
+#Wed Jun 10 20:51:21 EEST 2015
 FREERTOS.INCLUDE_vTaskDelayUntil=1
 FREERTOS.IPParameters=INCLUDE_vTaskDelayUntil,Tasks01
-FREERTOS.Tasks01=defaultTask,0,128,StartDefaultTask
+FREERTOS.Tasks01=adcTask,2,128,StartAdcTask;pidTask,1,128,StartPidTask;LcdTask,0,128,StartLcdTask
 File.Version=5
 KeepUserPlacement=true
 Mcu.Family=STM32F0
@@ -218,7 +218,9 @@ SH.S_TIM3_CH4.ConfNb=1
 TIM3.Channel-PWM\ Generation2\ CH2=TIM_CHANNEL_2
 TIM3.Channel-PWM\ Generation3\ CH3=TIM_CHANNEL_3
 TIM3.Channel-PWM\ Generation4\ CH4=TIM_CHANNEL_4
-TIM3.IPParameters=Channel-PWM Generation2 CH2,Channel-PWM Generation3 CH3,Channel-PWM Generation4 CH4
+TIM3.IPParameters=Prescaler,Period,Channel-PWM Generation2 CH2,Channel-PWM Generation3 CH3,Channel-PWM Generation4 CH4
+TIM3.Period=20000
+TIM3.Prescaler=48000
 VP_CRC_VS_CRC.Mode=CRC_Activate
 VP_CRC_VS_CRC.Signal=CRC_VS_CRC
 VP_FREERTOS_VS_ENABLE.Mode=Enabled

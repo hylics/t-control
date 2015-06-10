@@ -1,7 +1,7 @@
 /**
   ******************************************************************************
   * File Name          : freertos.c
-  * Date               : 09/06/2015 10:01:20
+  * Date               : 10/06/2015 20:51:26
   * Description        : Code for freertos applications
   ******************************************************************************
   *
@@ -42,14 +42,18 @@
 /* USER CODE END Includes */
 
 /* Variables -----------------------------------------------------------------*/
-osThreadId defaultTaskHandle;
+osThreadId adcTaskHandle;
+osThreadId pidTaskHandle;
+osThreadId LcdTaskHandle;
 
 /* USER CODE BEGIN Variables */
 
 /* USER CODE END Variables */
 
 /* Function prototypes -------------------------------------------------------*/
-void StartDefaultTask(void const * argument);
+void StartAdcTask(void const * argument);
+void StartPidTask(void const * argument);
+void StartLcdTask(void const * argument);
 
 void MX_FREERTOS_Init(void); /* (MISRA C 2004 rule 8.1) */
 
@@ -78,9 +82,17 @@ void MX_FREERTOS_Init(void) {
   /* USER CODE END RTOS_TIMERS */
 
   /* Create the thread(s) */
-  /* definition and creation of defaultTask */
-  osThreadDef(defaultTask, StartDefaultTask, osPriorityNormal, 0, 128);
-  defaultTaskHandle = osThreadCreate(osThread(defaultTask), NULL);
+  /* definition and creation of adcTask */
+  osThreadDef(adcTask, StartAdcTask, osPriorityHigh, 0, 128);
+  adcTaskHandle = osThreadCreate(osThread(adcTask), NULL);
+
+  /* definition and creation of pidTask */
+  osThreadDef(pidTask, StartPidTask, osPriorityAboveNormal, 0, 128);
+  pidTaskHandle = osThreadCreate(osThread(pidTask), NULL);
+
+  /* definition and creation of LcdTask */
+  osThreadDef(LcdTask, StartLcdTask, osPriorityNormal, 0, 128);
+  LcdTaskHandle = osThreadCreate(osThread(LcdTask), NULL);
 
   /* USER CODE BEGIN RTOS_THREADS */
   /* add threads, ... */
@@ -91,17 +103,41 @@ void MX_FREERTOS_Init(void) {
   /* USER CODE END RTOS_QUEUES */
 }
 
-/* StartDefaultTask function */
-void StartDefaultTask(void const * argument)
+/* StartAdcTask function */
+void StartAdcTask(void const * argument)
 {
 
-  /* USER CODE BEGIN StartDefaultTask */
+  /* USER CODE BEGIN StartAdcTask */
   /* Infinite loop */
   for(;;)
   {
     osDelay(1);
   }
-  /* USER CODE END StartDefaultTask */
+  /* USER CODE END StartAdcTask */
+}
+
+/* StartPidTask function */
+void StartPidTask(void const * argument)
+{
+  /* USER CODE BEGIN StartPidTask */
+  /* Infinite loop */
+  for(;;)
+  {
+    osDelay(1);
+  }
+  /* USER CODE END StartPidTask */
+}
+
+/* StartLcdTask function */
+void StartLcdTask(void const * argument)
+{
+  /* USER CODE BEGIN StartLcdTask */
+  /* Infinite loop */
+  for(;;)
+  {
+    osDelay(1);
+  }
+  /* USER CODE END StartLcdTask */
 }
 
 /* USER CODE BEGIN Application */
