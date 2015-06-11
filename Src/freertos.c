@@ -52,6 +52,7 @@ osMutexId Mutex_T_Handle;
 extern AD7792_HandleTypeDef adi1;
 extern SavedDomain_t SavedDomain;
 __IO static Temperature_t temp_handle = {0.0f};
+arm_pid_instance_f32 pid_instance_1;
 
 //__IO static float32_t t_rtd = 0.0f;
 
@@ -65,7 +66,7 @@ void StartLcdTask(void const * argument);
 void MX_FREERTOS_Init(void); /* (MISRA C 2004 rule 8.1) */
 
 /* USER CODE BEGIN FunctionPrototypes */
-
+extern void set_output(float32_t out);
 /* USER CODE END FunctionPrototypes */
 /* Hook prototypes */
 
@@ -122,7 +123,7 @@ void StartAdcTask(void const * argument)
   /* USER CODE BEGIN StartAdcTask */
 	TickType_t LastWakeTime;
 	const uint32_t adc_delay = 1000; //milliseconds
-	const uint32_t mutex_T_wait = 2000; //milliseconds
+	const uint32_t mutex_T_wait = 500; //milliseconds
 	static uint32_t filt_conv_rtd;
 	
 	LastWakeTime = xTaskGetTickCount();
@@ -162,6 +163,7 @@ void StartAdcTask(void const * argument)
 		
 		osDelayUntil((uint32_t)&LastWakeTime, adc_delay);
   }
+	vTaskDelete(NULL);
   /* USER CODE END StartAdcTask */
 }
 
@@ -169,11 +171,42 @@ void StartAdcTask(void const * argument)
 void StartPidTask(void const * argument)
 {
   /* USER CODE BEGIN StartPidTask */
+	TickType_t LastWakeTime;
+	const uint32_t pid_delay = 1000; //milliseconds
+	const uint32_t mutex_T_wait = 2000; //milliseconds
+	pid_instance_1.Kp = SavedDomain.Kp;
+	pid_instance_1.Ki = SavedDomain.Ki;
+	pid_instance_1.Kd = SavedDomain.Kd;
+	
+	arm_pid_init_f32(&pid_instance_1, 1);
+	
+	
   /* Infinite loop */
   for(;;)
   {
-    osDelay(1);
+		float32_t delta_t = 0.0f, out_f32 = 0.0f;
+		osStatus status = osMutexWait(Mutex_T_Handle, mutex_T_wait);
+		
+		if(status == osOK) {
+			//calculate difference of setpoint T and measured T
+			if(SavedDomain.input == in_rtd) {
+				delta_t = temp_handle.setpoint - temp_handle.rtd;
+			}
+			else {
+				delta_t = temp_handle.setpoint - temp_handle.thermocouple;
+			}//SavedDomain.input
+			osMutexRelease(Mutex_T_Handle);
+		}//status
+		else {
+			//do something when error occuring
+		}
+		
+		out_f32 = arm_pid_f32(&pid_instance_1, delta_t);
+		set_output(out_f32);
+		
+    osDelayUntil((uint32_t)&LastWakeTime, pid_delay);
   }
+	vTaskDelete(NULL);
   /* USER CODE END StartPidTask */
 }
 

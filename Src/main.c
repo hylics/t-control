@@ -62,9 +62,29 @@ void SystemClock_Config(void);
 void MX_FREERTOS_Init(void);
 
 /* USER CODE BEGIN PFP */
-
+void set_output(float32_t out);
 /* USER CODE END PFP */
-
+void set_output(float32_t out) {
+	//use mod
+	// tc1 6s, 6000 ms, 600 halfcycles 10ms cycle
+	// tc2 60s, 10*tc1
+	uint16_t tmp = (uint16_t)(out / SavedDomain.pwm_scale_f);
+	
+	static uint16_t counter = 0;
+	uint16_t pwm_val;
+	
+	if(counter++ == 0) {
+		pwm_val = tmp + 10*(tmp%10);
+	}
+	else {
+		pwm_val = tmp;
+	}
+	if(counter > 9) {
+		counter = 0;
+	}
+	
+	
+}
 /* USER CODE BEGIN 0 */
 
 /* USER CODE END 0 */

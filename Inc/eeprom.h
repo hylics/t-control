@@ -77,6 +77,7 @@
 /* Exported types ------------------------------------------------------------*/
 typedef float float32_t;
 typedef double float64_t;
+typedef enum {in_rtd, in_thermocouple} input_t;
 
 typedef struct __SavedDomain_t{
 	uint16_t header;
@@ -87,6 +88,7 @@ typedef struct __SavedDomain_t{
 	float32_t Kd;
 	uint16_t pwm_period;
 	float32_t pwm_scale_f;
+	input_t input; // define used temperature sensor
 } SavedDomain_t;
 
 /* Exported macro ------------------------------------------------------------*/
