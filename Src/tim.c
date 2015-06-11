@@ -1,7 +1,7 @@
 /**
   ******************************************************************************
   * File Name          : TIM.c
-  * Date               : 10/06/2015 20:51:29
+  * Date               : 11/06/2015 13:05:18
   * Description        : This file provides code for the configuration
   *                      of the TIM instances.
   ******************************************************************************
@@ -39,7 +39,9 @@
 #include "gpio.h"
 
 /* USER CODE BEGIN 0 */
-
+#include "eeprom.h"
+extern SavedDomain_t SavedDomain;
+/* remember! htim3.Init.Period = SavedDomain.pwm_period;*/
 /* USER CODE END 0 */
 
 TIM_HandleTypeDef htim3;
@@ -53,7 +55,7 @@ void MX_TIM3_Init(void)
   htim3.Instance = TIM3;
   htim3.Init.Prescaler = 48000;
   htim3.Init.CounterMode = TIM_COUNTERMODE_UP;
-  htim3.Init.Period = 20000;
+  htim3.Init.Period = SavedDomain.pwm_period;
   htim3.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
   HAL_TIM_PWM_Init(&htim3);
 

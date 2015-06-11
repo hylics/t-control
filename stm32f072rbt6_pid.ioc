@@ -1,7 +1,8 @@
 #MicroXplorer Configuration settings - do not modify
-#Wed Jun 10 20:51:21 EEST 2015
+#Thu Jun 11 15:02:05 EEST 2015
 FREERTOS.INCLUDE_vTaskDelayUntil=1
-FREERTOS.IPParameters=INCLUDE_vTaskDelayUntil,Tasks01
+FREERTOS.IPParameters=INCLUDE_vTaskDelayUntil,Tasks01,Mutexes01
+FREERTOS.Mutexes01=Mutex_T_
 FREERTOS.Tasks01=adcTask,2,128,StartAdcTask;pidTask,1,128,StartPidTask;LcdTask,0,128,StartLcdTask
 File.Version=5
 KeepUserPlacement=true
@@ -191,13 +192,14 @@ RCC.HCLKFreq_Value=48000000
 RCC.HSICECFreq_Value=32786.88524590164
 RCC.I2C1Freq_Value=8000000
 RCC.I2SFreq_Value=48000000
-RCC.IPParameters=PLLSource,PLLMUL,APB1TimFreq_Value,I2SFreq_Value,FCLKCortexFreq_Value,HSICECFreq_Value,AHBFreq_Value,PLLSourceVirtual,SYSCLKFreq_VALUE,USART1Freq_Value,SYSCLKSource,MCOFreq_Value,PLLCLKFreq_Value,VCOOutput2Freq_Value,RTCFreq_Value,PLLMCOFreq_Value,FamilyName,USART2Freq_Value,HCLKFreq_Value,CECFreq_Value,TimSysFreq_Value,I2C1Freq_Value,APB1Freq_Value
+RCC.IPParameters=PLLSource,PLLMUL,APB1TimFreq_Value,PLLSourceVirtualString,I2SFreq_Value,FCLKCortexFreq_Value,HSICECFreq_Value,AHBFreq_Value,PLLSourceVirtual,SYSCLKFreq_VALUE,USART1Freq_Value,SYSCLKSource,MCOFreq_Value,PLLCLKFreq_Value,VCOOutput2Freq_Value,RTCFreq_Value,PLLMCOFreq_Value,FamilyName,USART2Freq_Value,HCLKFreq_Value,CECFreq_Value,TimSysFreq_Value,I2C1Freq_Value,APB1Freq_Value
 RCC.MCOFreq_Value=48000000
 RCC.PLLCLKFreq_Value=288000000
 RCC.PLLMCOFreq_Value=288000000
 RCC.PLLMUL=RCC_PLL_MUL6
 RCC.PLLSource=RCC_PLLSOURCE_HSI48
 RCC.PLLSourceVirtual=RCC_PLLSOURCE_HSI48
+RCC.PLLSourceVirtualString=RCC_PLLSOURCE_HSI48
 RCC.RTCFreq_Value=40000
 RCC.SYSCLKFreq_VALUE=48000000
 RCC.SYSCLKSource=RCC_SYSCLKSOURCE_HSI48

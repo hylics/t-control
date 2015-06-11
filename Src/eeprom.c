@@ -46,23 +46,26 @@ should be within the RAM
 
 /* Includes ------------------------------------------------------------------*/
 #include "eeprom.h"
-
+#include "float.h"
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
 #define FLASH_TIMEOUT  200
+#define PWM_PERIOD 20000
 /* Private macro -------------------------------------------------------------*/
 /* Extern variables ---------------------------------------------------------*/
 //extern FLASH_ProcessTypeDef pFlash;
 
 /* Global variable used to store variable value in read sequence */
 //const SavedDomain_t SavedDomain __attribute__ ((at(PAGE0_BASE_ADDRESS))) = {};
+
 const SavedDomain_t SavedDomain __attribute__ ((aligned(1024))) = {
 	0xABAB,                 //header
   0x8000, 0x8000, 0x8000, //ADC offset
   0x54A3, 0x54A3, 0x54A3, //ADC fullscale
-  0.0f, 0.0f, 0.0f
-};      //PID coeff KP Ki Kd
-
+  0.0f, 0.0f, 0.0f,       //PID coeff KP Ki Kd
+	PWM_PERIOD,             // pwm Init.Period ms
+  FLT_MAX/(float32_t)PWM_PERIOD //scaling factor
+};
 
 /* Virtual address defined by the user: 0xFFFF value is prohibited */
 //extern uint16_t VirtAddVarTab[NB_OF_VAR];

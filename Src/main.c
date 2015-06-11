@@ -1,7 +1,7 @@
 /**
   ******************************************************************************
   * File Name          : main.c
-  * Date               : 10/06/2015 20:51:32
+  * Date               : 11/06/2015 13:05:21
   * Description        : Main program body
   ******************************************************************************
   *
@@ -44,13 +44,7 @@
 #include "gpio.h"
 
 /* USER CODE BEGIN Includes */
-#define ARM_MATH_CM0
-
-#include "soft_spi.h"
-#include "eeprom.h"
-#include "adi.h"
-#include "arm_math.h"
-#include "rtd_linearization.h"
+#include "main.h"
 
 /* USER CODE END Includes */
 
@@ -60,7 +54,7 @@
 //__IO uint8_t dma_t_cplt=1, dma_r_cplt=1;
 extern AD7792_HandleTypeDef adi1;
 extern SavedDomain_t SavedDomain;
-HAL_StatusTypeDef sts;
+//HAL_StatusTypeDef sts;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -89,10 +83,6 @@ int main(void)
 	*  switch Iout1 and Iout2
 	*/
 	
-	//__IO uint32_t raw_conv = 0;
-	__IO uint32_t sum_conv[4] = {0};
-	__IO uint32_t raw_conv = 0;
-	__IO static float32_t t_rtd = 0.0f;
 	__IO uint32_t conf[5] = {0};
 	
   /* USER CODE END 1 */
@@ -134,67 +124,9 @@ int main(void)
 		conf[3] = AD7792_GetRegisterValue(AD7792_REG_OFFSET, 2, 1);
 		conf[4] = AD7792_GetRegisterValue(AD7792_REG_FULLSCALE, 2, 1);
 		
-		__IO uint8_t temp_state=1;
-		while (temp_state)
-    {
-			static uint32_t filtered_conv;
-			/*reading data unstable, some times its read only first byte of data*/
-		  //__IO uint32_t t_read;
-			adi1.io &= ~AD7792_IEXCDIR(0x3);
-			adi1.io |= AD7792_IEXCDIR(AD7792_DIR_IEXC1_IOUT2_IEXC2_IOUT1);
-			AD7792_conf(&adi1, reg_io); // CS is modified by SPI read/write functions.
-			raw_conv = AD7792_SingleConversion(&adi1);
-			
-			adi1.io &= ~AD7792_IEXCDIR(0x3);
-			adi1.io |= AD7792_IEXCDIR(AD7792_DIR_IEXC1_IOUT1_IEXC2_IOUT2);
-			AD7792_conf(&adi1, reg_io); // CS is modified by SPI read/write functions.
-			raw_conv += AD7792_SingleConversion(&adi1);
-			
-			filtered_conv = rec_filter(raw_conv, 55, 8); // 45=30s, 55=20s
-			
-			t_rtd = rtd_get_temp(filtered_conv, a375, r1000);
-			
-			//AD7792_Calibrate(&adi1, AD7792_MODE_CAL_SYS_ZERO, AD7792_CH_AIN2P_AIN2M);
-			conf[4] = AD7792_GetRegisterValue(AD7792_REG_FULLSCALE, 2, 1);
-			
-			
-//		for(uint32_t i=0; i<8; i++) {
-//			//uint32_t command = AD7792_IEXCEN(AD7792_EN_IXCEN_210uA);
-//			
-//			if( i % 2 ) {
-//				adi1.io &= ~AD7792_IEXCDIR(0x3);
-//        adi1.io |= AD7792_IEXCDIR(AD7792_DIR_IEXC1_IOUT2_IEXC2_IOUT1);
-//        AD7792_conf(&adi1, reg_io); // CS is modified by SPI read/write functions.
-//			}
-//			else {
-//				adi1.io &= ~AD7792_IEXCDIR(0x3);
-//        adi1.io |= AD7792_IEXCDIR(AD7792_DIR_IEXC1_IOUT1_IEXC2_IOUT2);
-//        AD7792_conf(&adi1, reg_io); // CS is modified by SPI read/write functions.
-//			}
-//			conf[2] = AD7792_GetRegisterValue(AD7792_REG_IO, 1, 1);
-//			/*if(t_read < 0x60) {
-//				while(1) {}
-//				}*/
-//			raw_conv[i] = AD7792_SingleConversion(&adi1);
-//			HAL_Delay(200);
-//		}
-//		
-//		/*sum of A21+A22 measurement*/
-//		for( uint32_t i=0; i<4; i++) {
-//			sum_conv[i] = raw_conv[2*i] + raw_conv[(2*i + 1)];
-//			t_rtd[i] = rtd_get_temp(sum_conv[i], a375, r1000);
-//		}
-
-		HAL_Delay(200);
-		/*conf[0] = AD7792_GetRegisterValue(AD7792_REG_CONF, 2, 1);
-		conf[1] = AD7792_GetRegisterValue(AD7792_REG_MODE, 2, 1);
-		conf[2] = AD7792_GetRegisterValue(AD7792_REG_IO, 1, 1);
-		conf[3] = AD7792_GetRegisterValue(AD7792_REG_OFFSET, 2, 1);
+		//AD7792_Calibrate(&adi1, AD7792_MODE_CAL_SYS_ZERO, AD7792_CH_AIN2P_AIN2M);
 		conf[4] = AD7792_GetRegisterValue(AD7792_REG_FULLSCALE, 2, 1);
-	  */
-  }
-		
-	
+			
   /* USER CODE END 2 */
 
   /* Call init function for freertos objects (in freertos.c) */

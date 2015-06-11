@@ -1,7 +1,7 @@
 /**
   ******************************************************************************
   * File Name          : freertos.c
-  * Date               : 10/06/2015 20:51:26
+  * Date               : 11/06/2015 13:05:17
   * Description        : Code for freertos applications
   ******************************************************************************
   *
@@ -37,7 +37,8 @@
 #include "task.h"
 #include "cmsis_os.h"
 
-/* USER CODE BEGIN Includes */     
+/* USER CODE BEGIN Includes */
+#include "main.h"
 
 /* USER CODE END Includes */
 
@@ -45,8 +46,14 @@
 osThreadId adcTaskHandle;
 osThreadId pidTaskHandle;
 osThreadId LcdTaskHandle;
+osMutexId Mutex_T_Handle;
 
 /* USER CODE BEGIN Variables */
+extern AD7792_HandleTypeDef adi1;
+extern SavedDomain_t SavedDomain;
+__IO static Temperature_t temp_handle = {0.0f};
+
+//__IO static float32_t t_rtd = 0.0f;
 
 /* USER CODE END Variables */
 
@@ -68,6 +75,11 @@ void MX_FREERTOS_Init(void) {
   /* USER CODE BEGIN Init */
        
   /* USER CODE END Init */
+
+  /* Create the mutex(es) */
+  /* definition and creation of Mutex_T_upd */
+  osMutexDef(Mutex_T_);
+  Mutex_T_Handle = osMutexCreate(osMutex(Mutex_T_));
 
   /* USER CODE BEGIN RTOS_MUTEX */
   /* add mutexes, ... */
@@ -108,10 +120,47 @@ void StartAdcTask(void const * argument)
 {
 
   /* USER CODE BEGIN StartAdcTask */
+	TickType_t LastWakeTime;
+	const uint32_t adc_delay = 1000; //milliseconds
+	const uint32_t mutex_T_wait = 2000; //milliseconds
+	static uint32_t filt_conv_rtd;
+	
+	LastWakeTime = xTaskGetTickCount();
   /* Infinite loop */
   for(;;)
   {
-    osDelay(1);
+		/*reading data unstable, some times its read only first byte of data*/
+		__IO uint32_t raw_conv_rtd = 0;
+		
+		adi1.io &= ~AD7792_IEXCDIR(0x3);
+		adi1.io |= AD7792_IEXCDIR(AD7792_DIR_IEXC1_IOUT2_IEXC2_IOUT1);
+		
+		taskENTER_CRITICAL();
+		AD7792_conf(&adi1, reg_io); // CS is modified by SPI read/write functions.
+		raw_conv_rtd = AD7792_SingleConversion(&adi1);
+		taskEXIT_CRITICAL();
+		
+		adi1.io &= ~AD7792_IEXCDIR(0x3);
+		adi1.io |= AD7792_IEXCDIR(AD7792_DIR_IEXC1_IOUT1_IEXC2_IOUT2);
+		
+		taskENTER_CRITICAL();
+		AD7792_conf(&adi1, reg_io); // CS is modified by SPI read/write functions.
+		raw_conv_rtd += AD7792_SingleConversion(&adi1);
+		taskEXIT_CRITICAL();
+		
+		filt_conv_rtd = rec_filter(raw_conv_rtd, 55, 8); // 45=30s, 55=20s
+		
+		//access through semaphores to temperature state;
+		osStatus status = osMutexWait(Mutex_T_Handle, mutex_T_wait);
+		if(status == osOK) {
+			temp_handle.rtd = rtd_get_temp(filt_conv_rtd, a375, r1000);
+			osMutexRelease(Mutex_T_Handle);
+		}
+		else {
+			//do something when error occuring
+		}
+		
+		osDelayUntil((uint32_t)&LastWakeTime, adc_delay);
   }
   /* USER CODE END StartAdcTask */
 }

@@ -182,6 +182,7 @@ void AD7792_SetRegisterValue(uint8_t regAddress, uint32_t regValue, uint8_t size
 *******************************************************************************/
 static void AD7792_WaitRdyGoLow(void) {
     while( AD7792_RDY_STATE ) {
+			//add osDelay() ???
       ;
     }
 }

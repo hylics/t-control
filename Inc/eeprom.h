@@ -85,6 +85,8 @@ typedef struct __SavedDomain_t{
 	float32_t Kp;
 	float32_t Ki;
 	float32_t Kd;
+	uint16_t pwm_period;
+	float32_t pwm_scale_f;
 } SavedDomain_t;
 
 /* Exported macro ------------------------------------------------------------*/
