@@ -7,9 +7,12 @@
 #ifndef __MAIN_H__
 #define __MAIN_H__
 
+#define PID_MAX_FLT 6000.0f
+#define PID_MIN_FLT +0.0f
+
 #define ARM_MATH_CM0
 #include "float.h"
-#include "fenv.h"
+//#include "fenv.h"
 #include "soft_spi.h"
 #include "eeprom.h"
 #include "adi.h"

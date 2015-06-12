@@ -208,10 +208,20 @@ void StartPidTask(void const * argument)
 			//do something when error occuring
 		}
 		
-		// undreflow float
 		out_f32 = arm_pid_f32(&pid_instance_1, delta_t);
-		set_output(out_f32);
-		out_tr = out_f32;
+		
+		if(pid_instance_1.state[2] > PID_MAX_FLT) {
+			//overflow protection
+			pid_instance_1.state[2] = PID_MAX_FLT;
+		}
+		else if(pid_instance_1.state[2] < PID_MIN_FLT) {
+			//underflow protection
+			pid_instance_1.state[2] = PID_MIN_FLT;
+		}
+		
+		set_output(pid_instance_1.state[2]);
+		//set_output(out_f32);
+		out_tr = pid_instance_1.state[2];
 		
 		osDelay(1000);
     //osDelayUntil((uint32_t)&LastWakeTime, pid_delay);
