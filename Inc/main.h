@@ -9,6 +9,7 @@
 
 #define ARM_MATH_CM0
 #include "float.h"
+#include "fenv.h"
 #include "soft_spi.h"
 #include "eeprom.h"
 #include "adi.h"
@@ -21,6 +22,7 @@ typedef struct __Temperature_t {
 	float32_t setpoint;
 }Temperature_t;
 
+void set_output(float32_t out);
 
 #endif	// __MAIN_H__
 

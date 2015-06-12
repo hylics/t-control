@@ -62,7 +62,7 @@ const SavedDomain_t SavedDomain __attribute__ ((aligned(1024))) = {
 	0xABAB,                 //header
   0x8000, 0x8000, 0x8000, //ADC offset
   0x54A3, 0x54A3, 0x54A3, //ADC fullscale
-  0.0f, 0.0f, 0.0f,       //PID coeff KP Ki Kd
+  100000000000.0f, 1.5e+35F, 1.0f,       //PID coeff KP Ki Kd
 	PWM_PERIOD,             // pwm Init.Period ms
   FLT_MAX/(float32_t)PWM_PERIOD, //scaling factor
 	in_rtd                  // input RTD

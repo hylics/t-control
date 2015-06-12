@@ -54,6 +54,7 @@
 //__IO uint8_t dma_t_cplt=1, dma_r_cplt=1;
 extern AD7792_HandleTypeDef adi1;
 extern SavedDomain_t SavedDomain;
+TIM_OC_InitTypeDef sConfigPWM;
 //HAL_StatusTypeDef sts;
 /* USER CODE END PV */
 
@@ -62,8 +63,10 @@ void SystemClock_Config(void);
 void MX_FREERTOS_Init(void);
 
 /* USER CODE BEGIN PFP */
-void set_output(float32_t out);
+
 /* USER CODE END PFP */
+
+/* USER CODE BEGIN 0 */
 void set_output(float32_t out) {
 	//use mod
 	// tc1 6s, 6000 ms, 600 halfcycles 10ms cycle
@@ -83,10 +86,11 @@ void set_output(float32_t out) {
 		counter = 0;
 	}
 	
+	sConfigPWM.Pulse = pwm_val;
+	HAL_TIM_PWM_ConfigChannel(&htim3, &sConfigPWM, TIM_CHANNEL_1);
+	HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_1);
 	
 }
-/* USER CODE BEGIN 0 */
-
 /* USER CODE END 0 */
 
 int main(void)
@@ -104,6 +108,10 @@ int main(void)
 	*/
 	
 	__IO uint32_t conf[5] = {0};
+	sConfigPWM.OCMode = TIM_OCMODE_PWM1;
+  sConfigPWM.Pulse = 0;
+  sConfigPWM.OCPolarity = TIM_OCPOLARITY_HIGH;
+  sConfigPWM.OCFastMode = TIM_OCFAST_DISABLE;
 	
   /* USER CODE END 1 */
 

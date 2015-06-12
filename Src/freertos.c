@@ -53,7 +53,9 @@ extern AD7792_HandleTypeDef adi1;
 extern SavedDomain_t SavedDomain;
 __IO static Temperature_t temp_handle = {0.0f};
 arm_pid_instance_f32 pid_instance_1;
-
+__IO static float32_t out_tr;
+size_t fre=0;
+//fre=xPortGetFreeHeapSize();
 //__IO static float32_t t_rtd = 0.0f;
 
 /* USER CODE END Variables */
@@ -66,7 +68,7 @@ void StartLcdTask(void const * argument);
 void MX_FREERTOS_Init(void); /* (MISRA C 2004 rule 8.1) */
 
 /* USER CODE BEGIN FunctionPrototypes */
-extern void set_output(float32_t out);
+
 /* USER CODE END FunctionPrototypes */
 /* Hook prototypes */
 
@@ -96,11 +98,12 @@ void MX_FREERTOS_Init(void) {
 
   /* Create the thread(s) */
   /* definition and creation of adcTask */
+
   osThreadDef(adcTask, StartAdcTask, osPriorityHigh, 0, 128);
   adcTaskHandle = osThreadCreate(osThread(adcTask), NULL);
 
   /* definition and creation of pidTask */
-  osThreadDef(pidTask, StartPidTask, osPriorityAboveNormal, 0, 128);
+  osThreadDef(pidTask, StartPidTask, osPriorityAboveNormal, 0, 256);
   pidTaskHandle = osThreadCreate(osThread(pidTask), NULL);
 
   /* definition and creation of LcdTask */
@@ -155,15 +158,19 @@ void StartAdcTask(void const * argument)
 		osStatus status = osMutexWait(Mutex_T_Handle, mutex_T_wait);
 		if(status == osOK) {
 			temp_handle.rtd = rtd_get_temp(filt_conv_rtd, a375, r1000);
+			temp_handle.setpoint = -200.0f;
 			osMutexRelease(Mutex_T_Handle);
 		}
 		else {
 			//do something when error occuring
 		}
 		
-		osDelayUntil((uint32_t)&LastWakeTime, adc_delay);
+		fre=xPortGetFreeHeapSize();
+		
+		osDelay(1000);
+		//osDelayUntil((uint32_t)&LastWakeTime, adc_delay);
   }
-	vTaskDelete(NULL);
+	//vTaskDelete(NULL);
   /* USER CODE END StartAdcTask */
 }
 
@@ -201,12 +208,15 @@ void StartPidTask(void const * argument)
 			//do something when error occuring
 		}
 		
+		// undreflow float
 		out_f32 = arm_pid_f32(&pid_instance_1, delta_t);
 		set_output(out_f32);
+		out_tr = out_f32;
 		
-    osDelayUntil((uint32_t)&LastWakeTime, pid_delay);
+		osDelay(1000);
+    //osDelayUntil((uint32_t)&LastWakeTime, pid_delay);
   }
-	vTaskDelete(NULL);
+	//vTaskDelete(NULL);
   /* USER CODE END StartPidTask */
 }
 
