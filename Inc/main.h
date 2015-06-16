@@ -18,6 +18,7 @@
 #include "adi.h"
 #include "arm_math.h"
 #include "rtd_linearization.h"
+#include "ct_assert.h"
 
 typedef struct __Temperature_t {
 	float32_t rtd;

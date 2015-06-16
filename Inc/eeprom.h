@@ -33,6 +33,7 @@
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f0xx_hal.h"
 //#include "stm32f0xx_hal_flash.h"
+#include "ct_assert.h"
 
 /* Exported constants --------------------------------------------------------*/
 
@@ -89,7 +90,11 @@ typedef struct __SavedDomain_t{
 	uint16_t pwm_period;
 	float32_t pwm_scale_f;
 	input_t input; // define used temperature sensor
-} SavedDomain_t;
+} SavedDomain_t; //size 40 bytes, non packed
+
+/*size of SavedDomain_t may be aligned to uint16_t size*/
+STATIC_ASSERT(!(sizeof(SavedDomain_t) % sizeof(uint16_t)));
+//STATIC_ASSERT((sizeof(SavedDomain_t) == 40));
 
 /* Exported macro ------------------------------------------------------------*/
 /* Exported functions ------------------------------------------------------- */

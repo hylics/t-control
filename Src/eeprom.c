@@ -155,7 +155,7 @@ HAL_StatusTypeDef SaveOptToFlash(SavedDomain_t* Src, SavedDomain_t* Dst) {
 	uint16_t* SrcW = (uint16_t*)Src;
 	__IO uint16_t* DstW = (uint16_t*)Dst;
 	//uint32_t len = sizeof(SavedDomain_t);
-	uint32_t len = (sizeof(SavedDomain_t) / sizeof(uint16_t)) + (sizeof(SavedDomain_t) % sizeof(uint16_t));
+	uint32_t len = sizeof(SavedDomain_t) / sizeof(uint16_t);
 	
 	HAL_StatusTypeDef status = HAL_ERROR;
 	
