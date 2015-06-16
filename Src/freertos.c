@@ -1,7 +1,7 @@
 /**
   ******************************************************************************
   * File Name          : freertos.c
-  * Date               : 11/06/2015 13:05:17
+  * Date               : 16/06/2015 11:46:45
   * Description        : Code for freertos applications
   ******************************************************************************
   *
@@ -37,7 +37,7 @@
 #include "task.h"
 #include "cmsis_os.h"
 
-/* USER CODE BEGIN Includes */
+/* USER CODE BEGIN Includes */     
 #include "main.h"
 
 /* USER CODE END Includes */
@@ -51,6 +51,7 @@ osMutexId Mutex_T_Handle;
 /* USER CODE BEGIN Variables */
 extern AD7792_HandleTypeDef adi1;
 extern SavedDomain_t SavedDomain;
+extern TIM_HandleTypeDef htim3;
 __IO static Temperature_t temp_handle = {0.0f};
 arm_pid_instance_f32 pid_instance_1;
 __IO static float32_t out_tr;
@@ -83,7 +84,7 @@ void MX_FREERTOS_Init(void) {
   /* USER CODE END Init */
 
   /* Create the mutex(es) */
-  /* definition and creation of Mutex_T_upd */
+  /* definition and creation of Mutex_T_ */
   osMutexDef(Mutex_T_);
   Mutex_T_Handle = osMutexCreate(osMutex(Mutex_T_));
 
@@ -101,12 +102,11 @@ void MX_FREERTOS_Init(void) {
 
   /* Create the thread(s) */
   /* definition and creation of adcTask */
-
   osThreadDef(adcTask, StartAdcTask, osPriorityHigh, 0, 128);
   adcTaskHandle = osThreadCreate(osThread(adcTask), NULL);
 
   /* definition and creation of pidTask */
-  osThreadDef(pidTask, StartPidTask, osPriorityAboveNormal, 0, 256);
+  osThreadDef(pidTask, StartPidTask, osPriorityAboveNormal, 0, 128);
   pidTaskHandle = osThreadCreate(osThread(pidTask), NULL);
 
   /* definition and creation of LcdTask */
@@ -195,6 +195,8 @@ void StartPidTask(void const * argument)
 	
 	arm_pid_init_f32(&pid_instance_1, 1);
 	
+	//where the best place for this?
+	HAL_TIM_Base_Start_IT(&htim3);
 	
   /* Infinite loop */
   for(;;)

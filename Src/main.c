@@ -1,7 +1,7 @@
 /**
   ******************************************************************************
   * File Name          : main.c
-  * Date               : 11/06/2015 13:05:21
+  * Date               : 16/06/2015 11:46:53
   * Description        : Main program body
   ******************************************************************************
   *
@@ -68,7 +68,7 @@ void MX_FREERTOS_Init(void);
 
 /* USER CODE BEGIN 0 */
 static uint16_t counter = 0;
-void HAL_TIM_PWM_PulseFinishedCallback(TIM_HandleTypeDef *htim) {
+void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) {
 	//
 	counter++;
 }
@@ -96,7 +96,8 @@ void set_output(float32_t out, uint32_t channel) {
 	
 	sConfigPWM.Pulse = pwm_val;
 	HAL_TIM_PWM_ConfigChannel(&htim3, &sConfigPWM, channel);
-	HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_1);
+	//HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_1);
+	HAL_TIM_PWM_Start_IT(&htim3, TIM_CHANNEL_1);
 	
 }
 /* USER CODE END 0 */
