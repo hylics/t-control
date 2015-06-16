@@ -67,27 +67,35 @@ void MX_FREERTOS_Init(void);
 /* USER CODE END PFP */
 
 /* USER CODE BEGIN 0 */
-void set_output(float32_t out) {
+static uint16_t counter = 0;
+void HAL_TIM_PWM_PulseFinishedCallback(TIM_HandleTypeDef *htim) {
+	//
+	counter++;
+}
+
+void set_output(float32_t out, uint32_t channel) {
 	//use mod
 	// tc1 6s, 6000 ms, 600 halfcycles 10ms cycle
 	// tc2 60s, 10*tc1
-	uint16_t tmp = (uint16_t)(out / SavedDomain.pwm_scale_f);
+	//uint16_t tmp = (uint16_t)(out / SavedDomain.pwm_scale_f);
 	
-	static uint16_t counter = 0;
+	//uint16_t tmp = (uint16_t)out;
+	
+	
 	uint16_t pwm_val;
 	
-	if(counter++ == 0) {
-		pwm_val = tmp + 10*(tmp%10);
+	if(counter == 0) {
+		pwm_val = (uint16_t)out + 10*((uint16_t)out%10);
 	}
 	else {
-		pwm_val = tmp;
+		pwm_val = (uint16_t)out;
 	}
 	if(counter > 9) {
 		counter = 0;
 	}
 	
 	sConfigPWM.Pulse = pwm_val;
-	HAL_TIM_PWM_ConfigChannel(&htim3, &sConfigPWM, TIM_CHANNEL_1);
+	HAL_TIM_PWM_ConfigChannel(&htim3, &sConfigPWM, channel);
 	HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_1);
 	
 }

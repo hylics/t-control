@@ -1,9 +1,10 @@
 #MicroXplorer Configuration settings - do not modify
-#Thu Jun 11 15:02:05 EEST 2015
+#Mon Jun 15 13:43:44 EEST 2015
 FREERTOS.INCLUDE_vTaskDelayUntil=1
-FREERTOS.IPParameters=INCLUDE_vTaskDelayUntil,Tasks01,Mutexes01
+FREERTOS.IPParameters=INCLUDE_vTaskDelayUntil,Tasks01,configTOTAL_HEAP_SIZE,Mutexes01
 FREERTOS.Mutexes01=Mutex_T_
 FREERTOS.Tasks01=adcTask,2,128,StartAdcTask;pidTask,1,128,StartPidTask;LcdTask,0,128,StartLcdTask
+FREERTOS.configTOTAL_HEAP_SIZE=4000
 File.Version=5
 KeepUserPlacement=true
 Mcu.Family=STM32F0

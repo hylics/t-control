@@ -55,6 +55,9 @@ __IO static Temperature_t temp_handle = {0.0f};
 arm_pid_instance_f32 pid_instance_1;
 __IO static float32_t out_tr;
 size_t fre=0;
+
+//unsigned int la_adc_task = 0;
+//unsigned int la_pid_task = 0;
 //fre=xPortGetFreeHeapSize();
 //__IO static float32_t t_rtd = 0.0f;
 
@@ -125,16 +128,19 @@ void StartAdcTask(void const * argument)
 
   /* USER CODE BEGIN StartAdcTask */
 	TickType_t LastWakeTime;
-	const uint32_t adc_delay = 1000; //milliseconds
+	//const uint32_t adc_delay = 1000; //milliseconds
 	const uint32_t mutex_T_wait = 500; //milliseconds
 	static uint32_t filt_conv_rtd;
 	
 	LastWakeTime = xTaskGetTickCount();
+	
   /* Infinite loop */
   for(;;)
   {
 		/*reading data unstable, some times its read only first byte of data*/
 		__IO uint32_t raw_conv_rtd = 0;
+		
+		//la_adc_task = 1;
 		
 		adi1.io &= ~AD7792_IEXCDIR(0x3);
 		adi1.io |= AD7792_IEXCDIR(AD7792_DIR_IEXC1_IOUT2_IEXC2_IOUT1);
@@ -158,17 +164,19 @@ void StartAdcTask(void const * argument)
 		osStatus status = osMutexWait(Mutex_T_Handle, mutex_T_wait);
 		if(status == osOK) {
 			temp_handle.rtd = rtd_get_temp(filt_conv_rtd, a375, r1000);
-			temp_handle.setpoint = -200.0f;
+			temp_handle.setpoint = 25.0f;
 			osMutexRelease(Mutex_T_Handle);
 		}
 		else {
 			//do something when error occuring
 		}
 		
-		fre=xPortGetFreeHeapSize();
+		//fre=xPortGetFreeHeapSize();
 		
-		osDelay(1000);
-		//osDelayUntil((uint32_t)&LastWakeTime, adc_delay);
+		//la_adc_task = 0;
+		
+		//osDelay(1000);
+		vTaskDelayUntil(&LastWakeTime, 1000);
   }
 	//vTaskDelete(NULL);
   /* USER CODE END StartAdcTask */
@@ -179,7 +187,7 @@ void StartPidTask(void const * argument)
 {
   /* USER CODE BEGIN StartPidTask */
 	TickType_t LastWakeTime;
-	const uint32_t pid_delay = 1000; //milliseconds
+	//const uint32_t pid_delay = 6000; //milliseconds
 	const uint32_t mutex_T_wait = 2000; //milliseconds
 	pid_instance_1.Kp = SavedDomain.Kp;
 	pid_instance_1.Ki = SavedDomain.Ki;
@@ -192,6 +200,9 @@ void StartPidTask(void const * argument)
   for(;;)
   {
 		float32_t delta_t = 0.0f, out_f32 = 0.0f;
+		
+		//la_pid_task = 1;
+		
 		osStatus status = osMutexWait(Mutex_T_Handle, mutex_T_wait);
 		
 		if(status == osOK) {
@@ -219,12 +230,14 @@ void StartPidTask(void const * argument)
 			pid_instance_1.state[2] = PID_MIN_FLT;
 		}
 		
-		set_output(pid_instance_1.state[2]);
+		set_output(pid_instance_1.state[2], TIM_CHANNEL_1);
 		//set_output(out_f32);
 		out_tr = pid_instance_1.state[2];
 		
-		osDelay(1000);
-    //osDelayUntil((uint32_t)&LastWakeTime, pid_delay);
+		//la_pid_task = 0;
+		
+		//osDelay(1000);
+    vTaskDelayUntil(&LastWakeTime, 2000);
   }
 	//vTaskDelete(NULL);
   /* USER CODE END StartPidTask */

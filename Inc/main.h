@@ -25,7 +25,7 @@ typedef struct __Temperature_t {
 	float32_t setpoint;
 }Temperature_t;
 
-void set_output(float32_t out);
+void set_output(float32_t out, uint32_t channel);
 
 #endif	// __MAIN_H__
 
