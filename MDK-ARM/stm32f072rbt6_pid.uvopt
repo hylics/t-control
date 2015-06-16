@@ -152,7 +152,7 @@
           <Type>0</Type>
           <LineNumber>242</LineNumber>
           <EnabledFlag>1</EnabledFlag>
-          <Address>134227064</Address>
+          <Address>134227372</Address>
           <ByteObject>0</ByteObject>
           <HtxType>0</HtxType>
           <ManyObjects>0</ManyObjects>
@@ -161,7 +161,39 @@
           <BreakIfRCount>1</BreakIfRCount>
           <Filename>D:\kholomenyuk\GitHub\t-control\Src\freertos.c</Filename>
           <ExecCommand></ExecCommand>
-          <Expression>\\stm32f072rbt6_pid_Configuration\../Src/freertos.c\242</Expression>
+          <Expression></Expression>
+        </Bp>
+        <Bp>
+          <Number>1</Number>
+          <Type>0</Type>
+          <LineNumber>153</LineNumber>
+          <EnabledFlag>1</EnabledFlag>
+          <Address>134229592</Address>
+          <ByteObject>0</ByteObject>
+          <HtxType>0</HtxType>
+          <ManyObjects>0</ManyObjects>
+          <SizeOfObject>0</SizeOfObject>
+          <BreakByAccess>0</BreakByAccess>
+          <BreakIfRCount>1</BreakIfRCount>
+          <Filename>D:\kholomenyuk\GitHub\t-control\Src\main.c</Filename>
+          <ExecCommand></ExecCommand>
+          <Expression></Expression>
+        </Bp>
+        <Bp>
+          <Number>2</Number>
+          <Type>0</Type>
+          <LineNumber>147</LineNumber>
+          <EnabledFlag>1</EnabledFlag>
+          <Address>134229578</Address>
+          <ByteObject>0</ByteObject>
+          <HtxType>0</HtxType>
+          <ManyObjects>0</ManyObjects>
+          <SizeOfObject>0</SizeOfObject>
+          <BreakByAccess>0</BreakByAccess>
+          <BreakIfRCount>1</BreakIfRCount>
+          <Filename>D:\kholomenyuk\GitHub\t-control\Src\main.c</Filename>
+          <ExecCommand></ExecCommand>
+          <Expression></Expression>
         </Bp>
       </Breakpoint>
       <WatchWindow1>
@@ -190,7 +222,19 @@
           <WinNumber>1</WinNumber>
           <ItemText>counter</ItemText>
         </Ww>
+        <Ww>
+          <count>5</count>
+          <WinNumber>1</WinNumber>
+          <ItemText>SavedDomain</ItemText>
+        </Ww>
       </WatchWindow1>
+      <MemoryWindow1>
+        <Mm>
+          <WinNumber>1</WinNumber>
+          <SubType>0</SubType>
+          <ItemText>SavedDomain</ItemText>
+        </Mm>
+      </MemoryWindow1>
       <Tracepoint>
         <THDelay>0</THDelay>
       </Tracepoint>
@@ -253,8 +297,8 @@
       <Focus>0</Focus>
       <ColumnNumber>0</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>132</TopLine>
-      <CurrentLine>138</CurrentLine>
+      <TopLine>147</TopLine>
+      <CurrentLine>153</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>..\Drivers\CMSIS\Device\ST\STM32F0xx\Source\Templates\arm\startup_stm32f072xb.s</PathWithFileName>
       <FilenameWithoutPath>startup_stm32f072xb.s</FilenameWithoutPath>
@@ -277,8 +321,8 @@
       <Focus>0</Focus>
       <ColumnNumber>0</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>584</TopLine>
-      <CurrentLine>688</CurrentLine>
+      <TopLine>618</TopLine>
+      <CurrentLine>628</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>..\Drivers\STM32F0xx_HAL_Driver\Src\stm32f0xx_hal_flash.c</PathWithFileName>
       <FilenameWithoutPath>stm32f0xx_hal_flash.c</FilenameWithoutPath>
@@ -619,10 +663,10 @@
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <Focus>0</Focus>
-      <ColumnNumber>0</ColumnNumber>
+      <ColumnNumber>87</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>66</TopLine>
-      <CurrentLine>73</CurrentLine>
+      <TopLine>135</TopLine>
+      <CurrentLine>153</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>..\Src\main.c</PathWithFileName>
       <FilenameWithoutPath>main.c</FilenameWithoutPath>
@@ -765,7 +809,7 @@
       <Focus>0</Focus>
       <ColumnNumber>45</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>67</TopLine>
+      <TopLine>57</TopLine>
       <CurrentLine>58</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>..\Src\tim.c</PathWithFileName>
@@ -811,10 +855,10 @@
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <Focus>0</Focus>
-      <ColumnNumber>50</ColumnNumber>
+      <ColumnNumber>0</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>53</TopLine>
-      <CurrentLine>230</CurrentLine>
+      <TopLine>220</TopLine>
+      <CurrentLine>242</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>..\Src\freertos.c</PathWithFileName>
       <FilenameWithoutPath>freertos.c</FilenameWithoutPath>
@@ -859,10 +903,10 @@
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <Focus>0</Focus>
-      <ColumnNumber>22</ColumnNumber>
+      <ColumnNumber>32</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>52</TopLine>
-      <CurrentLine>65</CurrentLine>
+      <TopLine>149</TopLine>
+      <CurrentLine>157</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>..\Src\eeprom.c</PathWithFileName>
       <FilenameWithoutPath>eeprom.c</FilenameWithoutPath>
