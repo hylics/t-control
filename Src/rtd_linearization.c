@@ -55,11 +55,12 @@ float32_t rtd_get_temp(uint32_t Rx, alpha_t a, r_zero_t rz) {
 	}
   // if input (r) is within range, then solve for output.
   else {
+		float32_t rf = r / R0[rz];
     // if r < threshold, use negative transfer function
   //if (r<1000)  t=-242.0199+2.222812*r+2.585885E-3*pow(r,2)-4.826040E-6*pow(r,3)-2.818340E-8*pow(r,4)+1.524259E-10*pow(r,5);
   //if (r<966)  t=-241.9610+2.216253*r+2.854064E-3*pow(r,2)-9.912120E-6*pow(r,3)+1.705183E-8*pow(r,4);
     //if (r<951) { t=-242.0906+2.227625*r+2.517790E-3*pow(r,2)-5.861951E-6*pow(r,3); }
-		if (r<1000) { t=0; }
+		if (r<1000) {	t=-244.865 + 217.64883*rf + 38.918247*pow(rf,2) - 13.665073*pow(rf,3) + 1.9592755*pow(rf,4); }
   //if (r<721)  t=-242.9703+2.283841*r+1.472734E-3*pow(r,2);
     // NOTE: un-comment only one of the above four lines...
     // (5th-order, 4th-order, 3rd-order, 2nd-order respectively)

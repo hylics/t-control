@@ -57,7 +57,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 /* defines */
 #define R_REF 2000
 #define ADC_MAX 65536
-#define R_ZERO 32768
+//#define R_ZERO 32768
 #define TMIN (-200)  // = minimum temperature in degC
 #define TMAX (540)  // = maximum temperature in degC
 #define RMIN (185.201)  // = input resistance in ohms at -200 degC
@@ -80,6 +80,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //static const float AA[2] = {3.81E-3, 3.908E-3};
 //static const float BB[2] = {-6.02E-7, -5.755E-7};
 //static const float CC[2] = {-6.0E-12, -4.183E-12};
+static const float32_t R0[2] = {100.0F, 1000.0F};
 static const float32_t Z1[2] = {-3.81E-3, -3.908E-3};
 static const float32_t Z2[2] = {1.69241E-5, 1.757446E-5};
 // Alpha 375: R 100, 1000 Ohm; Alpha 385: R 100, 1000 Ohm
