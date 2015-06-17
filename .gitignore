@@ -81,7 +81,6 @@ $RECYCLE.BIN/
 *.map
 *.lnp
 *.bak
-*.sct
 *.axf
 *.lst
 .mxproject

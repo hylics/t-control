@@ -42,8 +42,9 @@
 #define PAGE_SIZE             ((uint32_t)0x0400)  /* Page size = 1KByte */
 
 /* EEPROM start address in Flash */
-#define EEPROM_START_ADDRESS  ((uint32_t)0x08002000) /* EEPROM emulation start address:
-                                                        from sector2, after 8KByte of used 
+
+#define EEPROM_START_ADDRESS  ((uint32_t)(FLASH_BASE+126*1024)) /* EEPROM emulation start address:
+                                                        from sector2, after 125KByte of used 
                                                         Flash memory */
 
 /* Pages 0 and 1 base and end addresses */
@@ -95,6 +96,7 @@ typedef struct __SavedDomain_t{
 /*size of SavedDomain_t may be aligned to uint16_t size*/
 STATIC_ASSERT(!(sizeof(SavedDomain_t) % sizeof(uint16_t)));
 //STATIC_ASSERT((sizeof(SavedDomain_t) == 40));
+STATIC_ASSERT(sizeof(SavedDomain_t) <= 1024);
 
 /* Exported macro ------------------------------------------------------------*/
 /* Exported functions ------------------------------------------------------- */
