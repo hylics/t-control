@@ -91,10 +91,12 @@ typedef struct __SavedDomain_t{
 	uint16_t pwm_period;
 	float32_t pwm_scale_f;
 	input_t input; // define used temperature sensor
-} SavedDomain_t; //size 40 bytes, non packed
+	uint32_t crc;
+} SavedDomain_t; //size 44 bytes, non packed
 
 /*size of SavedDomain_t may be aligned to uint16_t size*/
-STATIC_ASSERT(!(sizeof(SavedDomain_t) % sizeof(uint16_t)));
+STATIC_ASSERT(!(sizeof(SavedDomain_t) % sizeof(uint16_t))); //for flash operations
+STATIC_ASSERT(!(sizeof(SavedDomain_t) % sizeof(uint32_t))); //for crc32
 //STATIC_ASSERT((sizeof(SavedDomain_t) == 40));
 STATIC_ASSERT(sizeof(SavedDomain_t) <= 1024);
 

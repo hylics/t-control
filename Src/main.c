@@ -53,7 +53,8 @@
 /* USER CODE BEGIN PV */
 //__IO uint8_t dma_t_cplt=1, dma_r_cplt=1;
 extern AD7792_HandleTypeDef adi1;
-extern SavedDomain_t SavedDomain;
+extern SavedDomain_t EepromDomain;
+SavedDomain_t Options_rw;
 TIM_OC_InitTypeDef sConfigPWM;
 HAL_StatusTypeDef sts;
 /* USER CODE END PV */
@@ -77,7 +78,7 @@ void set_output(float32_t out, uint32_t channel) {
 	//use mod
 	// tc1 6s, 6000 ms, 600 halfcycles 10ms cycle
 	// tc2 60s, 10*tc1
-	//uint16_t tmp = (uint16_t)(out / SavedDomain.pwm_scale_f);
+	//uint16_t tmp = (uint16_t)(out / Options_rw.pwm_scale_f);
 	
 	//uint16_t tmp = (uint16_t)out;
 	
@@ -122,6 +123,8 @@ int main(void)
   sConfigPWM.OCPolarity = TIM_OCPOLARITY_HIGH;
   sConfigPWM.OCFastMode = TIM_OCFAST_DISABLE;
 	
+	Options_rw = EepromDomain;
+	
   /* USER CODE END 1 */
 
   /* MCU Configuration----------------------------------------------------------*/
@@ -143,14 +146,21 @@ int main(void)
   MX_USART2_UART_Init();
 
   /* USER CODE BEGIN 2 */
-	SavedDomain_t Copy_Options = SavedDomain;
-	ee_format(&SavedDomain); //hardfault??? 
-	/*if(SavedDomain.header != 0xABAB) {
-		ee_format(&SavedDomain);
+	uint32_t temp_crc = HAL_CRC_Calculate(&hcrc, (uint32_t*)&Options_rw, OPT_CRC_LEN);
+	if(Options_rw.crc != temp_crc) {
+		//TODO: display CRC error on LCD
+		while(1) {
+		  ;
+		}
+	}
+	//ee_format(&EepromDomain); 
+	/*if(EepromDomain.header != 0xABAB) {
+		ee_format(&EepromDomain);
 	}*/
 	
-	Copy_Options.offset[0] = 0x7000;
-	sts = SaveOptToFlash(&Copy_Options, &SavedDomain); // 60% work, hardfault after write
+	//Options_rw.offset[0] = 0x7000;
+	//Options_rw.crc = HAL_CRC_Calculate(&hcrc, (uint32_t*)&Options_rw, OPT_CRC_LEN); //crc32
+	//sts = SaveOptToFlash(&Options_rw, &EepromDomain); // 100% work
 
 	AD7792_Reset();
 	ADI_Init();

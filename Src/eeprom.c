@@ -58,17 +58,18 @@ should be within the RAM
 /* Global variable used to store variable value in read sequence */
 /* mode1: align mode and custom irom from target dialog, code of function placed before SavedDomain*/
 /* mode2: section and scatter file with second Load Region*/
-//const SavedDomain_t SavedDomain __attribute__ ((at(PAGE0_BASE_ADDRESS))) = {};
-//const SavedDomain_t SavedDomain __attribute__ ((aligned(1024)))
-//const SavedDomain_t SavedDomain __attribute__ ((section("eeeprom")))
-const SavedDomain_t SavedDomain __attribute__ ((section("eeprom"))) = {
+//const SavedDomain_t EepromDomain __attribute__ ((at(PAGE0_BASE_ADDRESS))) = {};
+//const SavedDomain_t EepromDomain __attribute__ ((aligned(1024)))
+//const SavedDomain_t EepromDomain __attribute__ ((section("eeeprom")))
+const SavedDomain_t EepromDomain __attribute__ ((section("eeprom"))) = {
 	0xABAB,                 //header
   0x8000, 0x8000, 0x8000, //ADC offset
   0x54A3, 0x54A3, 0x54A3, //ADC fullscale
   10.0F, 1.0e-4F, 0.0F,       //PID coeff KP Ki Kd
 	PWM_PERIOD,             // pwm Init.Period ms
   FLT_MAX /(float32_t)PWM_PERIOD, //scaling factor
-	in_rtd                  // input RTD
+	in_rtd,                  // input RTD
+	0xA9C347E3 //crc32
 };
 
 /* Virtual address defined by the user: 0xFFFF value is prohibited */

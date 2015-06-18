@@ -50,7 +50,8 @@ osMutexId Mutex_T_Handle;
 
 /* USER CODE BEGIN Variables */
 extern AD7792_HandleTypeDef adi1;
-extern SavedDomain_t SavedDomain;
+//extern SavedDomain_t EepromDomain;
+extern SavedDomain_t Options_rw;
 extern TIM_HandleTypeDef htim3;
 __IO static Temperature_t temp_handle = {0.0f};
 arm_pid_instance_f32 pid_instance_1;
@@ -189,9 +190,9 @@ void StartPidTask(void const * argument)
 	TickType_t LastWakeTime;
 	//const uint32_t pid_delay = 6000; //milliseconds
 	const uint32_t mutex_T_wait = 2000; //milliseconds
-	pid_instance_1.Kp = SavedDomain.Kp;
-	pid_instance_1.Ki = SavedDomain.Ki;
-	pid_instance_1.Kd = SavedDomain.Kd;
+	pid_instance_1.Kp = Options_rw.Kp;
+	pid_instance_1.Ki = Options_rw.Ki;
+	pid_instance_1.Kd = Options_rw.Kd;
 	
 	arm_pid_init_f32(&pid_instance_1, 1);
 	
@@ -201,7 +202,7 @@ void StartPidTask(void const * argument)
   /* Infinite loop */
   for(;;)
   {
-		float32_t delta_t = 0.0f, out_f32 = 0.0f;
+		float32_t delta_t = 0.0f;//, out_f32 = 0.0f;
 		
 		//la_pid_task = 1;
 		
@@ -209,19 +210,19 @@ void StartPidTask(void const * argument)
 		
 		if(status == osOK) {
 			//calculate difference of setpoint T and measured T
-			if(SavedDomain.input == in_rtd) {
+			if(Options_rw.input == in_rtd) {
 				delta_t = temp_handle.setpoint - temp_handle.rtd;
 			}
 			else {
 				delta_t = temp_handle.setpoint - temp_handle.thermocouple;
-			}//SavedDomain.input
+			}//Options_rw.input
 			osMutexRelease(Mutex_T_Handle);
 		}//status
 		else {
 			//do something when error occuring
 		}
 		
-		out_f32 = arm_pid_f32(&pid_instance_1, delta_t);
+		arm_pid_f32(&pid_instance_1, delta_t);
 		
 		if(pid_instance_1.state[2] > PID_MAX_FLT) {
 			//overflow protection

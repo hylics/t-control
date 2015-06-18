@@ -9,6 +9,7 @@
 
 #define PID_MAX_FLT 6000.0f
 #define PID_MIN_FLT +0.0f
+#define OPT_CRC_LEN (uint32_t)(sizeof(SavedDomain_t)/sizeof(uint32_t) - 1) //calculate crc32 of options struct without crc word
 
 #define ARM_MATH_CM0
 #include "float.h"
@@ -19,6 +20,7 @@
 #include "arm_math.h"
 #include "rtd_linearization.h"
 #include "ct_assert.h"
+
 
 typedef struct __Temperature_t {
 	float32_t rtd;
