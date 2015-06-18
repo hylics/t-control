@@ -87,6 +87,34 @@ static const float32_t Z2[2] = {1.69241E-5, 1.757446E-5};
 static const float32_t Z3[4] = {-2.408E-8, -2.408E-9, -2.302E-8, -2.302E-9};
 static const float32_t Z4[2] = {-1.204E-6, -1.151E-6};
 
+/*first element a375, second a385*/
+#if defined(RTD_N_POLY_2) //max_delta 0.2443 0.1711
+static const float32_t k0[2] = {-246.46210F, -242.99161F};
+static const float32_t k1[2] = {227.89989F,   228.40784F};
+static const float32_t k2[2] = {18.771526F,   14.726745F};
+#elif defined(RTD_N_POLY_3) //max_delta 0.0150 0.0126
+static const float32_t k0[2] = {-245.02817F, -242.10721F};
+static const float32_t k1[2] = {219.02946F,   222.77431F};
+static const float32_t k2[2] = {34.936184F,   25.186029F};
+static const float32_t k3[2] = {-8.9524498F, -5.8657217F};
+#elif defined(RTD_N_POLY_4) //max_delta 0.0041 0.0023
+static const float32_t k0[2] = {-244.86504F, -241.97653F};
+static const float32_t k1[2] = {217.64883F,   221.63242F};
+static const float32_t k2[2] = {38.918247F,   28.555647F};
+static const float32_t k3[2] = {-13.665073F, -9.9203072F};
+static const float32_t k4[2] = {1.9592755F,   1.7067046F};
+#elif defined(RTD_N_POLY_5) //max_delta 7.5340e-05 5.9128e-05
+static const float32_t k0[2] = {-244.99606F, -242.03606F};
+static const float32_t k1[2] = {219.05382F,   222.29222F};
+static const float32_t k2[2] = {33.334751F,   25.865198F};
+static const float32_t k3[2] = {-3.3006127F, -4.8258057F};
+static const float32_t k4[2] = {-7.1098032F, -2.8207901F};
+static const float32_t k4[2] = {3.0179856F,   1.5252922F};
+#else
+  #error "Define RTD_N_POLY_2-5
+#endif
+
+
 #elif defined(RTD_METHOD_PIECEWISE)
 
 typedef float float32_t;
