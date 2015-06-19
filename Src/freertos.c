@@ -53,6 +53,7 @@ extern AD7792_HandleTypeDef adi1;
 //extern SavedDomain_t EepromDomain;
 extern SavedDomain_t Options_rw;
 extern TIM_HandleTypeDef htim3;
+extern HAL_StatusTypeDef (*pf_output[N_FUNC_PWR])(float32_t pwr);
 __IO static Temperature_t temp_handle = {0.0f};
 arm_pid_instance_f32 pid_instance_1;
 //__IO static float32_t out_tr;

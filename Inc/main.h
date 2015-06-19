@@ -30,12 +30,6 @@ typedef struct __Temperature_t {
 	float32_t setpoint;
 }Temperature_t;
 
-//extern HAL_StatusTypeDef out_pwm_jitter(float32_t pwr);
-//extern HAL_StatusTypeDef out_pwm_simple(float32_t pwr);
-//extern HAL_StatusTypeDef out_pwm_bresenham(float32_t pwr);
-
-//HAL_StatusTypeDef (*pf_output[N_FUNC_PWR])(float32_t pwr) = {out_pwm_jitter, out_pwm_simple, out_pwm_bresenham};
-extern HAL_StatusTypeDef (*pf_output[N_FUNC_PWR])(float32_t pwr);
 
 #endif	// __MAIN_H__
 

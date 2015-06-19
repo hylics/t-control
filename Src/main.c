@@ -64,13 +64,13 @@ void SystemClock_Config(void);
 void MX_FREERTOS_Init(void);
 
 /* USER CODE BEGIN PFP */
-HAL_StatusTypeDef out_pwm_jitter(float32_t pwr);
-HAL_StatusTypeDef out_pwm_simple(float32_t pwr);
-HAL_StatusTypeDef out_pwm_bresenham(float32_t pwr);
-HAL_StatusTypeDef (*pf_output[N_FUNC_PWR])(float32_t pwr) = {out_pwm_jitter, out_pwm_simple, out_pwm_bresenham};
+static HAL_StatusTypeDef out_pwm_jitter(float32_t pwr) __attribute__((used));
+static HAL_StatusTypeDef out_pwm_simple(float32_t pwr) __attribute__((used));
+static HAL_StatusTypeDef out_pwm_bresenham(float32_t pwr) __attribute__((used));
 /* USER CODE END PFP */
 
 /* USER CODE BEGIN 0 */
+HAL_StatusTypeDef (*pf_output[N_FUNC_PWR])(float32_t pwr) = {out_pwm_jitter, out_pwm_simple, out_pwm_bresenham};
 static uint16_t counter = 0;
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) {
 	//
