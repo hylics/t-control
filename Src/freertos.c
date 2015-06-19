@@ -164,7 +164,7 @@ void StartAdcTask(void const * argument)
 		//access through semaphores to temperature state;
 		osStatus status = osMutexWait(Mutex_T_Handle, mutex_T_wait);
 		if(status == osOK) {
-			temp_handle.rtd = rtd_get_temp(filt_conv_rtd, a375, r1000);
+			temp_handle.rtd = rtd_get_temp(filt_conv_rtd, Pt375, r1000);
 			temp_handle.setpoint = 25.0f;
 			osMutexRelease(Mutex_T_Handle);
 		}

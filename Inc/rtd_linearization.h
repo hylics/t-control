@@ -87,7 +87,7 @@ static const float32_t Z2[2] = {1.69241E-5, 1.757446E-5};
 static const float32_t Z3[4] = {-2.408E-8, -2.408E-9, -2.302E-8, -2.302E-9};
 static const float32_t Z4[2] = {-1.204E-6, -1.151E-6};
 
-/*first element a375, second a385*/
+/*first element Pt375, second Pt385*/
 #if defined(RTD_N_POLY_2) //max_delta 0.2443 0.1711
 static const float32_t k0[2] = {-246.46210F, -242.99161F};
 static const float32_t k1[2] = {227.89989F,   228.40784F};
@@ -140,7 +140,7 @@ typedef double float64_t;
 #endif
 /* end includes*/
 
-typedef enum {a375, a385} alpha_t;
+typedef enum {Pt375, Pt385} alpha_t;
 typedef enum {r100, r1000} r_zero_t;
 
 /* function prototypes*/

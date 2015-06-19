@@ -55,16 +55,23 @@ float32_t rtd_get_temp(uint32_t Rx, alpha_t a, r_zero_t rz) {
 	}
   // if input (r) is within range, then solve for output.
   else {
-		float32_t rf = r / R0[rz];
-    // if r < threshold, use negative transfer function
-  //if (r<1000)  t=-242.0199+2.222812*r+2.585885E-3*pow(r,2)-4.826040E-6*pow(r,3)-2.818340E-8*pow(r,4)+1.524259E-10*pow(r,5);
-  //if (r<966)  t=-241.9610+2.216253*r+2.854064E-3*pow(r,2)-9.912120E-6*pow(r,3)+1.705183E-8*pow(r,4);
-    //if (r<951) { t=-242.0906+2.227625*r+2.517790E-3*pow(r,2)-5.861951E-6*pow(r,3); }
-		if (r<1000) {	t=-244.865 + 217.64883*rf + 38.918247*pow(rf,2) - 13.665073*pow(rf,3) + 1.9592755*pow(rf,4); }
-  //if (r<721)  t=-242.9703+2.283841*r+1.472734E-3*pow(r,2);
-    // NOTE: un-comment only one of the above four lines...
+		//use pow() or unroll this for reduce computation time 21688bytes pow()
+		// if r < resistance at 0C, use negative transfer function
+		if(r < R0[rz]) {
+			float32_t rf = r / R0[rz];
+		#if defined(RTD_N_POLY_2) //max_delta 0.2443 0.1711
+		  t = k0[a] + k1[a]*rf + k2[a]*pow(rf,2);
+		#elif defined(RTD_N_POLY_3) //max_delta 0.0150 0.0126
+		  t = k0[a] + k1[a]*rf + k2[a]*pow(rf,2) + k3[a]*pow(rf,3);
+		#elif defined(RTD_N_POLY_4) //max_delta 0.0041 0.0023
+		  t = k0[a] + k1[a]*rf + k2[a]*pow(rf,2) + k3[a]*pow(rf,3) + k4[a]*pow(rf,4);
+		#elif defined(RTD_N_POLY_5) //max_delta 7.5340e-05 5.9128e-05
+		  t = k0[a] + k1[a]*rf + k2[a]*pow(rf,2) + k3[a]*pow(rf,3) + k4[a]*pow(rf,4) + k5[a]*pow(rf,5);
+		#else
+      #error "Define RTD_N_POLY_2-5
+    #endif
     // (5th-order, 4th-order, 3rd-order, 2nd-order respectively)
-
+		}
     // if r >= threshold, use positive transfer function
 		#if defined(USE_ARM_MATH)
 		else {
@@ -73,7 +80,9 @@ float32_t rtd_get_temp(uint32_t Rx, alpha_t a, r_zero_t rz) {
 			t = (Z1[a]+zrx)/Z4[a];
 		}
 		#else
-    else { t=(Z1[a]+sqrt(Z2[a]+Z3[2*a+rz]*r))/Z4[a]; }
+    else {
+		  t=(Z1[a]+sqrt(Z2[a]+Z3[2*a+rz]*r))/Z4[a];
+		}
     #endif
   }
 	
