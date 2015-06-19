@@ -76,6 +76,7 @@
 /* Variables' number */
 #define NB_OF_VAR             ((uint8_t)0x03)
 
+#define FLASH_N_END      10000 //stm32f072 10k cycles
 /* Exported types ------------------------------------------------------------*/
 typedef float float32_t;
 typedef double float64_t;
@@ -89,15 +90,16 @@ typedef struct __SavedDomain_t{
 	float32_t Ki;
 	float32_t Kd;
 	uint16_t pwm_period;
-	float32_t pwm_scale_f;
+	//float32_t pwm_scale_f;
 	input_t input; // define used temperature sensor
+	uint32_t cnt_fw; //flash write counter
 	uint32_t crc;
-} SavedDomain_t; //size 44 bytes, non packed
+} SavedDomain_t; //size 48 bytes, non packed
 
 /*size of SavedDomain_t may be aligned to uint16_t size*/
 STATIC_ASSERT(!(sizeof(SavedDomain_t) % sizeof(uint16_t))); //for flash operations
 STATIC_ASSERT(!(sizeof(SavedDomain_t) % sizeof(uint32_t))); //for crc32
-//STATIC_ASSERT((sizeof(SavedDomain_t) == 40));
+//STATIC_ASSERT((sizeof(SavedDomain_t) == 48));
 STATIC_ASSERT(sizeof(SavedDomain_t) <= 1024);
 
 /* Exported macro ------------------------------------------------------------*/

@@ -67,9 +67,10 @@ const SavedDomain_t EepromDomain __attribute__ ((section("eeprom"))) = {
   0x54A3, 0x54A3, 0x54A3, //ADC fullscale
   10.0F, 1.0e-4F, 0.0F,       //PID coeff KP Ki Kd
 	PWM_PERIOD,             // pwm Init.Period ms
-  FLT_MAX /(float32_t)PWM_PERIOD, //scaling factor
+  //FLT_MAX /(float32_t)PWM_PERIOD, //scaling factor
 	in_rtd,                  // input RTD
-	0xA9C347E3 //crc32
+	1, //flash write counter
+	0xBC057A60 //crc32
 };
 
 /* Virtual address defined by the user: 0xFFFF value is prohibited */

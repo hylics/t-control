@@ -153,6 +153,7 @@ int main(void)
 		  ;
 		}
 	}
+	//Options_rw.cnt_fw++;
 	//ee_format(&EepromDomain); 
 	/*if(EepromDomain.header != 0xABAB) {
 		ee_format(&EepromDomain);

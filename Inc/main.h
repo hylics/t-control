@@ -9,7 +9,8 @@
 
 #define PID_MAX_FLT 6000.0f
 #define PID_MIN_FLT +0.0f
-#define OPT_CRC_LEN (uint32_t)(sizeof(SavedDomain_t)/sizeof(uint32_t) - 1) //calculate crc32 of options struct without crc word
+//calculate crc32 of options structure without crc word
+#define OPT_CRC_LEN (uint32_t)(sizeof(SavedDomain_t)/sizeof(uint32_t) - 1)
 
 #define ARM_MATH_CM0
 #include "float.h"
