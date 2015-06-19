@@ -83,7 +83,7 @@ typedef double float64_t;
 typedef enum {in_rtd, in_thermocouple} input_t;
 typedef enum {pwm_jitter, pwm_simple, pwm_bresenham} out_pf_t;
 
-typedef struct __SavedDomain_t{
+typedef __packed struct __SavedDomain_t{
 	uint16_t header;
 	uint16_t offset[3];
 	uint16_t fullscale[3];
@@ -96,12 +96,13 @@ typedef struct __SavedDomain_t{
 	out_pf_t pf_out; //used function to set output
 	uint32_t cnt_fw; //flash write counter
 	uint32_t crc;
+	uint32_t padding:16;
 } SavedDomain_t; //size 48???? bytes, non packed
 
 /*size of SavedDomain_t may be aligned to uint16_t size*/
 STATIC_ASSERT(!(sizeof(SavedDomain_t) % sizeof(uint16_t))); //for flash operations
 STATIC_ASSERT(!(sizeof(SavedDomain_t) % sizeof(uint32_t))); //for crc32
-//STATIC_ASSERT((sizeof(SavedDomain_t) == 48));
+//STATIC_ASSERT((sizeof(SavedDomain_t) == 52)); //with __packed not working
 STATIC_ASSERT(sizeof(SavedDomain_t) <= 1024);
 
 /* Exported macro ------------------------------------------------------------*/
