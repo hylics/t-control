@@ -64,7 +64,10 @@ void SystemClock_Config(void);
 void MX_FREERTOS_Init(void);
 
 /* USER CODE BEGIN PFP */
-
+HAL_StatusTypeDef out_pwm_jitter(float32_t pwr);
+HAL_StatusTypeDef out_pwm_simple(float32_t pwr);
+HAL_StatusTypeDef out_pwm_bresenham(float32_t pwr);
+HAL_StatusTypeDef (*pf_output[N_FUNC_PWR])(float32_t pwr) = {out_pwm_jitter, out_pwm_simple, out_pwm_bresenham};
 /* USER CODE END PFP */
 
 /* USER CODE BEGIN 0 */
@@ -74,33 +77,42 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) {
 	counter++;
 }
 
-void set_output(float32_t out, uint32_t channel) {
+HAL_StatusTypeDef out_pwm_jitter(float32_t pwr) {
 	//use mod
 	// tc1 6s, 6000 ms, 600 halfcycles 10ms cycle
 	// tc2 60s, 10*tc1
-	//uint16_t tmp = (uint16_t)(out / Options_rw.pwm_scale_f);
+	//uint16_t tmp = (uint16_t)(pwr / Options_rw.pwm_scale_f);
 	
-	//uint16_t tmp = (uint16_t)out;
+	//uint16_t tmp = (uint16_t)pwr;
 	
 	
 	uint16_t pwm_val;
 	
 	if(counter == 0) {
-		pwm_val = (uint16_t)out + 10*((uint16_t)out%10);
+		pwm_val = (uint16_t)pwr + 10*((uint16_t)pwr%10);
 	}
 	else {
-		pwm_val = (uint16_t)out;
+		pwm_val = (uint16_t)pwr;
 	}
 	if(counter > 9) {
 		counter = 0;
 	}
 	
 	sConfigPWM.Pulse = pwm_val;
-	HAL_TIM_PWM_ConfigChannel(&htim3, &sConfigPWM, channel);
+	HAL_TIM_PWM_ConfigChannel(&htim3, &sConfigPWM, TIM_CHANNEL_1);
 	//HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_1);
 	HAL_TIM_PWM_Start_IT(&htim3, TIM_CHANNEL_1);
 	
+	return HAL_OK;
 }
+HAL_StatusTypeDef out_pwm_simple(float32_t pwr){
+	return HAL_OK;
+}
+
+HAL_StatusTypeDef out_pwm_bresenham(float32_t pwr) {
+	return HAL_OK;
+}
+
 /* USER CODE END 0 */
 
 int main(void)
@@ -146,13 +158,14 @@ int main(void)
   MX_USART2_UART_Init();
 
   /* USER CODE BEGIN 2 */
-	uint32_t temp_crc = HAL_CRC_Calculate(&hcrc, (uint32_t*)&Options_rw, OPT_CRC_LEN);
-	if(Options_rw.crc != temp_crc) {
+	//keep commented while default config changed
+	//uint32_t temp_crc = HAL_CRC_Calculate(&hcrc, (uint32_t*)&Options_rw, OPT_CRC_LEN);
+	/*if(Options_rw.crc != temp_crc) {
 		//TODO: display CRC error on LCD
 		while(1) {
 		  ;
 		}
-	}
+	}*/
 	//Options_rw.cnt_fw++;
 	//ee_format(&EepromDomain); 
 	/*if(EepromDomain.header != 0xABAB) {

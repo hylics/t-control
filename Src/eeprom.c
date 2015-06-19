@@ -62,15 +62,16 @@ should be within the RAM
 //const SavedDomain_t EepromDomain __attribute__ ((aligned(1024)))
 //const SavedDomain_t EepromDomain __attribute__ ((section("eeeprom")))
 const SavedDomain_t EepromDomain __attribute__ ((section("eeprom"))) = {
-	0xABAB,                 //header
-  0x8000, 0x8000, 0x8000, //ADC offset
-  0x54A3, 0x54A3, 0x54A3, //ADC fullscale
-  10.0F, 1.0e-4F, 0.0F,       //PID coeff KP Ki Kd
-	PWM_PERIOD,             // pwm Init.Period ms
+	0xABAB,                  //header
+  0x8000, 0x8000, 0x8000,  //ADC offset
+  0x54A3, 0x54A3, 0x54A3,  //ADC fullscale
+  10.0F, 1.0e-4F, 0.0F,    //PID coeff Kp Ki Kd
+	PWM_PERIOD,              // pwm Init.Period ms
   //FLT_MAX /(float32_t)PWM_PERIOD, //scaling factor
-	in_rtd,                  // input RTD
-	1, //flash write counter
-	0xBC057A60 //crc32
+	in_rtd,                  //input RTD
+	pwm_jitter,              //default implementation output function
+	1,                       //flash write counter
+	0xBC057A60               //crc32
 };
 
 /* Virtual address defined by the user: 0xFFFF value is prohibited */

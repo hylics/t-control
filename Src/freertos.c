@@ -55,7 +55,7 @@ extern SavedDomain_t Options_rw;
 extern TIM_HandleTypeDef htim3;
 __IO static Temperature_t temp_handle = {0.0f};
 arm_pid_instance_f32 pid_instance_1;
-__IO static float32_t out_tr;
+//__IO static float32_t out_tr;
 size_t fre=0;
 
 //unsigned int la_adc_task = 0;
@@ -232,10 +232,11 @@ void StartPidTask(void const * argument)
 			//underflow protection
 			pid_instance_1.state[2] = PID_MIN_FLT;
 		}
-		
-		set_output(pid_instance_1.state[2], TIM_CHANNEL_1);
+		//set output power
+		pf_output[Options_rw.pf_out](pid_instance_1.state[2]);//use Eeprom or Options_rw to choice output function?
+		//set_output(pid_instance_1.state[2], TIM_CHANNEL_1);
 		//set_output(out_f32);
-		out_tr = pid_instance_1.state[2];
+		//out_tr = pid_instance_1.state[2];
 		
 		//la_pid_task = 0;
 		

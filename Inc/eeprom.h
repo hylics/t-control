@@ -81,6 +81,7 @@
 typedef float float32_t;
 typedef double float64_t;
 typedef enum {in_rtd, in_thermocouple} input_t;
+typedef enum {pwm_jitter, pwm_simple, pwm_bresenham} out_pf_t;
 
 typedef struct __SavedDomain_t{
 	uint16_t header;
@@ -92,9 +93,10 @@ typedef struct __SavedDomain_t{
 	uint16_t pwm_period;
 	//float32_t pwm_scale_f;
 	input_t input; // define used temperature sensor
+	out_pf_t pf_out; //used function to set output
 	uint32_t cnt_fw; //flash write counter
 	uint32_t crc;
-} SavedDomain_t; //size 48 bytes, non packed
+} SavedDomain_t; //size 48???? bytes, non packed
 
 /*size of SavedDomain_t may be aligned to uint16_t size*/
 STATIC_ASSERT(!(sizeof(SavedDomain_t) % sizeof(uint16_t))); //for flash operations
