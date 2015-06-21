@@ -76,7 +76,18 @@
 /* Variables' number */
 #define NB_OF_VAR             ((uint8_t)0x03)
 
-#define FLASH_N_END      10000 //stm32f072 10k cycles
+//TODO: add other MCU's
+#if defined (STM32F071xB) || defined (STM32F072xB) || defined (STM32F078xx)
+ #define FLASH_N_END      10000 //stm32f072 10k cycles
+#elif defined(STM32F030x6) || defined(STM32F031x6) || defined(STM32F038xx) || defined(STM32F070x6) || defined(STM32F070xB) || defined(STM32F030x6)
+ #define FLASH_N_END      1000
+#else
+ #error "unknown family of target, FLASH_N_END undefined"
+#endif
+
+
+
+
 /* Exported types ------------------------------------------------------------*/
 typedef float float32_t;
 typedef double float64_t;
@@ -95,8 +106,8 @@ typedef __packed struct __SavedDomain_t{
 	input_t input; // define used temperature sensor
 	out_pf_t pf_out; //used function to set output
 	uint32_t cnt_fw; //flash write counter
+	uint16_t padding;
 	uint32_t crc;
-	uint32_t padding:16;
 } SavedDomain_t; //size 48???? bytes, non packed
 
 /*size of SavedDomain_t may be aligned to uint16_t size*/

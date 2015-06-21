@@ -144,7 +144,7 @@ typedef enum {Pt375, Pt385} alpha_t;
 typedef enum {r100, r1000} r_zero_t;
 
 /* function prototypes*/
-float32_t rtd_get_temp(uint32_t Rx, alpha_t a, r_zero_t rz);
+float32_t rtd_get_temp(uint32_t Rx, alpha_t a, r_zero_t rz);// __attribute__((pure));
 
 /* end function prototypes*/
 

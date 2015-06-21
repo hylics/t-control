@@ -57,6 +57,8 @@ extern SavedDomain_t EepromDomain;
 SavedDomain_t Options_rw;
 TIM_OC_InitTypeDef sConfigPWM;
 HAL_StatusTypeDef sts;
+HD44780 lcd;
+HD44780_STM32F0xx_GPIO_Driver lcd_pindriver;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -64,6 +66,8 @@ void SystemClock_Config(void);
 void MX_FREERTOS_Init(void);
 
 /* USER CODE BEGIN PFP */
+void init_lcd(void);
+void delay_lcd(uint16_t ms);
 static HAL_StatusTypeDef out_pwm_jitter(float32_t pwr) __attribute__((used));
 static HAL_StatusTypeDef out_pwm_simple(float32_t pwr) __attribute__((used));
 static HAL_StatusTypeDef out_pwm_bresenham(float32_t pwr) __attribute__((used));
@@ -71,9 +75,8 @@ static HAL_StatusTypeDef out_pwm_bresenham(float32_t pwr) __attribute__((used));
 
 /* USER CODE BEGIN 0 */
 HAL_StatusTypeDef (*pf_output[N_FUNC_PWR])(float32_t pwr) = {out_pwm_jitter, out_pwm_simple, out_pwm_bresenham};
-static uint16_t counter = 0;
+static uint16_t counter = 0; //counter for out_pwm_jitter
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) {
-	//
 	counter++;
 }
 
@@ -187,7 +190,7 @@ int main(void)
 		
 		//AD7792_Calibrate(&adi1, AD7792_MODE_CAL_SYS_ZERO, AD7792_CH_AIN2P_AIN2M);
 		conf[4] = AD7792_GetRegisterValue(AD7792_REG_FULLSCALE, 2, 1);
-			
+	init_lcd();
   /* USER CODE END 2 */
 
   /* Call init function for freertos objects (in freertos.c) */
@@ -248,6 +251,60 @@ void SystemClock_Config(void)
 }
 
 /* USER CODE BEGIN 4 */
+void init_lcd(void)
+{
+  /* Распиновка дисплея */
+  const HD44780_STM32F0xx_Pinout lcd_pinout =
+  {
+    {
+      /* RS        */  { GPIOA, GPIO_PIN_6 },
+      /* ENABLE    */  { GPIOA, GPIO_PIN_5 },
+      /* RW        */  { NULL, 0 },
+      /* Backlight */  { NULL, 0 },
+      /* DP0       */  { NULL, 0 },
+      /* DP1       */  { NULL, 0 },
+      /* DP2       */  { NULL, 0 },
+      /* DP3       */  { NULL, 0 },
+      /* DP4       */  { GPIOA, GPIO_PIN_3 },
+      /* DP5       */  { GPIOA, GPIO_PIN_2 },
+      /* DP6       */  { GPIOA, GPIO_PIN_1 },
+      /* DP7       */  { GPIOA, GPIO_PIN_0 },
+    }
+  };
+
+  /* Настраиваем драйвер: указываем интерфейс драйвера (стандартный),
+     указанную выше распиновку и обработчик ошибок GPIO (необязателен). */
+  lcd_pindriver.interface = HD44780_STM32F0XX_PINDRIVER_INTERFACE;
+  /* Если вдруг захотите сами вручную настраивать GPIO для дисплея
+     (зачем бы вдруг), напишите здесь ещё (библиотека учтёт это):*/
+  lcd_pindriver.interface.configure = NULL;
+  lcd_pindriver.pinout = lcd_pinout;
+  lcd_pindriver.assert_failure_handler = NULL; //hd44780_assert_failure_handler;
+
+  /* И, наконец, создаём конфигурацию дисплея: указываем наш драйвер,
+     функцию задержки, обработчик ошибок дисплея (необязателен) и опции.
+     На данный момент доступны две опции - использовать или нет
+     вывод RW дисплея (в последнем случае его нужно прижать к GND),
+     и то же для управления подсветкой. */
+  const HD44780_Config lcd_config =
+  {
+    (HD44780_GPIO_Interface*)&lcd_pindriver,
+    delay_lcd,
+    NULL, //hd44780_assert_failure_handler,
+    //HD44780_OPT_USE_RW
+  };
+
+  /* Ну, а теперь всё стандартно: подаём тактирование на GPIO,
+     инициализируем дисплей: 16x2, 4-битный интерфейс, символы 5x8 точек. */
+  //RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA, ENABLE);
+  hd44780_init(&lcd, HD44780_MODE_4BIT, &lcd_config, 20, 4, HD44780_CHARSIZE_5x8);
+}
+
+void delay_lcd(uint16_t ms) {
+	//cast types for supress warnings
+	osDelay((uint32_t)ms);
+}
+
  /*void HAL_SPI_TxCpltCallback(SPI_HandleTypeDef *hspi) {
 	 //change state
 	 dma_t_cplt = 0;

@@ -54,6 +54,8 @@ extern AD7792_HandleTypeDef adi1;
 extern SavedDomain_t Options_rw;
 extern TIM_HandleTypeDef htim3;
 extern HAL_StatusTypeDef (*pf_output[N_FUNC_PWR])(float32_t pwr);
+extern HD44780 lcd;
+//extern HD44780_STM32F0xx_GPIO_Driver lcd_pindriver;
 __IO static Temperature_t temp_handle = {0.0f};
 arm_pid_instance_f32 pid_instance_1;
 //__IO static float32_t out_tr;
@@ -252,9 +254,19 @@ void StartPidTask(void const * argument)
 void StartLcdTask(void const * argument)
 {
   /* USER CODE BEGIN StartLcdTask */
+	static unsigned counter = 5;
+
+	const size_t buf_size = lcd.columns_amount + 1;
+	char buf[buf_size];
   /* Infinite loop */
   for(;;)
   {
+		snprintf(buf, buf_size, "%d", counter);
+
+		++counter;
+
+		hd44780_clear(&lcd);
+		hd44780_write_string(&lcd, buf);
     osDelay(1);
   }
   /* USER CODE END StartLcdTask */

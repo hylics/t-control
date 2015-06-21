@@ -11,8 +11,9 @@
 #define PID_MIN_FLT +0.0f
 //calculate crc32 of options structure without crc word
 #define OPT_CRC_LEN (uint32_t)(sizeof(SavedDomain_t)/sizeof(uint32_t) - 1)
-#define N_FUNC_PWR 3 //number of realisations functions setting power
+#define N_FUNC_PWR 3 //number of implementations of functions setting power
 
+#include <stdio.h>
 #define ARM_MATH_CM0
 #include "float.h"
 //#include "fenv.h"
@@ -22,6 +23,8 @@
 #include "arm_math.h"
 #include "rtd_linearization.h"
 #include "ct_assert.h"
+#include "hd44780.h"
+#include "hd44780_stm32f0xx.h"
 
 
 typedef struct __Temperature_t {

@@ -71,6 +71,7 @@ const SavedDomain_t EepromDomain __attribute__ ((section("eeprom"))) = {
 	in_rtd,                  //input RTD
 	pwm_jitter,              //default implementation output function
 	1,                       //flash write counter
+	0, //padding
 	0xBC057A60               //crc32
 };
 
