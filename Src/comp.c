@@ -1,8 +1,9 @@
 /**
   ******************************************************************************
-  * @file    stm32f0xx_it.h
-  * @date    22/06/2015 20:20:30
-  * @brief   This file contains the headers of the interrupt handlers.
+  * File Name          : COMP.c
+  * Date               : 22/06/2015 20:20:23
+  * Description        : This file provides code for the configuration
+  *                      of the COMP instances.
   ******************************************************************************
   *
   * COPYRIGHT(c) 2015 STMicroelectronics
@@ -32,31 +33,88 @@
   ******************************************************************************
   */
 
-/* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __STM32F0xx_IT_H
-#define __STM32F0xx_IT_H
-
-#ifdef __cplusplus
- extern "C" {
-#endif 
-
 /* Includes ------------------------------------------------------------------*/
-/* Exported types ------------------------------------------------------------*/
-/* Exported constants --------------------------------------------------------*/
-/* Exported macro ------------------------------------------------------------*/
-/* Exported functions ------------------------------------------------------- */
+#include "comp.h"
 
-void USART2_IRQHandler(void);
-void USART1_IRQHandler(void);
-void EXTI4_15_IRQHandler(void);
-void SysTick_Handler(void);
-void TIM3_IRQHandler(void);
-void NMI_Handler(void);
+#include "gpio.h"
 
-#ifdef __cplusplus
+/* USER CODE BEGIN 0 */
+
+/* USER CODE END 0 */
+
+COMP_HandleTypeDef hcomp2;
+
+/* COMP2 init function */
+void MX_COMP2_Init(void)
+{
+
+  hcomp2.Instance = COMP2;
+  hcomp2.Init.InvertingInput = COMP_INVERTINGINPUT_VREFINT;
+  hcomp2.Init.NonInvertingInput = COMP_NONINVERTINGINPUT_IO1;
+  hcomp2.Init.Output = COMP_OUTPUT_NONE;
+  hcomp2.Init.OutputPol = COMP_OUTPUTPOL_NONINVERTED;
+  hcomp2.Init.Hysteresis = COMP_HYSTERESIS_NONE;
+  hcomp2.Init.Mode = COMP_MODE_HIGHSPEED;
+  hcomp2.Init.WindowMode = COMP_WINDOWMODE_DISABLED;
+  hcomp2.Init.TriggerMode = COMP_TRIGGERMODE_NONE;
+  HAL_COMP_Init(&hcomp2);
+
 }
-#endif
 
-#endif /* __STM32F0xx_IT_H */
+void HAL_COMP_MspInit(COMP_HandleTypeDef* hcomp)
+{
+
+  GPIO_InitTypeDef GPIO_InitStruct;
+  if(hcomp->Instance==COMP2)
+  {
+  /* USER CODE BEGIN COMP2_MspInit 0 */
+
+  /* USER CODE END COMP2_MspInit 0 */
+  
+    /**COMP2 GPIO Configuration    
+    PA3     ------> COMP2_INP 
+    */
+    GPIO_InitStruct.Pin = GPIO_PIN_3;
+    GPIO_InitStruct.Mode = GPIO_MODE_ANALOG;
+    GPIO_InitStruct.Pull = GPIO_NOPULL;
+    HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
+
+  /* USER CODE BEGIN COMP2_MspInit 1 */
+
+  /* USER CODE END COMP2_MspInit 1 */
+  }
+}
+
+void HAL_COMP_MspDeInit(COMP_HandleTypeDef* hcomp)
+{
+
+  if(hcomp->Instance==COMP2)
+  {
+  /* USER CODE BEGIN COMP2_MspDeInit 0 */
+
+  /* USER CODE END COMP2_MspDeInit 0 */
+  
+    /**COMP2 GPIO Configuration    
+    PA3     ------> COMP2_INP 
+    */
+    HAL_GPIO_DeInit(GPIOA, GPIO_PIN_3);
+
+  /* USER CODE BEGIN COMP2_MspDeInit 1 */
+
+  /* USER CODE END COMP2_MspDeInit 1 */
+  }
+} 
+
+/* USER CODE BEGIN 1 */
+
+/* USER CODE END 1 */
+
+/**
+  * @}
+  */
+
+/**
+  * @}
+  */
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

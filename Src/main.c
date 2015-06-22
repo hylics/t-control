@@ -1,7 +1,7 @@
 /**
   ******************************************************************************
   * File Name          : main.c
-  * Date               : 22/06/2015 11:08:53
+  * Date               : 22/06/2015 20:20:32
   * Description        : Main program body
   ******************************************************************************
   *
@@ -35,6 +35,7 @@
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f0xx_hal.h"
 #include "cmsis_os.h"
+#include "comp.h"
 #include "crc.h"
 #include "i2c.h"
 #include "iwdg.h"
@@ -44,9 +45,11 @@
 #include "gpio.h"
 
 /* USER CODE BEGIN Includes */
+//#define USE_FULL_ASSERT 1
+//#define NDEBUG
 #include "main.h"
 //#include "assert.h"
-//#define USE_FULL_ASSERT 1
+
 /* USER CODE END Includes */
 
 /* Private variables ---------------------------------------------------------*/
@@ -156,6 +159,7 @@ int main(void)
 
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
+  MX_COMP2_Init();
   MX_CRC_Init();
   MX_I2C1_Init();
   MX_IWDG_Init();
@@ -295,7 +299,11 @@ void init_lcd(void)
      (зачем бы вдруг), напишите здесь ещё (библиотека учтёт это):*/
   //lcd_pindriver.interface.configure = NULL;
   lcd_pindriver.pinout = lcd_pinout;
+	#ifdef USE_FULL_ASSERT
   lcd_pindriver.assert_failure_handler = hd44780_assert_failure_handler; //hd44780_assert_failure_handler;
+	#else
+	lcd_pindriver.assert_failure_handler = NULL;
+	#endif
 
   /* �?, наконец, создаём конфигурацию дисплея: указываем наш драйвер,
      функцию задержки, обработчик ошибок дисплея (необязателен) и опции.
@@ -306,7 +314,9 @@ void init_lcd(void)
   {
     (HD44780_GPIO_Interface*)&lcd_pindriver,
     delay_lcd,
-    hd44780_assert_failure_handler, //hd44780_assert_failure_handler,
+		#ifdef USE_FULL_ASSERT
+    hd44780_assert_failure_handler //hd44780_assert_failure_handler,
+		#endif
     //HD44780_OPT_USE_RW
   };
 
@@ -337,18 +347,12 @@ void delay_lcd(uint16_t ms) {
 //{
 //  return (now >= before) ? (now - before) : (UINT32_MAX - before + now);
 //}
-
+#ifdef USE_FULL_ASSERT
 void hd44780_assert_failure_handler(const char *filename, unsigned long line)
 {
-	__IO static char st_file[30];
-	for (uint32_t i=0; i<30; i++) {
-		st_file[i]=*(filename+i);
-	}
-	__IO static unsigned long st_line;
-	st_line	= line;
-  //(void)filename; (void)line;
-  do {} while (1);
+	assert_failed((uint8_t *)filename, (uint32_t)line);
 }
+#endif
 
  /*void HAL_SPI_TxCpltCallback(SPI_HandleTypeDef *hspi) {
 	 //change state
@@ -375,6 +379,16 @@ void assert_failed(uint8_t* file, uint32_t line)
   /* USER CODE BEGIN 6 */
   /* User can add his own implementation to report the file name and line number,
     ex: printf("Wrong parameters value: file %s on line %d\r\n", file, line) */
+	__IO static char st_file[30];
+	__IO static unsigned long st_line;
+	
+	for (uint32_t i=0; i<30; i++) {
+		st_file[i]=*(file+i);
+	}
+	
+	st_line	= line;
+  //(void)filename; (void)line;
+  do {} while (1);
   /* USER CODE END 6 */
 
 }

@@ -1,8 +1,9 @@
 /**
   ******************************************************************************
-  * @file    stm32f0xx_it.h
-  * @date    22/06/2015 20:20:30
-  * @brief   This file contains the headers of the interrupt handlers.
+  * File Name          : COMP.h
+  * Date               : 22/06/2015 20:20:24
+  * Description        : This file provides code for the configuration
+  *                      of the COMP instances.
   ******************************************************************************
   *
   * COPYRIGHT(c) 2015 STMicroelectronics
@@ -31,32 +32,31 @@
   *
   ******************************************************************************
   */
-
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __STM32F0xx_IT_H
-#define __STM32F0xx_IT_H
-
+#ifndef __comp_H
+#define __comp_H
 #ifdef __cplusplus
  extern "C" {
-#endif 
+#endif
 
 /* Includes ------------------------------------------------------------------*/
-/* Exported types ------------------------------------------------------------*/
-/* Exported constants --------------------------------------------------------*/
-/* Exported macro ------------------------------------------------------------*/
-/* Exported functions ------------------------------------------------------- */
+#include "stm32f0xx_hal.h"
 
-void USART2_IRQHandler(void);
-void USART1_IRQHandler(void);
-void EXTI4_15_IRQHandler(void);
-void SysTick_Handler(void);
-void TIM3_IRQHandler(void);
-void NMI_Handler(void);
+extern COMP_HandleTypeDef hcomp2;
+
+void MX_COMP2_Init(void);
 
 #ifdef __cplusplus
 }
 #endif
+#endif /*__ comp_H */
 
-#endif /* __STM32F0xx_IT_H */
+/**
+  * @}
+  */
+
+/**
+  * @}
+  */
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

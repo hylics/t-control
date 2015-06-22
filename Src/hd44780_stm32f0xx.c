@@ -26,7 +26,8 @@ OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <stdint.h>
 #include <stdlib.h>
 #include "hd44780_stm32f0xx.h"
-#ifndef NDEBUG
+#ifdef USE_FULL_ASSERT
+//#ifndef NDEBUG
 #define HD44780_STM32F0XX_ASSERT(x) \
 { \
 if (!(x)) \

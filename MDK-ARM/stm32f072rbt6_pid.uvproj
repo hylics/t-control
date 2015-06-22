@@ -513,6 +513,11 @@
               <FileType>1</FileType>
               <FilePath>..\Drivers\STM32F0xx_HAL_Driver\Src\stm32f0xx_hal_rtc_ex.c</FilePath>
             </File>
+            <File>
+              <FileName>stm32f0xx_hal_comp.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Drivers\STM32F0xx_HAL_Driver\Src\stm32f0xx_hal_comp.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -612,6 +617,11 @@
               <FileName>hd44780_stm32f0xx.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\Src\hd44780_stm32f0xx.c</FilePath>
+            </File>
+            <File>
+              <FileName>comp.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Src\comp.c</FilePath>
             </File>
           </Files>
         </Group>
