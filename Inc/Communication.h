@@ -65,11 +65,11 @@
 /******************************************************************************/
 
 #define ADI_PAR_CS_PIN        		// Add code here
-#define ADI_PART_CS_PIN_OUT   		// Add code here
-#define ADI_PART_CS_LOW        		HAL_GPIO_WritePin(GPIOB, GPIO_PIN_12, GPIO_PIN_RESET)
-#define ADI_PART_CS_HIGH       		HAL_GPIO_WritePin(GPIOB, GPIO_PIN_12, GPIO_PIN_SET)
-#define GPIO1_PIN              		// Add code here
-#define GPIO1_STATE            		HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_6) // Add code here
+#define ADI_PART_CS_PIN_OUT   		GPIOB, GPIO_PIN_12// Add code here
+#define ADI_PART_CS_LOW        		HAL_GPIO_WritePin(ADI_PART_CS_PIN_OUT, GPIO_PIN_RESET)
+#define ADI_PART_CS_HIGH       		HAL_GPIO_WritePin(ADI_PART_CS_PIN_OUT, GPIO_PIN_SET)
+#define GPIO1_PIN              		GPIOC, GPIO_PIN_6// Add code here
+#define GPIO1_STATE            		HAL_GPIO_ReadPin(GPIO1_PIN) // Add code here
 #define SPI_HW                    &hspi2
 
 /******************************************************************************/

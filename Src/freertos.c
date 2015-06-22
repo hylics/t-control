@@ -1,7 +1,7 @@
 /**
   ******************************************************************************
   * File Name          : freertos.c
-  * Date               : 16/06/2015 11:46:45
+  * Date               : 22/06/2015 11:08:50
   * Description        : Code for freertos applications
   ******************************************************************************
   *
@@ -76,7 +76,7 @@ void StartLcdTask(void const * argument);
 void MX_FREERTOS_Init(void); /* (MISRA C 2004 rule 8.1) */
 
 /* USER CODE BEGIN FunctionPrototypes */
-
+extern void init_lcd(void);
 /* USER CODE END FunctionPrototypes */
 /* Hook prototypes */
 
@@ -175,12 +175,12 @@ void StartAdcTask(void const * argument)
 			//do something when error occuring
 		}
 		
-		//fre=xPortGetFreeHeapSize();
+		fre=xPortGetFreeHeapSize();
 		
 		//la_adc_task = 0;
 		
 		//osDelay(1000);
-		vTaskDelayUntil(&LastWakeTime, 1000);
+		vTaskDelayUntil(&LastWakeTime, 2000);//2000
   }
 	//vTaskDelete(NULL);
   /* USER CODE END StartAdcTask */
@@ -244,7 +244,7 @@ void StartPidTask(void const * argument)
 		//la_pid_task = 0;
 		
 		//osDelay(1000);
-    vTaskDelayUntil(&LastWakeTime, 2000);
+    vTaskDelayUntil(&LastWakeTime, 2000);//2000
   }
 	//vTaskDelete(NULL);
   /* USER CODE END StartPidTask */
@@ -254,19 +254,23 @@ void StartPidTask(void const * argument)
 void StartLcdTask(void const * argument)
 {
   /* USER CODE BEGIN StartLcdTask */
-	static unsigned counter = 5;
+//	TickType_t LastWakeTime;
+//	static uint32_t counter2 = 5;
 
-	const size_t buf_size = lcd.columns_amount + 1;
-	char buf[buf_size];
+//	const size_t buf_size = lcd.columns_amount + 1;
+//	char buf[buf_size];
   /* Infinite loop */
   for(;;)
   {
-		snprintf(buf, buf_size, "%d", counter);
-
-		++counter;
-
-		hd44780_clear(&lcd);
-		hd44780_write_string(&lcd, buf);
+//		snprintf(buf, buf_size, "%d", counter2);
+//		
+//    vTaskDelayUntil(&LastWakeTime, 1000);//
+//		
+//		++counter2;
+//    taskENTER_CRITICAL();
+//		hd44780_clear(&lcd);
+//		hd44780_write_string(&lcd, buf);
+//		taskEXIT_CRITICAL();
     osDelay(1);
   }
   /* USER CODE END StartLcdTask */

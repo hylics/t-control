@@ -1,7 +1,7 @@
 /**
   ******************************************************************************
   * File Name          : main.c
-  * Date               : 16/06/2015 11:46:53
+  * Date               : 22/06/2015 11:08:53
   * Description        : Main program body
   ******************************************************************************
   *
@@ -45,7 +45,8 @@
 
 /* USER CODE BEGIN Includes */
 #include "main.h"
-
+//#include "assert.h"
+//#define USE_FULL_ASSERT 1
 /* USER CODE END Includes */
 
 /* Private variables ---------------------------------------------------------*/
@@ -59,6 +60,7 @@ TIM_OC_InitTypeDef sConfigPWM;
 HAL_StatusTypeDef sts;
 HD44780 lcd;
 HD44780_STM32F0xx_GPIO_Driver lcd_pindriver;
+volatile uint32_t systick_ms = 0;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -68,6 +70,8 @@ void MX_FREERTOS_Init(void);
 /* USER CODE BEGIN PFP */
 void init_lcd(void);
 void delay_lcd(uint16_t ms);
+uint32_t uint32_time_diff(uint32_t now, uint32_t before);
+void hd44780_assert_failure_handler(const char *filename, unsigned long line);
 static HAL_StatusTypeDef out_pwm_jitter(float32_t pwr) __attribute__((used));
 static HAL_StatusTypeDef out_pwm_simple(float32_t pwr) __attribute__((used));
 static HAL_StatusTypeDef out_pwm_bresenham(float32_t pwr) __attribute__((used));
@@ -174,7 +178,19 @@ int main(void)
 	/*if(EepromDomain.header != 0xABAB) {
 		ee_format(&EepromDomain);
 	}*/
+	init_lcd();
 	
+	for(uint32_t i=0; i<1000; i++) {
+		static uint32_t counter2 = 5;
+		const size_t buf_size = lcd.columns_amount + 1;
+		char buf[buf_size];
+		snprintf(buf, buf_size, "%d", counter2);
+		++counter2;
+		hd44780_clear(&lcd);
+		hd44780_write_string(&lcd, buf);
+		HAL_Delay(300);
+	}
+
 	//Options_rw.offset[0] = 0x7000;
 	//Options_rw.crc = HAL_CRC_Calculate(&hcrc, (uint32_t*)&Options_rw, OPT_CRC_LEN); //crc32
 	//sts = SaveOptToFlash(&Options_rw, &EepromDomain); // 100% work
@@ -190,7 +206,7 @@ int main(void)
 		
 		//AD7792_Calibrate(&adi1, AD7792_MODE_CAL_SYS_ZERO, AD7792_CH_AIN2P_AIN2M);
 		conf[4] = AD7792_GetRegisterValue(AD7792_REG_FULLSCALE, 2, 1);
-	init_lcd();
+	
   /* USER CODE END 2 */
 
   /* Call init function for freertos objects (in freertos.c) */
@@ -257,18 +273,18 @@ void init_lcd(void)
   const HD44780_STM32F0xx_Pinout lcd_pinout =
   {
     {
-      /* RS        */  { GPIOA, GPIO_PIN_6 },
-      /* ENABLE    */  { GPIOA, GPIO_PIN_5 },
+      /* RS        */  { GPIOC, GPIO_PIN_9 },
+      /* ENABLE    */  { GPIOC, GPIO_PIN_8 },
       /* RW        */  { NULL, 0 },
       /* Backlight */  { NULL, 0 },
       /* DP0       */  { NULL, 0 },
       /* DP1       */  { NULL, 0 },
       /* DP2       */  { NULL, 0 },
       /* DP3       */  { NULL, 0 },
-      /* DP4       */  { GPIOA, GPIO_PIN_3 },
-      /* DP5       */  { GPIOA, GPIO_PIN_2 },
-      /* DP6       */  { GPIOA, GPIO_PIN_1 },
-      /* DP7       */  { GPIOA, GPIO_PIN_0 },
+      /* DP4       */  { GPIOA, GPIO_PIN_8 },
+      /* DP5       */  { GPIOA, GPIO_PIN_9 },
+      /* DP6       */  { GPIOA, GPIO_PIN_10 },
+      /* DP7       */  { GPIOA, GPIO_PIN_11 },
     }
   };
 
@@ -277,11 +293,11 @@ void init_lcd(void)
   lcd_pindriver.interface = HD44780_STM32F0XX_PINDRIVER_INTERFACE;
   /* Если вдруг захотите сами вручную настраивать GPIO для дисплея
      (зачем бы вдруг), напишите здесь ещё (библиотека учтёт это):*/
-  lcd_pindriver.interface.configure = NULL;
+  //lcd_pindriver.interface.configure = NULL;
   lcd_pindriver.pinout = lcd_pinout;
-  lcd_pindriver.assert_failure_handler = NULL; //hd44780_assert_failure_handler;
+  lcd_pindriver.assert_failure_handler = hd44780_assert_failure_handler; //hd44780_assert_failure_handler;
 
-  /* И, наконец, создаём конфигурацию дисплея: указываем наш драйвер,
+  /* �?, наконец, создаём конфигурацию дисплея: указываем наш драйвер,
      функцию задержки, обработчик ошибок дисплея (необязателен) и опции.
      На данный момент доступны две опции - использовать или нет
      вывод RW дисплея (в последнем случае его нужно прижать к GND),
@@ -290,7 +306,7 @@ void init_lcd(void)
   {
     (HD44780_GPIO_Interface*)&lcd_pindriver,
     delay_lcd,
-    NULL, //hd44780_assert_failure_handler,
+    hd44780_assert_failure_handler, //hd44780_assert_failure_handler,
     //HD44780_OPT_USE_RW
   };
 
@@ -301,8 +317,37 @@ void init_lcd(void)
 }
 
 void delay_lcd(uint16_t ms) {
+	HAL_Delay((uint32_t)ms);
+//	SysTick->VAL = SysTick->LOAD;
+//  const uint32_t systick_ms_start = systick_ms;//increment in Systick handler
+//  uint16_t us = ms * 1000;
+//  while (1)
+//  {
+//    uint32_t diff = uint32_time_diff(systick_ms, systick_ms_start);
+
+//    if (diff >= ((uint32_t)us / 1000) + (us % 1000 ? 1 : 0))
+//      break;
+//  }
 	//cast types for supress warnings
-	osDelay((uint32_t)ms);
+	// вызов до старта диспетчера приводит к ошибке
+	//osDelay((uint32_t)ms);
+}
+
+//uint32_t uint32_time_diff(uint32_t now, uint32_t before)
+//{
+//  return (now >= before) ? (now - before) : (UINT32_MAX - before + now);
+//}
+
+void hd44780_assert_failure_handler(const char *filename, unsigned long line)
+{
+	__IO static char st_file[30];
+	for (uint32_t i=0; i<30; i++) {
+		st_file[i]=*(filename+i);
+	}
+	__IO static unsigned long st_line;
+	st_line	= line;
+  //(void)filename; (void)line;
+  do {} while (1);
 }
 
  /*void HAL_SPI_TxCpltCallback(SPI_HandleTypeDef *hspi) {
