@@ -254,24 +254,32 @@ void StartPidTask(void const * argument)
 void StartLcdTask(void const * argument)
 {
   /* USER CODE BEGIN StartLcdTask */
-//	TickType_t LastWakeTime;
-//	static uint32_t counter2 = 5;
+	TickType_t LastWakeTime;
+	const uint32_t mutex_T_wait = 2000; //milliseconds
+	//static uint32_t counter2 = 5;
 
-//	const size_t buf_size = lcd.columns_amount + 1;
-//	char buf[buf_size];
+	const size_t buf_size = lcd.columns_amount + 1;
+	char buf[buf_size];
   /* Infinite loop */
   for(;;)
   {
+		osStatus status = osMutexWait(Mutex_T_Handle, mutex_T_wait);
+		if(status == osOK) {
+			snprintf(buf, buf_size, "%f", temp_handle.rtd);
+			//++counter2;
+			hd44780_clear(&lcd);
+			hd44780_write_string(&lcd, buf);
+		}
 //		snprintf(buf, buf_size, "%d", counter2);
 //		
-//    vTaskDelayUntil(&LastWakeTime, 1000);//
+    vTaskDelayUntil(&LastWakeTime, 1000);//
 //		
 //		++counter2;
 //    taskENTER_CRITICAL();
 //		hd44780_clear(&lcd);
 //		hd44780_write_string(&lcd, buf);
 //		taskEXIT_CRITICAL();
-    osDelay(1);
+    //osDelay(1);
   }
   /* USER CODE END StartLcdTask */
 }

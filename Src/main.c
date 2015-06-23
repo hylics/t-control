@@ -184,7 +184,7 @@ int main(void)
 	}*/
 	init_lcd();
 	
-	for(uint32_t i=0; i<100; i++) {
+	for(uint32_t i=0; i<10; i++) {
 		static uint32_t counter2 = 0;
 		const size_t buf_size = lcd.columns_amount + 1;
 		char buf[buf_size];
@@ -192,7 +192,7 @@ int main(void)
 		++counter2;
 		hd44780_clear(&lcd);
 		hd44780_write_string(&lcd, buf);
-		HAL_Delay(50);
+		HAL_Delay(200);
 	}
 
 	//Options_rw.offset[0] = 0x7000;
