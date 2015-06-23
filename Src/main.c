@@ -184,15 +184,15 @@ int main(void)
 	}*/
 	init_lcd();
 	
-	for(uint32_t i=0; i<1000; i++) {
-		static uint32_t counter2 = 5;
+	for(uint32_t i=0; i<100; i++) {
+		static uint32_t counter2 = 0;
 		const size_t buf_size = lcd.columns_amount + 1;
 		char buf[buf_size];
 		snprintf(buf, buf_size, "%d", counter2);
 		++counter2;
 		hd44780_clear(&lcd);
 		hd44780_write_string(&lcd, buf);
-		HAL_Delay(300);
+		HAL_Delay(50);
 	}
 
 	//Options_rw.offset[0] = 0x7000;
@@ -299,7 +299,7 @@ void init_lcd(void)
      (зачем бы вдруг), напишите здесь ещё (библиотека учтёт это):*/
   //lcd_pindriver.interface.configure = NULL;
   lcd_pindriver.pinout = lcd_pinout;
-	#ifdef USE_FULL_ASSERT
+	#ifndef NDEBUG
   lcd_pindriver.assert_failure_handler = hd44780_assert_failure_handler; //hd44780_assert_failure_handler;
 	#else
 	lcd_pindriver.assert_failure_handler = NULL;
@@ -313,9 +313,9 @@ void init_lcd(void)
   const HD44780_Config lcd_config =
   {
     (HD44780_GPIO_Interface*)&lcd_pindriver,
-    delay_lcd,
-		#ifdef USE_FULL_ASSERT
-    hd44780_assert_failure_handler //hd44780_assert_failure_handler,
+    delay_lcd
+		#ifndef NDEBUG
+    , hd44780_assert_failure_handler //hd44780_assert_failure_handler,
 		#endif
     //HD44780_OPT_USE_RW
   };
@@ -347,10 +347,19 @@ void delay_lcd(uint16_t ms) {
 //{
 //  return (now >= before) ? (now - before) : (UINT32_MAX - before + now);
 //}
-#ifdef USE_FULL_ASSERT
+#ifndef NDEBUG
 void hd44780_assert_failure_handler(const char *filename, unsigned long line)
 {
-	assert_failed((uint8_t *)filename, (uint32_t)line);
+	__IO static char st_file[30];
+	__IO static unsigned long st_line;
+	
+	for (uint32_t i=0; i<30; i++) {
+		st_file[i]=*(filename+i);
+	}
+	
+	st_line	= line;
+  //(void)filename; (void)line;
+  do {} while (1);
 }
 #endif
 
@@ -379,15 +388,6 @@ void assert_failed(uint8_t* file, uint32_t line)
   /* USER CODE BEGIN 6 */
   /* User can add his own implementation to report the file name and line number,
     ex: printf("Wrong parameters value: file %s on line %d\r\n", file, line) */
-	__IO static char st_file[30];
-	__IO static unsigned long st_line;
-	
-	for (uint32_t i=0; i<30; i++) {
-		st_file[i]=*(file+i);
-	}
-	
-	st_line	= line;
-  //(void)filename; (void)line;
   do {} while (1);
   /* USER CODE END 6 */
 

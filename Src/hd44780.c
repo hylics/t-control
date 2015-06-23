@@ -24,8 +24,8 @@ OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <stdlib.h>
 #include <stdint.h>
 #include "hd44780.h"
-#ifdef USE_FULL_ASSERT
-//#ifndef NDEBUG
+//#ifdef USE_FULL_ASSERT
+#ifndef NDEBUG
 #define HD44780_ASSERT(x) \
 { \
 if (!(x)) \
