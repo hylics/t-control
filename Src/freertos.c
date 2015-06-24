@@ -1,7 +1,7 @@
 /**
   ******************************************************************************
   * File Name          : freertos.c
-  * Date               : 22/06/2015 20:20:26
+  * Date               : 24/06/2015 11:14:05
   * Description        : Code for freertos applications
   ******************************************************************************
   *
@@ -60,6 +60,8 @@ __IO static Temperature_t temp_handle = {0.0f};
 arm_pid_instance_f32 pid_instance_1;
 //__IO static float32_t out_tr;
 size_t fre=0;
+__IO static uint8_t CPU_IDLE = 0, malloc_err=0;
+
 
 //unsigned int la_adc_task = 0;
 //unsigned int la_pid_task = 0;
@@ -79,6 +81,67 @@ void MX_FREERTOS_Init(void); /* (MISRA C 2004 rule 8.1) */
 extern void init_lcd(void);
 /* USER CODE END FunctionPrototypes */
 /* Hook prototypes */
+void vApplicationIdleHook(void);
+void vApplicationStackOverflowHook(xTaskHandle xTask, signed char *pcTaskName);
+void vApplicationMallocFailedHook(void);
+
+/* USER CODE BEGIN 2 */
+void vApplicationIdleHook( void )
+{
+   /* vApplicationIdleHook() will only be called if configUSE_IDLE_HOOK is set
+   to 1 in FreeRTOSConfig.h. It will be called on each iteration of the idle
+   task. It is essential that code added to this hook function never attempts
+   to block in any way (for example, call xQueueReceive() with a block time
+   specified, or call vTaskDelay()). If the application makes use of the
+   vTaskDelete() API function (as this demo application does) then it is also
+   important that vApplicationIdleHook() is permitted to return to its calling
+   function, because it is the responsibility of the idle task to clean up
+   memory allocated by the kernel to any task that has since been deleted. */
+	 static portTickType LastTick; 
+        static uint32_t count;             //наш трудяга счетчик
+        static uint32_t max_count ;                //максимальное значение счетчика, вычисляется при калибровке и соответствует 100% CPU idle
+
+        count++;                                                  //приращение счетчика
+
+        if((xTaskGetTickCount() - LastTick ) > 1000)    { //если прошло 1000 тиков (1 сек для моей платфрмы)
+                LastTick = xTaskGetTickCount();
+                if(count > max_count) max_count = count;          //это калибровка
+                CPU_IDLE = (100 * count) / max_count;               //вычисляем текущую загрузку
+                count = 0;                                        //обнуляем счетчик
+        }
+
+}
+/* USER CODE END 2 */
+
+/* USER CODE BEGIN 4 */
+void vApplicationStackOverflowHook(xTaskHandle xTask, signed char *pcTaskName)
+{
+   /* Run time stack overflow checking is performed if
+   configCHECK_FOR_STACK_OVERFLOW is defined to 1 or 2. This hook function is
+   called if a stack overflow is detected. */
+__IO	static int8_t taskname[30];
+	for(uint32_t i=0; i<30; i++) {
+		taskname[i]=*(pcTaskName+i);
+	}
+}
+/* USER CODE END 4 */
+
+/* USER CODE BEGIN 5 */
+void vApplicationMallocFailedHook(void)
+{
+   /* vApplicationMallocFailedHook() will only be called if
+   configUSE_MALLOC_FAILED_HOOK is set to 1 in FreeRTOSConfig.h. It is a hook
+   function that will get called if a call to pvPortMalloc() fails.
+   pvPortMalloc() is called internally by the kernel whenever a task, queue,
+   timer or semaphore is created. It is also called by various parts of the
+   demo application. If heap_1.c or heap_2.c are used, then the size of the
+   heap available to pvPortMalloc() is defined by configTOTAL_HEAP_SIZE in
+   FreeRTOSConfig.h, and the xPortGetFreeHeapSize() API function can be used
+   to query the size of free heap space that remains (although it does not
+   provide information on how the remaining heap might be fragmented). */
+	malloc_err++;
+}
+/* USER CODE END 5 */
 
 /* Init FreeRTOS */
 
@@ -135,7 +198,7 @@ void StartAdcTask(void const * argument)
 	//const uint32_t adc_delay = 1000; //milliseconds
 	const uint32_t mutex_T_wait = 500; //milliseconds
 	static uint32_t filt_conv_rtd;
-	
+	osDelay(1000); //for maxcount calibration
 	LastWakeTime = xTaskGetTickCount();
 	
   /* Infinite loop */
@@ -196,6 +259,7 @@ void StartPidTask(void const * argument)
 	pid_instance_1.Kp = Options_rw.Kp;
 	pid_instance_1.Ki = Options_rw.Ki;
 	pid_instance_1.Kd = Options_rw.Kd;
+	osDelay(1000); //for maxcount calibration
 	
 	arm_pid_init_f32(&pid_instance_1, 1);
 	
@@ -254,19 +318,21 @@ void StartPidTask(void const * argument)
 void StartLcdTask(void const * argument)
 {
   /* USER CODE BEGIN StartLcdTask */
+	static osStatus status;
 	TickType_t LastWakeTime;
 	const uint32_t mutex_T_wait = 2000; //milliseconds
-	//static uint32_t counter2 = 5;
-
+//	//static uint32_t counter2 = 5;
+  osDelay(1000); //for maxcount calibration
 	const size_t buf_size = lcd.columns_amount + 1;
 	char buf[buf_size];
   /* Infinite loop */
   for(;;)
   {
-		osStatus status = osMutexWait(Mutex_T_Handle, mutex_T_wait);
+		status = osMutexWait(Mutex_T_Handle, mutex_T_wait);
 		if(status == osOK) {
-			snprintf(buf, buf_size, "%f", temp_handle.rtd);
-			//++counter2;
+			snprintf(buf, buf_size, "%5.2f", temp_handle.rtd);
+			osMutexRelease(Mutex_T_Handle);
+//			//++counter2;
 			hd44780_clear(&lcd);
 			hd44780_write_string(&lcd, buf);
 		}
@@ -279,7 +345,7 @@ void StartLcdTask(void const * argument)
 //		hd44780_clear(&lcd);
 //		hd44780_write_string(&lcd, buf);
 //		taskEXIT_CRITICAL();
-    //osDelay(1);
+    osDelay(1000);
   }
   /* USER CODE END StartLcdTask */
 }

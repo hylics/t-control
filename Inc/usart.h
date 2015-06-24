@@ -1,7 +1,7 @@
 /**
   ******************************************************************************
   * File Name          : USART.h
-  * Date               : 22/06/2015 20:20:30
+  * Date               : 24/06/2015 11:14:07
   * Description        : This file provides code for the configuration
   *                      of the USART instances.
   ******************************************************************************
@@ -44,9 +44,11 @@
 
 extern UART_HandleTypeDef huart1;
 extern UART_HandleTypeDef huart2;
+extern UART_HandleTypeDef huart4;
 
 void MX_USART1_UART_Init(void);
 void MX_USART2_UART_Init(void);
+void MX_USART4_UART_Init(void);
 
 #ifdef __cplusplus
 }

@@ -1,7 +1,7 @@
 /**
   ******************************************************************************
   * File Name          : USART.c
-  * Date               : 22/06/2015 20:20:29
+  * Date               : 24/06/2015 11:14:07
   * Description        : This file provides code for the configuration
   *                      of the USART instances.
   ******************************************************************************
@@ -44,6 +44,7 @@
 
 UART_HandleTypeDef huart1;
 UART_HandleTypeDef huart2;
+UART_HandleTypeDef huart4;
 
 /* USART1 init function */
 
@@ -79,6 +80,24 @@ void MX_USART2_UART_Init(void)
   huart2.Init.OneBitSampling = UART_ONEBIT_SAMPLING_DISABLED ;
   huart2.AdvancedInit.AdvFeatureInit = UART_ADVFEATURE_NO_INIT;
   HAL_HalfDuplex_Init(&huart2);
+
+}
+/* USART4 init function */
+
+void MX_USART4_UART_Init(void)
+{
+
+  huart4.Instance = USART4;
+  huart4.Init.BaudRate = 115200;
+  huart4.Init.WordLength = UART_WORDLENGTH_8B;
+  huart4.Init.StopBits = UART_STOPBITS_1;
+  huart4.Init.Parity = UART_PARITY_NONE;
+  huart4.Init.Mode = UART_MODE_TX_RX;
+  huart4.Init.HwFlowCtl = UART_HWCONTROL_NONE;
+  huart4.Init.OverSampling = UART_OVERSAMPLING_16;
+  huart4.Init.OneBitSampling = UART_ONEBIT_SAMPLING_DISABLED ;
+  huart4.AdvancedInit.AdvFeatureInit = UART_ADVFEATURE_NO_INIT;
+  HAL_UART_Init(&huart4);
 
 }
 
@@ -145,6 +164,29 @@ void HAL_UART_MspInit(UART_HandleTypeDef* huart)
 
   /* USER CODE END USART2_MspInit 1 */
   }
+  else if(huart->Instance==USART4)
+  {
+  /* USER CODE BEGIN USART4_MspInit 0 */
+
+  /* USER CODE END USART4_MspInit 0 */
+    /* Peripheral clock enable */
+    __USART4_CLK_ENABLE();
+  
+    /**USART4 GPIO Configuration    
+    PA0     ------> USART4_TX
+    PA1     ------> USART4_RX 
+    */
+    GPIO_InitStruct.Pin = GPIO_PIN_0|GPIO_PIN_1;
+    GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
+    GPIO_InitStruct.Pull = GPIO_PULLUP;
+    GPIO_InitStruct.Speed = GPIO_SPEED_LOW;
+    GPIO_InitStruct.Alternate = GPIO_AF4_USART4;
+    HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
+
+  /* USER CODE BEGIN USART4_MspInit 1 */
+
+  /* USER CODE END USART4_MspInit 1 */
+  }
 }
 
 void HAL_UART_MspDeInit(UART_HandleTypeDef* huart)
@@ -193,6 +235,24 @@ void HAL_UART_MspDeInit(UART_HandleTypeDef* huart)
   /* USER CODE BEGIN USART2_MspDeInit 1 */
 
   /* USER CODE END USART2_MspDeInit 1 */
+  }
+  else if(huart->Instance==USART4)
+  {
+  /* USER CODE BEGIN USART4_MspDeInit 0 */
+
+  /* USER CODE END USART4_MspDeInit 0 */
+    /* Peripheral clock disable */
+    __USART4_CLK_DISABLE();
+  
+    /**USART4 GPIO Configuration    
+    PA0     ------> USART4_TX
+    PA1     ------> USART4_RX 
+    */
+    HAL_GPIO_DeInit(GPIOA, GPIO_PIN_0|GPIO_PIN_1);
+
+  /* USER CODE BEGIN USART4_MspDeInit 1 */
+
+  /* USER CODE END USART4_MspDeInit 1 */
   }
 } 
 

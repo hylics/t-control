@@ -1,7 +1,7 @@
 /**
   ******************************************************************************
   * File Name          : main.c
-  * Date               : 22/06/2015 20:20:32
+  * Date               : 24/06/2015 11:14:09
   * Description        : Main program body
   ******************************************************************************
   *
@@ -167,6 +167,7 @@ int main(void)
   MX_TIM3_Init();
   MX_USART1_UART_Init();
   MX_USART2_UART_Init();
+  MX_USART4_UART_Init();
 
   /* USER CODE BEGIN 2 */
 	//keep commented while default config changed
