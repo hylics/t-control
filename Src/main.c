@@ -328,7 +328,21 @@ void init_lcd(void)
 }
 
 void delay_lcd(uint16_t ms) {
-	HAL_Delay((uint32_t)ms);
+	HAL_Delay((uint32_t)(ms>1000 ? (ms/1000 + (ms%1000 ? 1 : 0)) : 1));
+//	if(xTaskGetSchedulerState() == pdFALSE) {
+//		HAL_Delay((uint32_t)(ms));
+//	}
+//	/*else if(ms < 1000) {
+//		//
+//	}*/
+//	else if(ms>1000) {
+//		//
+//		osDelay((uint32_t)(ms/1000 + (ms%1000>0 ? 1 : 0)));
+//	}
+//	else {
+//		osDelay(1);
+//	}
+	
 //	SysTick->VAL = SysTick->LOAD;
 //  const uint32_t systick_ms_start = systick_ms;//increment in Systick handler
 //  uint16_t us = ms * 1000;

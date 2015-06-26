@@ -146,10 +146,10 @@ const HD44780_Config *config, uint8_t columns, uint8_t rows, HD44780_CharSize ch
 		/*** This is according to the hitachi HD44780 datasheet page 45 figure 23 ***/
 		/* Send function set command sequence */
 		HD44780_RETURN_IF_ERROR(hd44780_command(display, HD44780_CMD_FUNCTIONSET | display->displayfunction));
-		delay_microseconds(5); // 4500us wait more than 4.1ms
+		delay_microseconds(4500); // 4500us wait more than 4.1ms
 		/* Second try */
 		HD44780_RETURN_IF_ERROR(hd44780_command(display, HD44780_CMD_FUNCTIONSET | display->displayfunction));
-		delay_microseconds(1); // 150us
+		delay_microseconds(150); // 150us
 		/* Third go */
 		HD44780_RETURN_IF_ERROR(hd44780_command(display, HD44780_CMD_FUNCTIONSET | display->displayfunction));
 	}
@@ -157,13 +157,13 @@ const HD44780_Config *config, uint8_t columns, uint8_t rows, HD44780_CharSize ch
 		/*** This is according to the hitachi HD44780 datasheet figure 24, pg 46 ***/
 		/* We start in 8bit mode, try to set 4 bit mode */
 		HD44780_RETURN_IF_ERROR(hd44780_write_bits(display, 0x03));
-		delay_microseconds(5); //4500us wait min 4.1ms
+		delay_microseconds(4500); //4500us wait min 4.1ms
 		/* Second try */
 		HD44780_RETURN_IF_ERROR(hd44780_write_bits(display, 0x03));
-		delay_microseconds(5); //4500us wait min 4.1ms
+		delay_microseconds(4500); //4500us wait min 4.1ms
 		/* Third go! */
 		HD44780_RETURN_IF_ERROR(hd44780_write_bits(display, 0x03));
-		delay_microseconds(1); //150us
+		delay_microseconds(150); //150us
 		/* Finally, set to 4-bit interface */
 		HD44780_RETURN_IF_ERROR(hd44780_write_bits(display, 0x02));
 	}
@@ -200,7 +200,7 @@ HD44780_Result hd44780_clear(HD44780 *display) {
 	HD44780_RETURN_ASSERT(display != NULL, HD44780_RESULT_ERROR);
 	HD44780_RETURN_ASSERT(display->cfg.delay_microseconds != NULL, HD44780_RESULT_ERROR);
 	HD44780_RETURN_IF_ERROR(hd44780_command(display, HD44780_CMD_CLEARDISPLAY)); // clear display, set cursor position to zero
-	display->cfg.delay_microseconds(3); // 3000us this command takes a long time!
+	display->cfg.delay_microseconds(3000); // 3000us this command takes a long time!
 	return HD44780_RESULT_OK;
 }
 
@@ -209,7 +209,7 @@ HD44780_Result hd44780_home(HD44780 *display) {
 	HD44780_RETURN_ASSERT(display != NULL, HD44780_RESULT_ERROR);
 	HD44780_RETURN_ASSERT(display->cfg.delay_microseconds != NULL, HD44780_RESULT_ERROR);
 	HD44780_RETURN_IF_ERROR(hd44780_command(display, HD44780_CMD_RETURNHOME));
-	display->cfg.delay_microseconds(3); // 3000us this command takes a long time!
+	display->cfg.delay_microseconds(3000); // 3000us this command takes a long time!
 	return HD44780_RESULT_OK;
 }
 
@@ -351,7 +351,7 @@ HD44780_Result hd44780_config(HD44780 *display) {
 	* according to datasheet, we need at least 40ms after power rises above 2.7V
 	* before sending commands.
 	*/
-	display->cfg.delay_microseconds(50); // 50000us
+	display->cfg.delay_microseconds(50000); // 50000us
 	/* Now we pull both RS and R/W low to begin commands */
 	HD44780_RETURN_IF_ERROR(gpios->write(gpios, HD44780_PIN_RS, HD44780_PINSTATE_LOW));
 	HD44780_RETURN_IF_ERROR(gpios->write(gpios, HD44780_PIN_ENABLE, HD44780_PINSTATE_LOW));
@@ -440,7 +440,7 @@ HD44780_Result hd44780_pulse_enable_pin(HD44780 *display) {
 	HD44780_RETURN_IF_ERROR(gpios->write(gpios, HD44780_PIN_ENABLE, HD44780_PINSTATE_HIGH));
 	delay_microseconds(1); //1us enable pulse must be >450ns
 	HD44780_RETURN_IF_ERROR(gpios->write(gpios, HD44780_PIN_ENABLE, HD44780_PINSTATE_LOW));
-	delay_microseconds(1); //100us commands need > 37us to settle
+	delay_microseconds(100); //100us commands need > 37us to settle
 	return HD44780_RESULT_OK;
 }
 

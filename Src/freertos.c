@@ -53,6 +53,7 @@ extern AD7792_HandleTypeDef adi1;
 //extern SavedDomain_t EepromDomain;
 extern SavedDomain_t Options_rw;
 extern TIM_HandleTypeDef htim3;
+extern UART_HandleTypeDef huart4;
 extern HAL_StatusTypeDef (*pf_output[N_FUNC_PWR])(float32_t pwr);
 extern HD44780 lcd;
 //extern HD44780_STM32F0xx_GPIO_Driver lcd_pindriver;
@@ -201,6 +202,8 @@ void StartAdcTask(void const * argument)
 	osDelay(1000); //for maxcount calibration
 	LastWakeTime = xTaskGetTickCount();
 	
+	uint8_t msg1[]="adc_task\n";
+	
   /* Infinite loop */
   for(;;)
   {
@@ -208,6 +211,7 @@ void StartAdcTask(void const * argument)
 		__IO uint32_t raw_conv_rtd = 0;
 		
 		//la_adc_task = 1;
+		HAL_UART_Transmit(&huart4, msg1, sizeof(msg1), 5);
 		
 		adi1.io &= ~AD7792_IEXCDIR(0x3);
 		adi1.io |= AD7792_IEXCDIR(AD7792_DIR_IEXC1_IOUT2_IEXC2_IOUT1);
@@ -242,8 +246,8 @@ void StartAdcTask(void const * argument)
 		
 		//la_adc_task = 0;
 		
-		//osDelay(1000);
-		vTaskDelayUntil(&LastWakeTime, 2000);//2000
+		osDelay(2000);
+		//vTaskDelayUntil(&LastWakeTime, 2000);//2000
   }
 	//vTaskDelete(NULL);
   /* USER CODE END StartAdcTask */
@@ -263,6 +267,8 @@ void StartPidTask(void const * argument)
 	
 	arm_pid_init_f32(&pid_instance_1, 1);
 	
+	uint8_t msg1[]="pid_task\n";
+	
 	//where the best place for this?
 	HAL_TIM_Base_Start_IT(&htim3);
 	
@@ -272,6 +278,7 @@ void StartPidTask(void const * argument)
 		float32_t delta_t = 0.0f;//, out_f32 = 0.0f;
 		
 		//la_pid_task = 1;
+		HAL_UART_Transmit(&huart4, msg1, sizeof(msg1), 5);
 		
 		osStatus status = osMutexWait(Mutex_T_Handle, mutex_T_wait);
 		
@@ -307,8 +314,8 @@ void StartPidTask(void const * argument)
 		
 		//la_pid_task = 0;
 		
-		//osDelay(1000);
-    vTaskDelayUntil(&LastWakeTime, 2000);//2000
+		osDelay(2000);
+    //vTaskDelayUntil(&LastWakeTime, 2000);//2000
   }
 	//vTaskDelete(NULL);
   /* USER CODE END StartPidTask */
@@ -325,9 +332,12 @@ void StartLcdTask(void const * argument)
   osDelay(1000); //for maxcount calibration
 	const size_t buf_size = lcd.columns_amount + 1;
 	char buf[buf_size];
+	uint8_t msg1[]="lcd_task\n";
   /* Infinite loop */
   for(;;)
   {
+		HAL_UART_Transmit(&huart4, msg1, sizeof(msg1), 5);
+		
 		status = osMutexWait(Mutex_T_Handle, mutex_T_wait);
 		if(status == osOK) {
 			snprintf(buf, buf_size, "%5.2f", temp_handle.rtd);
