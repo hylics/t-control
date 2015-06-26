@@ -195,12 +195,12 @@ void StartAdcTask(void const * argument)
 {
 
   /* USER CODE BEGIN StartAdcTask */
-	TickType_t LastWakeTime;
-	//const uint32_t adc_delay = 1000; //milliseconds
+	TickType_t LastWakeTime = xTaskGetTickCount();
+	const TickType_t adc_delay = 2000; //milliseconds
 	const uint32_t mutex_T_wait = 500; //milliseconds
 	static uint32_t filt_conv_rtd;
 	osDelay(1000); //for maxcount calibration
-	LastWakeTime = xTaskGetTickCount();
+	//LastWakeTime = xTaskGetTickCount();
 	
 	uint8_t msg1[]="adc_task\n";
 	
@@ -246,8 +246,8 @@ void StartAdcTask(void const * argument)
 		
 		//la_adc_task = 0;
 		
-		osDelay(2000);
-		//vTaskDelayUntil(&LastWakeTime, 2000);//2000
+		//osDelay(2000);
+		vTaskDelayUntil(&LastWakeTime, adc_delay);//2000
   }
 	//vTaskDelete(NULL);
   /* USER CODE END StartAdcTask */
@@ -257,8 +257,8 @@ void StartAdcTask(void const * argument)
 void StartPidTask(void const * argument)
 {
   /* USER CODE BEGIN StartPidTask */
-	TickType_t LastWakeTime;
-	//const uint32_t pid_delay = 6000; //milliseconds
+	TickType_t LastWakeTime = xTaskGetTickCount();
+	const TickType_t pid_delay = 2000; //milliseconds
 	const uint32_t mutex_T_wait = 2000; //milliseconds
 	pid_instance_1.Kp = Options_rw.Kp;
 	pid_instance_1.Ki = Options_rw.Ki;
@@ -314,8 +314,8 @@ void StartPidTask(void const * argument)
 		
 		//la_pid_task = 0;
 		
-		osDelay(2000);
-    //vTaskDelayUntil(&LastWakeTime, 2000);//2000
+		//osDelay(2000);
+    vTaskDelayUntil(&LastWakeTime, pid_delay);//2000
   }
 	//vTaskDelete(NULL);
   /* USER CODE END StartPidTask */
@@ -326,7 +326,8 @@ void StartLcdTask(void const * argument)
 {
   /* USER CODE BEGIN StartLcdTask */
 	static osStatus status;
-	TickType_t LastWakeTime;
+	TickType_t LastWakeTime = xTaskGetTickCount();
+	const TickType_t lcd_delay = 1000;
 	const uint32_t mutex_T_wait = 2000; //milliseconds
 //	//static uint32_t counter2 = 5;
   osDelay(1000); //for maxcount calibration
@@ -348,14 +349,14 @@ void StartLcdTask(void const * argument)
 		}
 //		snprintf(buf, buf_size, "%d", counter2);
 //		
-    vTaskDelayUntil(&LastWakeTime, 1000);//
+    vTaskDelayUntil(&LastWakeTime, lcd_delay);//
 //		
 //		++counter2;
 //    taskENTER_CRITICAL();
 //		hd44780_clear(&lcd);
 //		hd44780_write_string(&lcd, buf);
 //		taskEXIT_CRITICAL();
-    osDelay(1000);
+    //osDelay(1000);
   }
   /* USER CODE END StartLcdTask */
 }
