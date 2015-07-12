@@ -94,6 +94,16 @@ typedef double float64_t;
 typedef enum {in_rtd, in_thermocouple} input_t;
 typedef enum {pwm_jitter, pwm_simple, pwm_bresenham} out_pf_t;
 
+#define N_PROG 5  //number of temperature programs
+#define N_STEP 10 //number of steps in temperature programs
+
+typedef __packed struct __T_step_t{
+	uint32_t time;
+	float32_t y;
+	uint32_t type:2; //type of step
+}T_step_t;
+
+
 typedef __packed struct __SavedDomain_t{
 	uint16_t header;
 	uint16_t offset[3];
@@ -105,15 +115,16 @@ typedef __packed struct __SavedDomain_t{
 	//float32_t pwm_scale_f;
 	input_t input; // define used temperature sensor
 	out_pf_t pf_out; //used function to set output
+	T_step_t prog[N_PROG][N_STEP]; //temperature program
 	uint32_t cnt_fw; //flash write counter
-	uint16_t padding;
+	uint32_t padding; //for aligning size of packed structure
 	uint32_t crc;
 } SavedDomain_t; //size 48???? bytes, non packed
 
 /*size of SavedDomain_t may be aligned to uint16_t size*/
 STATIC_ASSERT(!(sizeof(SavedDomain_t) % sizeof(uint16_t))); //for flash operations
 STATIC_ASSERT(!(sizeof(SavedDomain_t) % sizeof(uint32_t))); //for crc32
-//STATIC_ASSERT((sizeof(SavedDomain_t) == 52)); //with __packed not working
+//STATIC_ASSERT((sizeof(SavedDomain_t) == 52)); //with qualifier __packed not working
 STATIC_ASSERT(sizeof(SavedDomain_t) <= 1024);
 
 /* Exported macro ------------------------------------------------------------*/

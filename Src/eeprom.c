@@ -70,6 +70,12 @@ const SavedDomain_t EepromDomain __attribute__ ((section("eeprom"))) = {
   //FLT_MAX /(float32_t)PWM_PERIOD, //scaling factor
 	in_rtd,                  //input RTD
 	pwm_jitter,              //default implementation output function
+	//Temperature programs
+	0,0.0F,0, 0,0.0F,0, 0,0.0F,0, 0,0.0F,0, 0,0.0F,0, 0,0.0F,0, 0,0.0F,0, 0,0.0F,0, 0,0.0F,0, 0,0.0F,0,
+	0,0.0F,0, 0,0.0F,0, 0,0.0F,0, 0,0.0F,0, 0,0.0F,0, 0,0.0F,0, 0,0.0F,0, 0,0.0F,0, 0,0.0F,0, 0,0.0F,0,
+	0,0.0F,0, 0,0.0F,0, 0,0.0F,0, 0,0.0F,0, 0,0.0F,0, 0,0.0F,0, 0,0.0F,0, 0,0.0F,0, 0,0.0F,0, 0,0.0F,0,
+	0,0.0F,0, 0,0.0F,0, 0,0.0F,0, 0,0.0F,0, 0,0.0F,0, 0,0.0F,0, 0,0.0F,0, 0,0.0F,0, 0,0.0F,0, 0,0.0F,0,
+	0,0.0F,0, 0,0.0F,0, 0,0.0F,0, 0,0.0F,0, 0,0.0F,0, 0,0.0F,0, 0,0.0F,0, 0,0.0F,0, 0,0.0F,0, 0,0.0F,0,
 	1,                       //flash write counter
 	0, //padding
 	0xBC057A60               //crc32
