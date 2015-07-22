@@ -195,6 +195,7 @@ int main(void)
 		hd44780_write_string(&lcd, buf);
 		HAL_Delay(200);
 	}
+	//spi_send_byte((uint8_t)0x55);
 
 	//Options_rw.offset[0] = 0x7000;
 	//Options_rw.crc = HAL_CRC_Calculate(&hcrc, (uint32_t*)&Options_rw, OPT_CRC_LEN); //crc32

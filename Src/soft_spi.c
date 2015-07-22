@@ -7,6 +7,7 @@
 #include "soft_spi.h"
 
 
+/* 2MHz clock at 48MHz system clock, half-duplex*/
 
 void spi_send_byte(uint8_t data) {
   // ????????? 1 ????
@@ -14,7 +15,7 @@ void spi_send_byte(uint8_t data) {
 		
     //CLRWDT();
 		SCK_LOW;
-		__NOP();
+		//__NOP();
     // ????????? ????? ??? = 1
     if (data & 0x80) {
       MOSI_HIGH; // ???????? 1
@@ -38,9 +39,9 @@ void spi_send_byte(uint8_t data) {
 uint8_t spi_read_byte(void) {
 	//
 	uint8_t spiReadData=0;
-	__NOP();
-	__NOP();
-	__NOP();
+	//__NOP();
+	//__NOP();
+	//__NOP();
  
    for(uint32_t i=0; i<8; i++) {
      //CLRWDT();
@@ -51,13 +52,14 @@ uint8_t spi_read_byte(void) {
 		 __NOP();
 		 __NOP();
 		 __NOP();
+		 __NOP();
+		 //__NOP();
+		 
 		 SCK_HIGH; // ?????????????
      if (MISO_STATE != (uint32_t)GPIO_PIN_RESET) { spiReadData |= 0x01; } // ?????? ???
-     __NOP();
-     __NOP();
-		 __NOP();
-		 __NOP();
-		 __NOP();
+		 //__NOP();
+		 //__NOP();
+		 //__NOP();
    }
  
    return spiReadData;
