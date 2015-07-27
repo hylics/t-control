@@ -1,7 +1,7 @@
 /**
   ******************************************************************************
   * File Name          : freertos.c
-  * Date               : 24/06/2015 11:14:05
+  * Date               : 27/07/2015 13:18:06
   * Description        : Code for freertos applications
   ******************************************************************************
   *
@@ -46,6 +46,7 @@
 osThreadId adcTaskHandle;
 osThreadId pidTaskHandle;
 osThreadId LcdTaskHandle;
+osThreadId ProgramTaskHandle;
 osMutexId Mutex_T_Handle;
 
 /* USER CODE BEGIN Variables */
@@ -75,6 +76,7 @@ __IO static uint8_t CPU_IDLE = 0, malloc_err=0;
 void StartAdcTask(void const * argument);
 void StartPidTask(void const * argument);
 void StartLcdTask(void const * argument);
+void StartProgramTask(void const * argument);
 
 void MX_FREERTOS_Init(void); /* (MISRA C 2004 rule 8.1) */
 
@@ -180,6 +182,10 @@ void MX_FREERTOS_Init(void) {
   /* definition and creation of LcdTask */
   osThreadDef(LcdTask, StartLcdTask, osPriorityNormal, 0, 128);
   LcdTaskHandle = osThreadCreate(osThread(LcdTask), NULL);
+
+  /* definition and creation of ProgramTask */
+  osThreadDef(ProgramTask, StartProgramTask, osPriorityNormal, 0, 128);
+  ProgramTaskHandle = osThreadCreate(osThread(ProgramTask), NULL);
 
   /* USER CODE BEGIN RTOS_THREADS */
   /* add threads, ... */
@@ -359,6 +365,64 @@ void StartLcdTask(void const * argument)
     //osDelay(1000);
   }
   /* USER CODE END StartLcdTask */
+}
+
+/* StartProgramTask function */
+void StartProgramTask(void const * argument)
+{
+  /* USER CODE BEGIN StartProgramTask */
+	static osStatus status;
+	TickType_t LastWakeTime = xTaskGetTickCount();
+	const TickType_t program_delay = 1000;
+	const uint32_t mutex_T_wait = 2000; //milliseconds
+	static uint32_t time=0;
+	float32_t alpfa=0, beta=0;
+	uint32_t prog=0;
+  uint32_t	step=0;
+	osDelay(30000);
+	status = osMutexWait(Mutex_T_Handle, mutex_T_wait);
+	if(status == osOK) {
+		if (Options_rw.input == in_rtd) {
+			Options_rw.prog[prog][0].y = temp_handle.rtd;
+		}
+		else {
+			Options_rw.prog[prog][0].y = temp_handle.thermocouple;
+		}
+		osMutexRelease(Mutex_T_Handle);
+	}
+	else {
+		//do something when error occuring
+	}//status
+	
+	osDelay(1000); //for maxcount calibration
+  /* Infinite loop */
+  for(;;)
+  { 
+		//update coefficients
+		if (time >= Options_rw.prog[prog][step].time) {
+		  beta = Options_rw.prog[prog][step].y;
+		  alpfa = (Options_rw.prog[prog][step+1].y - Options_rw.prog[prog][step].y)
+			          /
+			  		  (Options_rw.prog[prog][step+1].time - Options_rw.prog[prog][step].time);
+			if(Options_rw.prog[prog][step+1].time > Options_rw.prog[prog][step].time) {
+				step++;
+			}
+		}
+		
+		status = osMutexWait(Mutex_T_Handle, mutex_T_wait);
+		if(status == osOK) {
+			//calculate setpoint by a linear equation
+			temp_handle.setpoint = (float32_t)(alpfa * time) + beta;
+			osMutexRelease(Mutex_T_Handle);
+		}
+		else {
+			//do something when error occuring
+		}
+		
+		time++;
+    vTaskDelayUntil(&LastWakeTime, program_delay);
+  }
+  /* USER CODE END StartProgramTask */
 }
 
 /* USER CODE BEGIN Application */
