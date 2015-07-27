@@ -376,7 +376,7 @@ void StartProgramTask(void const * argument)
 	const TickType_t program_delay = 1000;
 	const uint32_t mutex_T_wait = 2000; //milliseconds
 	static uint32_t time=0;
-	float32_t alpfa=0, beta=0;
+	static float32_t alpha=0, beta=0;
 	uint32_t prog=0;
   uint32_t	step=0;
 	osDelay(30000);
@@ -400,19 +400,24 @@ void StartProgramTask(void const * argument)
   { 
 		//update coefficients
 		if (time >= Options_rw.prog[prog][step].time) {
-		  beta = Options_rw.prog[prog][step].y;
-		  alpfa = (Options_rw.prog[prog][step+1].y - Options_rw.prog[prog][step].y)
+		  
+		  alpha = (Options_rw.prog[prog][step+1].y - Options_rw.prog[prog][step].y)
 			          /
 			  		  (Options_rw.prog[prog][step+1].time - Options_rw.prog[prog][step].time);
-			if(Options_rw.prog[prog][step+1].time > Options_rw.prog[prog][step].time) {
-				step++;
-			}
-		}
+			beta = Options_rw.prog[prog][step+1].y - Options_rw.prog[prog][step+1].time * alpha;
+			
+			if(step<N_STEP) { //not end program?
+				//next step is has valid time?
+				if(Options_rw.prog[prog][step+1].time > Options_rw.prog[prog][step].time) {
+					step++;
+			  }
+			}//(step<N_STEP)
+		}//update coefficients
 		
 		status = osMutexWait(Mutex_T_Handle, mutex_T_wait);
 		if(status == osOK) {
 			//calculate setpoint by a linear equation
-			temp_handle.setpoint = (float32_t)(alpfa * time) + beta;
+			temp_handle.setpoint = (float32_t)(alpha * time) + beta;
 			osMutexRelease(Mutex_T_Handle);
 		}
 		else {
